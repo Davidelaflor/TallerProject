@@ -11,4 +11,6 @@ public interface OrdenTrabajoService {
     List<OrdenTrabajo> listarOrdenes();
     OrdenTrabajo obtenerOrdenPorId(Long id);
     void eliminarOrdenTrabajo(Long id);
+    boolean existeOrdenPorPatente(String patente);
+
 }

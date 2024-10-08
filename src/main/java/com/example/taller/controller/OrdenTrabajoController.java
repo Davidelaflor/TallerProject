@@ -2,6 +2,7 @@ package com.example.taller.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,10 +35,46 @@ public class OrdenTrabajoController {
           // @RequestParam Long empleadoCodigo,
           // @RequestParam String propietarioDni)
            {
+          
+            if (service.existeOrdenPorPatente(ordenTrabajoDto.getPatente())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Manejo de conflicto
+            }
+        
+       
         OrdenTrabajo nuevaOrden = service.crearOrdenTrabajo(ordenTrabajoDto);//, empleadoCodigo, propietarioDni, codigosRepuestos, cantidades);
         return ResponseEntity.ok(nuevaOrden);
 
     }
+    /*{
+  "patente": "ABC123",
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "detalleFalla": "No arranca",
+  "horasTrabajadas": 5,
+  "estado": "ACTIVO",
+  "fechaIngreso": "2024-10-07",
+  "empleado": {
+    "id": 1 // ID del empleado asignado
+  },
+  "propietario": {
+    "dni": "12345678A",
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "telefono": "123456789",
+    "direccion": "Calle Falsa 123"
+  },
+  "repuestosUtilizados": [
+    {
+      "codigoInventario": "REPU001",
+      "cantidad": 2
+    },
+    {
+      "codigoInventario": "REPU002",
+      "cantidad": 1
+    }
+  ]
+}
+ */
 
 
 

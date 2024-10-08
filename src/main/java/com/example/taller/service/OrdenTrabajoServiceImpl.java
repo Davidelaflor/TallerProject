@@ -43,10 +43,17 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
      @Autowired
     private RepuestosUtilizadosRepository repuestosUtilizadosRepository; // Asegúrate de que el nombre coincida
 
+    @Override
+    public boolean existeOrdenPorPatente(String patente) {
+        return ordenTrabajoRepository.findByPatente(patente).isPresent();
+    }
+    
 
     @Override
     public OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO ordenTrabajoDto){//, Long empleadoCodigo, String propietarioDni, List<String> codigosRepuestos, List<Integer> cantidades) {
        
+       
+
         System.out.println("Repuestos utilizados: " + ordenTrabajoDto.getRepuestosUtilizados()); //esto es para ver los logs en la consola y comprobar porque me sale null []
 
         // Verifica si el propietario ya existe
