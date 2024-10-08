@@ -1,4 +1,4 @@
-package com.example.taller.controller;
+/*package com.example.taller.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,4 +11,4 @@ public class OrdenTrabajoViewController {
     public String mostrarFormularioCrearOrden() {
         return "crearOrden"; // Nombre del archivo sin la extensión .html
     }
-}
+}*/
