@@ -2,6 +2,7 @@ package com.example.taller.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +39,7 @@ public class OrdenTrabajoController {
            {
           
             if (service.existeOrdenPorPatente(ordenTrabajoDto.getPatente())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Manejo de conflicto
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Manejo de conflicto error 406
             }
         
        
@@ -66,11 +67,11 @@ public class OrdenTrabajoController {
   },
   "repuestosUtilizados": [
     {
-      "codigoInventario": "REPU001",
+      "codigoInventario": "REP001",
       "cantidad": 2
     },
     {
-      "codigoInventario": "REPU002",
+      "codigoInventario": "REP002",
       "cantidad": 1
     }
   ]
@@ -78,16 +79,16 @@ public class OrdenTrabajoController {
  */
 
 
-
+ 
     @GetMapping
     public ResponseEntity<List<OrdenTrabajo>> listarOrdenes() {
         return ResponseEntity.ok(service.listarOrdenes());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrdenTrabajo> modificarOrden(@PathVariable Long id, @RequestBody OrdenTrabajoDTO ordenTrabajoDto,         @RequestParam(required = false) List<String> codigosRepuestos){
+    public ResponseEntity<OrdenTrabajo> modificarOrden(@PathVariable Long id, @RequestBody OrdenTrabajoDTO ordenTrabajoDto){//,         @RequestParam(required = false) List<String> codigosRepuestos){
         ordenTrabajoDto.setId(id);
-        OrdenTrabajo ordenModificada = service.modificarOrdenTrabajo(ordenTrabajoDto, codigosRepuestos);
+        OrdenTrabajo ordenModificada = service.modificarOrdenTrabajo(id, ordenTrabajoDto);
 
         return ResponseEntity.ok(ordenModificada);
     }

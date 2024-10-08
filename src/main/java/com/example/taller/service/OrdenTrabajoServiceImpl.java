@@ -44,6 +44,11 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
     private RepuestosUtilizadosRepository repuestosUtilizadosRepository; // Asegúrate de que el nombre coincida
 
     @Override
+    public boolean existeOrdenPorId(Long id) {
+        return ordenTrabajoRepository.existsById(id);
+    }
+
+    @Override
     public boolean existeOrdenPorPatente(String patente) {
         return ordenTrabajoRepository.findByPatente(patente).isPresent();
     }
@@ -105,7 +110,7 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
                 repuestoUtilizado.setOrdenTrabajo(ordenGuardada); // Establecer la relación con la orden
 
                 // Guarda el repuesto utilizado en la base de datos
-                repuestosUtilizadosRepository.save(repuestoUtilizado);
+               //repuestosUtilizadosRepository.save(repuestoUtilizado);
             } else {
                 throw new CustomException("Repuesto no encontrado para el código: " + repuestoDto.getCodigoInventario());
             }
@@ -114,98 +119,7 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
 
     return ordenGuardada; // Retorna la orden de trabajo guardada
 }
-       /*  OrdenTrabajoDTO nuevaOrden = new OrdenTrabajoDTO();
 
-        nuevaOrden.setPatente(ordenTrabajoDto.getPatente());
-        nuevaOrden.setMarca(ordenTrabajoDto.getMarca());
-        nuevaOrden.setModelo(ordenTrabajoDto.getModelo());
-        nuevaOrden.setDetalleFalla(ordenTrabajoDto.getDetalleFalla());
-        nuevaOrden.setHorasTrabajadas(ordenTrabajoDto.getHorasTrabajadas());
-        nuevaOrden.setEstado(ordenTrabajoDto.getEstado());
-        nuevaOrden.setFechaIngreso(ordenTrabajoDto.getFechaIngreso());
-    
-        // Asignar el ID del empleado
-        Empleado empleado = empleadoRepository.findById(empleadoCodigo)
-        .orElseThrow(() -> new CustomException("Empleado no encontrado con ID: " + empleadoCodigo));
-    nuevaOrden.setEmpleadoAsignado(empleado);
-
-
-    Propietario propietario = propietarioRepository.findByDni(propietarioDni)
-    .orElseThrow(() -> new CustomException("Propietario no encontrado con DNI: " + propietarioDni));
-    nuevaOrden.setPropietario(propietario);
-
-    OrdenTrabajoDTO ordenGuardada = ordenTrabajoRepository.save(nuevaOrden);
-
-    return ordenGuardada; // Retorna la orden de trabajo guardada
-}*/
-
-   /*  @Override
-    public OrdenTrabajoDTO modificarOrdenTrabajo(OrdenTrabajoDTO ordenTrabajo, List<String> codigosRepuestos) {
-        Optional<OrdenTrabajoDTO> ordenExistenteOpt = ordenTrabajoRepository.findById(ordenTrabajo.getId());
-        if (ordenExistenteOpt.isPresent()) {
-            OrdenTrabajoDTO ordenExistente = ordenExistenteOpt.get();
-
-            // Actualiza los campos necesarios
-            ordenExistente.setPatente(ordenTrabajo.getPatente());
-            ordenExistente.setMarca(ordenTrabajo.getMarca());
-            ordenExistente.setModelo(ordenTrabajo.getModelo());
-            ordenExistente.setDetalleFalla(ordenTrabajo.getDetalleFalla());
-            ordenExistente.setEstado(ordenTrabajo.getEstado());
-            ordenExistente.setHorasTrabajadas(ordenTrabajo.getHorasTrabajadas());
-            ordenExistente.setFechaIngreso(ordenTrabajo.getFechaIngreso());
-                    
-            // Asigna el empleado usando el ID
-            if (ordenTrabajo.getEmpleadoAsignado() != null) {
-                Empleado empleado = empleadoRepository.findById(ordenTrabajo.getEmpleadoAsignado().getId())
-                        .orElseThrow(() -> new CustomException("El empleado no existe."));
-                ordenExistente.setEmpleadoAsignado(empleado); // Almacena el nombre o ID según tu implementación
-            }
-
-            // Actualiza la lista de repuestos utilizados
-            if (codigosRepuestos != null) {
-                List<RepuestoUtilizado> repuestosUtilizados =  new ArrayList<>();
-                for (String codigo : codigosRepuestos) {
-                    Repuesto repuesto = repuestoRepository.findByCodigoInventario(codigo);
-                    if (repuesto != null) {
-                        RepuestoUtilizado repuestoUtilizado = new RepuestoUtilizado();
-                        repuestoUtilizado.setRepuesto(repuesto);
-                        repuestosUtilizados.add(repuestoUtilizado);
-                    } else {
-                        throw new CustomException("Repuesto no encontrado para el código: " + codigo);
-                    }
-                }
-    
-                // Asigna la lista de repuestos utilizados a la orden existente
-                ordenExistente.setRepuestosUtilizados(repuestosUtilizados);
-            }
-    
-            // Guarda la orden de trabajo actualizada
-            return ordenTrabajoRepository.save(ordenExistente);
-        } else {
-            throw new CustomException("La orden de trabajo con ID " + ordenTrabajo.getId() + " no existe.");
-        }
-    }
-
-
-    @Override
-    public List<OrdenTrabajoDTO> listarOrdenes() {
-        return ordenTrabajoRepository.findAll();
-    }
-
-    @Override
-    public OrdenTrabajoDTO obtenerOrdenPorId(Long id) {
-        Optional<OrdenTrabajoDTO> orden = ordenTrabajoRepository.findById(id);
-        return orden.orElseThrow(() -> new CustomException("Orden no encontrada"));
-    }
-
-    @Override
-    public void eliminarOrdenTrabajo(Long id) {
-        // Manejo de la lógica para eliminar una orden
-        if (!ordenTrabajoRepository.existsById(id)) {
-            throw new CustomException("Orden no encontrada");
-        }
-        ordenTrabajoRepository.deleteById(id);
-    }*/
     @Override
     public OrdenTrabajo obtenerOrdenPorId(Long id) {
         return ordenTrabajoRepository.findById(id)
@@ -221,16 +135,32 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
     }
 
     @Override
-    public OrdenTrabajo modificarOrdenTrabajo(OrdenTrabajoDTO ordenTrabajoDto, List<String> codigosRepuestos) {
-        // Implementación para modificar la orden de trabajo
-        // ...
-        return null; // Cambia esto por el objeto OrdenTrabajo actualizado
-    }
+    public OrdenTrabajo modificarOrdenTrabajo(Long id, OrdenTrabajoDTO ordenTrabajoDto) {
+        OrdenTrabajo ordenExistente = ordenTrabajoRepository.findById(id)
+        .orElseThrow(() -> new CustomException("Orden de trabajo no encontrada con ID: " + id));
+
+// Actualiza los campos de la orden de trabajo
+ordenExistente.setPatente(ordenTrabajoDto.getPatente());
+ordenExistente.setMarca(ordenTrabajoDto.getMarca());
+ordenExistente.setModelo(ordenTrabajoDto.getModelo());
+ordenExistente.setDetalleFalla(ordenTrabajoDto.getDetalleFalla());
+ordenExistente.setHorasTrabajadas(ordenTrabajoDto.getHorasTrabajadas());
+ordenExistente.setEstado(ordenTrabajoDto.getEstado());
+
+// Asigna el empleado si está presente en el DTO
+Empleado empleado = empleadoRepository.findById(ordenTrabajoDto.getEmpleado().getId())
+        .orElseThrow(() -> new CustomException("Empleado no encontrado con ID: " + ordenTrabajoDto.getEmpleado().getId()));
+ordenExistente.setEmpleadoAsignado(empleado);
+
+// Guardar los cambios en la base de datos
+return ordenTrabajoRepository.save(ordenExistente); }
 
     @Override
     public List<OrdenTrabajo> listarOrdenes() {
         return ordenTrabajoRepository.findAll();
     }
 
+ 
+    
 
 }
