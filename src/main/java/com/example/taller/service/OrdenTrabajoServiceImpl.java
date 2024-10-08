@@ -59,7 +59,7 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
        
        
 
-        System.out.println("Repuestos utilizados: " + ordenTrabajoDto.getRepuestosUtilizados()); //esto es para ver los logs en la consola y comprobar porque me sale null []
+       System.out.println("Repuestos utilizados: " + ordenTrabajoDto.getRepuestosUtilizados()); //esto es para ver los logs en la consola y comprobar porque me sale null []
 
         // Verifica si el propietario ya existe
     Optional<Propietario> propietarioOpt = propietarioRepository.findByDni(ordenTrabajoDto.getPropietario().getDni());
@@ -151,6 +151,9 @@ ordenExistente.setEstado(ordenTrabajoDto.getEstado());
 Empleado empleado = empleadoRepository.findById(ordenTrabajoDto.getEmpleado().getId())
         .orElseThrow(() -> new CustomException("Empleado no encontrado con ID: " + ordenTrabajoDto.getEmpleado().getId()));
 ordenExistente.setEmpleadoAsignado(empleado);
+
+
+
 
 // Guardar los cambios en la base de datos
 return ordenTrabajoRepository.save(ordenExistente); }

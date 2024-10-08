@@ -127,10 +127,10 @@ public String toString() {
             ", modelo='" + modelo + '\'' +
             ", detalleFalla='" + detalleFalla + '\'' +
             ", estado=" + estado +
-            ", repuestosUtilizados=" + repuestosUtilizados +
             ", horasTrabajadas=" + horasTrabajadas +
             ", propietario=" + propietario +
             ", empleado=" + empleado +
+            ", repuestosUtilizados=" + repuestosUtilizados + 
             '}';
 }
 }

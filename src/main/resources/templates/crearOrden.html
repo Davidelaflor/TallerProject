@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Orden de Trabajo</title>
+</head>
+<body>
+    <h1>Crear Orden de Trabajo</h1>
+    <form action="/ordenes" method="POST">
+        <label for="patente">Patente:</label>
+        <input type="text" id="patente" name="patente" required><br>
+
+        <label for="marca">Marca:</label>
+        <input type="text" id="marca" name="marca" required><br>
+
+        <label for="modelo">Modelo:</label>
+        <input type="text" id="modelo" name="modelo" required><br>
+
+        <label for="detalleFalla">Detalle de Falla:</label>
+        <input type="text" id="detalleFalla" name="detalleFalla" required><br>
+
+        <label for="horasTrabajadas">Horas Trabajadas:</label>
+        <input type="number" id="horasTrabajadas" name="horasTrabajadas" required><br>
+
+        <label for="estado">Estado:</label>
+        <select id="estado" name="estado" required>
+            <option value="ACTIVO">Activo</option>
+            <option value="FINALIZADO">Finalizado</option>
+        </select><br>
+
+        <label for="propietarioDni">DNI del Propietario:</label>
+        <input type="text" id="propietarioDni" name="propietarioDni" required><br>
+
+        <label for="empleadoId">ID del Empleado:</label>
+        <input type="number" id="empleadoId" name="empleadoId" required><br>
+
+        <button type="submit">Crear Orden</button>
+    </form>
+</body>
+</html>
