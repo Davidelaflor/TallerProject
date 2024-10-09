@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Órdenes de Trabajo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .orden {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lista de Órdenes de Trabajo</h1>
+    <div id="ordenes-list"></div>
+
+    <script>
+        // Función para obtener las órdenes desde la API
+        async function fetchOrdenes() {
+            try {
+                const response = await fetch('http://localhost:8080/api/ordenes');
+                if (!response.ok) {
+                    throw new Error('Error al cargar las órdenes');
+                }
+                const ordenes = await response.json();
+                mostrarOrdenes(ordenes);
+            } catch (error) {
+                document.getElementById('ordenes-list').innerHTML = '<p>' + error.message + '</p>';
+            }
+        }
+
+        // Función para mostrar las órdenes en el HTML
+        function mostrarOrdenes(ordenes) {
+            const ordenesList = document.getElementById('ordenes-list');
+            ordenesList.innerHTML = ''; // Limpiar el contenido anterior
+
+            ordenes.forEach(orden => {
+                const ordenDiv = document.createElement('div');
+                ordenDiv.classList.add('orden');
+                ordenDiv.innerHTML = `
+                    <strong>Orden ID:</strong> ${orden.id} <br />
+                    <strong>Descripción:</strong> ${orden.detalleFalla} <br />
+                    <strong>Estado:</strong> ${orden.estado}
+                `;
+                ordenesList.appendChild(ordenDiv);
+            });
+        }
+
+        // Llamada a la función para obtener las órdenes cuando se carga la página
+        window.onload = fetchOrdenes;
+    </script>
+
+</body>
+</html>
