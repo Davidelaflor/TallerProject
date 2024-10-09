@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cglib.core.Local;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,9 +32,13 @@ public class OrdenTrabajo {
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
-    private String patente;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_patente")
+    private Vehiculo vehiculo;
+
+    /*private String patente;
     private String marca;
-    private String modelo;
+    private String modelo;*/
     private String detalleFalla;
 
     @ManyToOne
@@ -55,7 +61,31 @@ public class OrdenTrabajo {
     
     private int horasTrabajadas;
 
+    public OrdenTrabajo() {}
 
+    public OrdenTrabajo(Vehiculo vehiculo, String detalleFalla, int horasTrabajadas, Estado estado, LocalDate fechaIngreso, Empleado empleadoAsignado, Propietario propietario, List<RepuestoUtilizado> repuestosUtilizados) {
+        this.vehiculo = vehiculo;
+        this.detalleFalla = detalleFalla;
+        this.horasTrabajadas = horasTrabajadas;
+        this.estado = estado;
+        this.fechaIngreso = fechaIngreso;
+        this.empleadoAsignado = empleadoAsignado;
+        this.propietario = propietario;
+        this.repuestosUtilizados = repuestosUtilizados;
+    }
+
+     // Métodos para manejar la lista de repuestos utilizados
+     public void addRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado) {
+        repuestosUtilizados.add(repuestoUtilizado);
+        repuestoUtilizado.setOrdenTrabajo(this); // Establece la relación bidireccional
+    }
+
+
+    public void removeRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado) {
+        repuestosUtilizados.remove(repuestoUtilizado);
+        repuestoUtilizado.setOrdenTrabajo(null); // Elimina la relación bidireccional
+    }
+    
     public Empleado getEmpleadoAsignado() {
         return empleadoAsignado;
     }
@@ -72,13 +102,13 @@ public class OrdenTrabajo {
         this.id = id;
     }
 
-    public String getPatente() {
+   /*  public String getPatente() {
         return patente;
     }
 
     public void setPatente(String patente) {
         this.patente = patente;
-    }
+    }*/
 
     public LocalDate getFechaIngreso() {
         return fechaIngreso;
@@ -96,7 +126,7 @@ public class OrdenTrabajo {
         this.propietario = propietario;
     }
 
-     public String getMarca() {
+    /* public String getMarca() {
         return marca;
     }
 
@@ -110,7 +140,7 @@ public class OrdenTrabajo {
 
     public void setModelo(String modelo) {
         this.modelo = modelo;
-    }
+    }*/
     
     public String getDetalleFalla() {
         return detalleFalla;
@@ -145,4 +175,11 @@ public class OrdenTrabajo {
         this.horasTrabajadas = horasTrabajadas;
     }
 
+    public Vehiculo getVehiculo() {
+        return vehiculo;
+    }
+
+    public void setVehiculo(Vehiculo vehiculo) {
+        this.vehiculo = vehiculo;
+    }
 }

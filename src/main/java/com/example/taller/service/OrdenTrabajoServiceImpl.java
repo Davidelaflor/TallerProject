@@ -53,7 +53,7 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
 
     @Override
     public boolean existeOrdenPorPatente(String patente) {
-        return ordenTrabajoRepository.findByPatente(patente).isPresent();
+        return ordenTrabajoRepository.findByVehiculo_Patente(patente).isPresent();
     }
     
 
@@ -84,16 +84,16 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
 
     // Ahora crea la nueva orden de trabajo
     OrdenTrabajo ordenTrabajo = new OrdenTrabajo();
-    ordenTrabajo.setPatente(ordenTrabajoDto.getPatente());
+    /*ordenTrabajo.setPatente(ordenTrabajoDto.getPatente());
     ordenTrabajo.setMarca(ordenTrabajoDto.getMarca());
-    ordenTrabajo.setModelo(ordenTrabajoDto.getModelo());
+    ordenTrabajo.setModelo(ordenTrabajoDto.getModelo());*/
     ordenTrabajo.setDetalleFalla(ordenTrabajoDto.getDetalleFalla());
     ordenTrabajo.setHorasTrabajadas(ordenTrabajoDto.getHorasTrabajadas());
     ordenTrabajo.setEstado(ordenTrabajoDto.getEstado());
     ordenTrabajo.setFechaIngreso(LocalDate.now()); // Establecer la fecha de ingreso, por ejemplo
 
     // Asigna el empleado usando el ID del DTO
-    Empleado empleado = empleadoRepository.findById(ordenTrabajoDto.getEmpleado().getId())
+    Empleado empleado = empleadoRepository.findById(ordenTrabajoDto.getEmpleadoAsignado().getId())
             .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado"));
 
     ordenTrabajo.setEmpleadoAsignado(empleado);
@@ -143,16 +143,16 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
         .orElseThrow(() -> new CustomException("Orden de trabajo no encontrada con ID: " + id));
 
 // Actualiza los campos de la orden de trabajo
-ordenExistente.setPatente(ordenTrabajoDto.getPatente());
+/*ordenExistente.setPatente(ordenTrabajoDto.getPatente());
 ordenExistente.setMarca(ordenTrabajoDto.getMarca());
-ordenExistente.setModelo(ordenTrabajoDto.getModelo());
+ordenExistente.setModelo(ordenTrabajoDto.getModelo());*/
 ordenExistente.setDetalleFalla(ordenTrabajoDto.getDetalleFalla());
 ordenExistente.setHorasTrabajadas(ordenTrabajoDto.getHorasTrabajadas());
 ordenExistente.setEstado(ordenTrabajoDto.getEstado());
 
 // Asigna el empleado si está presente en el DTO
-Empleado empleado = empleadoRepository.findById(ordenTrabajoDto.getEmpleado().getId())
-        .orElseThrow(() -> new CustomException("Empleado no encontrado con ID: " + ordenTrabajoDto.getEmpleado().getId()));
+Empleado empleado = empleadoRepository.findById(ordenTrabajoDto.getEmpleadoAsignado().getId())
+        .orElseThrow(() -> new CustomException("Empleado no encontrado con ID: " + ordenTrabajoDto.getEmpleadoAsignado().getId()));
 ordenExistente.setEmpleadoAsignado(empleado);
 
 

@@ -1,24 +1,42 @@
 package com.example.taller.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.cglib.core.Local;
 
 import com.example.taller.model.Estado;
 
 public class OrdenTrabajoDTO {
 
     private Long id;
-    private String patente;
-    private Date fechaIngreso;
+    private String vehiculoPatente;
+    private LocalDate fechaIngreso;
     private String propietarioDni;  // Relación Propietario y DNI
-    private String marca;
-    private String modelo;
     private String detalleFalla;
     private Estado estado; // Activo/Finalizado
     private List<RepuestoDTO> repuestosUtilizados;
     private int horasTrabajadas;
     private PropietarioDTO propietario;
-    private EmpleadoDTO empleado;
+    private EmpleadoDTO empleadoAsignado;
+
+     // Constructor vacío
+     public OrdenTrabajoDTO() {}
+
+     // Constructor
+     public OrdenTrabajoDTO(Long id, String vehiculoPatente, String detalleFalla, int horasTrabajadas, Estado estado, 
+                            LocalDate fechaIngreso, EmpleadoDTO empleadoAsignado, String propietarioDni, List<RepuestoDTO> repuestosUtilizados) {
+         this.id = id;
+         this.vehiculoPatente = vehiculoPatente;
+         this.detalleFalla = detalleFalla;
+         this.horasTrabajadas = horasTrabajadas;
+         this.estado = estado;
+         this.fechaIngreso = fechaIngreso;
+         this.empleadoAsignado = empleadoAsignado;
+         this.propietarioDni = propietarioDni;
+         this.repuestosUtilizados = repuestosUtilizados;
+     }
 
     public Long getId() {
         return id;
@@ -28,19 +46,12 @@ public class OrdenTrabajoDTO {
         this.id = id;
     }
 
-    public String getPatente() {
-        return patente;
-    }
 
-    public void setPatente(String patente) {
-        this.patente = patente;
-    }
-
-    public Date getFechaIngreso() {
+    public LocalDate getFechaIngreso() {
         return fechaIngreso;
     }
 
-    public void setFechaIngreso(Date fechaIngreso) {
+    public void setFechaIngreso(LocalDate fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
 
@@ -52,21 +63,6 @@ public class OrdenTrabajoDTO {
         this.propietarioDni = propietarioDni;
     }
 
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
-    }
-
-    public String getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
-    }
 
     public String getDetalleFalla() {
         return detalleFalla;
@@ -76,12 +72,12 @@ public class OrdenTrabajoDTO {
         this.detalleFalla = detalleFalla;
     }
 
-    public EmpleadoDTO getEmpleado() {
-        return empleado;
+    public EmpleadoDTO getEmpleadoAsignado() {
+        return empleadoAsignado;
     }
 
-    public void setEmpleado(EmpleadoDTO empleado) {
-        this.empleado = empleado;
+    public void setEmpleadoAsignado(EmpleadoDTO empleadoAsignado) {
+        this.empleadoAsignado = empleadoAsignado;
     }
 
     public Estado getEstado() {
@@ -116,20 +112,21 @@ public class OrdenTrabajoDTO {
         this.propietario = propietario;
     }
 
+    public String getVehiculoPatente() { return vehiculoPatente; }
+    public void setVehiculoPatente(String vehiculoPatente) { this.vehiculoPatente = vehiculoPatente; }
+
+
     @Override
 public String toString() {
     return "OrdenTrabajoDTO{" +
             "id=" + id +
-            ", patente='" + patente + '\'' +
             ", fechaIngreso=" + fechaIngreso +
             ", propietarioDni='" + propietarioDni + '\'' +
-            ", marca='" + marca + '\'' +
-            ", modelo='" + modelo + '\'' +
             ", detalleFalla='" + detalleFalla + '\'' +
             ", estado=" + estado +
             ", horasTrabajadas=" + horasTrabajadas +
             ", propietario=" + propietario +
-            ", empleado=" + empleado +
+            ", empleado=" + empleadoAsignado +
             ", repuestosUtilizados=" + repuestosUtilizados + 
             '}';
 }

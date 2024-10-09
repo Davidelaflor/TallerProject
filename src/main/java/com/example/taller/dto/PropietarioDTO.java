@@ -1,22 +1,27 @@
 package com.example.taller.dto;
 
+import java.util.List;
+
 public class PropietarioDTO {
     private String dni;
     private String nombre;
     private String apellido;
     private String direccion;
     private String telefono;
+    private List<VehiculoDTO> vehiculos;
 
     // Constructor por defecto
     public PropietarioDTO() {}
 
     // Constructor parametrizado
-    public PropietarioDTO(String dni, String nombre, String apellido, String direccion, String telefono) {
+    public PropietarioDTO(String dni, String nombre, String apellido, String direccion, String telefono, List<VehiculoDTO> vehiculos) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido = apellido; // Inicializa el apellido
         this.direccion = direccion;
         this.telefono = telefono;
+        this.vehiculos = vehiculos;
+
     }
 
     public String getDni() {
@@ -58,6 +63,9 @@ public class PropietarioDTO {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+
+    public List<VehiculoDTO> getVehiculos() { return vehiculos; }
+    public void setVehiculos(List<VehiculoDTO> vehiculos) { this.vehiculos = vehiculos; }
 
     @Override
 public String toString() {

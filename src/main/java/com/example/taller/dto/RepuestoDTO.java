@@ -7,6 +7,19 @@ public class RepuestoDTO {
     private double precio;
     private Integer cantidad;
 
+  // Constructor vacío
+  public RepuestoDTO() {
+
+  }
+
+      // Constructor
+      public RepuestoDTO(String codigoInventario, String nombre, int cantidad, double precio) {
+        this.codigoInventario = codigoInventario;
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+        this.precio = precio;
+    }
+
     public Integer getCantidad() {
         return cantidad;
     }

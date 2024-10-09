@@ -14,6 +14,6 @@ import com.example.taller.model.OrdenTrabajo;
 @Repository
 public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, Long> { //aqui tenia que poner el nombre de la tabla de la base de datos??
     List<OrdenTrabajo> findByEstado(Estado estado); // Ejemplo de consulta personalizada
-    Optional<OrdenTrabajo> findByPatente(String patente);
+    Optional<OrdenTrabajo> findByVehiculo_Patente(String patente);
 
  }

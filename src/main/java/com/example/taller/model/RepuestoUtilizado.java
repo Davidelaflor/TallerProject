@@ -31,6 +31,14 @@ public class RepuestoUtilizado {
         public RepuestoUtilizado() {
         }
     
+         // Constructor
+    public RepuestoUtilizado(Long id, OrdenTrabajo ordenTrabajo, Repuesto repuesto, Integer cantidad) {
+        this.id = id;
+        this.ordenTrabajo = ordenTrabajo;
+        this.repuesto = repuesto;
+        this.cantidad = cantidad;
+    }
+
     // Getters y Setters
 
     public Long getId() {

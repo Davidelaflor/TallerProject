@@ -24,6 +24,13 @@ public class Repuesto {
     public Repuesto() {
     }
 
+ // Constructor
+ public Repuesto(String codigoInventario, String nombre, Integer cantidad, Double precio) {
+    this.codigoInventario = codigoInventario;
+    this.nombre = nombre;
+    this.cantidad = cantidad;
+    this.precio = precio;
+}
 
 public Integer getCantidad() {
     return cantidad;

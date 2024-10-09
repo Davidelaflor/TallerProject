@@ -19,6 +19,7 @@ public class Empleado {
 
     // Constructor vacío, necesario para JPA
     public Empleado() {
+        
     }
 
     // Getters y Setters
