@@ -29,6 +29,8 @@ public class OrdenTrabajoController {
             this.service = service;
         }
 
+      
+
     @PostMapping
     public ResponseEntity<OrdenTrabajo> crearOrdenTrabajo(
             @RequestBody OrdenTrabajoDTO ordenTrabajoDto)//,

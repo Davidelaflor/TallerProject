@@ -43,6 +43,9 @@ public class OrdenTrabajoServiceImpl implements OrdenTrabajoService {
      @Autowired
     private RepuestosUtilizadosRepository repuestosUtilizadosRepository; // Asegúrate de que el nombre coincida
 
+
+    
+
     @Override
     public boolean existeOrdenPorId(Long id) {
         return ordenTrabajoRepository.existsById(id);

@@ -96,7 +96,7 @@ public class OrdenTrabajo {
         this.propietario = propietario;
     }
 
-    public String getMarca() {
+     public String getMarca() {
         return marca;
     }
 
@@ -111,7 +111,7 @@ public class OrdenTrabajo {
     public void setModelo(String modelo) {
         this.modelo = modelo;
     }
-
+    
     public String getDetalleFalla() {
         return detalleFalla;
     }

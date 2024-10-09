@@ -8,7 +8,7 @@ import com.example.taller.dto.OrdenTrabajoDTO;
 public interface OrdenTrabajoService {
   OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO ordenTrabajoDto);//, Long empleadoCodigo, String propietarioDni, List<String> codigosRepuestos, List<Integer> cantidades); 
   OrdenTrabajo modificarOrdenTrabajo(Long id, OrdenTrabajoDTO ordenTrabajoDto);
-    List<OrdenTrabajo> listarOrdenes();
+  List<OrdenTrabajo> listarOrdenes();
     OrdenTrabajo obtenerOrdenPorId(Long id);
     void eliminarOrdenTrabajo(Long id);
     boolean existeOrdenPorPatente(String patente);
