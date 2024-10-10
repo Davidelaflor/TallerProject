@@ -1,5 +1,7 @@
 package com.example.taller.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +21,11 @@ import com.example.taller.service.PropietarioService;
 public class PropietarioController {
     @Autowired
     private PropietarioService propietarioService;
+
+    @GetMapping
+    public List<Propietario> listarPropietarios() {
+        return propietarioService.listarPropietarios();
+    }
 
     @PostMapping
     public ResponseEntity<Propietario> crearPropietario(@RequestBody PropietarioDTO propietario) {

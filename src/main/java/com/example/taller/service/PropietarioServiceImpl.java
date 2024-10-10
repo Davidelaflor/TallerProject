@@ -1,4 +1,6 @@
 package com.example.taller.service;
+import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,11 @@ public class PropietarioServiceImpl implements PropietarioService {
     @Autowired
     private PropietarioRepository propietarioRepository;
 
+      @Override
+    public List<Propietario> listarPropietarios() {
+        return propietarioRepository.findAll();
+    }
+  
     @Override
     public Propietario crearPropietario(PropietarioDTO dto) {
         Propietario entity = generatePropietarioEntity(dto);
