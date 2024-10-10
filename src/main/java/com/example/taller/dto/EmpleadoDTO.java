@@ -2,7 +2,6 @@ package com.example.taller.dto;
 
 public class EmpleadoDTO {
     private Long id;
-
     private String nombre;
     private String apellido;
     private String telefono;

@@ -5,99 +5,44 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.taller.model.OrdenTrabajo;
 
 import com.example.taller.dto.OrdenTrabajoDTO;
-import com.example.taller.service.OrdenTrabajoService;
+import com.example.taller.model.OrdenTrabajo;
+import com.example.taller.service.TallerServiceInterface;
 
 @RestController
 @RequestMapping("/api/ordenes")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class OrdenTrabajoController {
-    //Autowired =
-        private final OrdenTrabajoService service;
-        
-        public OrdenTrabajoController(OrdenTrabajoService service) {
-            this.service = service;
-        }
+@Autowired
+    private TallerServiceInterface tallerService;
+
+    @GetMapping
+    public List<OrdenTrabajo> listarOrdenes() {
+        return tallerService.listarOrdenes();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrdenTrabajo> obtenerOrden(@PathVariable Long id) {
+        OrdenTrabajo ordenTrabajo = tallerService.buscarOrdenTrabajoPorId(id);
+        return ordenTrabajo != null ? ResponseEntity.ok(ordenTrabajo) : ResponseEntity.notFound().build();
+    }
 
     @PostMapping
-    public ResponseEntity<OrdenTrabajo> crearOrdenTrabajo(
-            @RequestBody OrdenTrabajoDTO ordenTrabajoDto)//,
-          // @RequestParam List<String> codigosRepuestos,
-          // @RequestParam List<Integer> cantidades,
-          // @RequestParam Long empleadoCodigo,
-          // @RequestParam String propietarioDni)
-           {
-          
-            if (service.existeOrdenPorPatente(ordenTrabajoDto.getPatente())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Manejo de conflicto error 406
-            }
-        
-       
-        OrdenTrabajo nuevaOrden = service.crearOrdenTrabajo(ordenTrabajoDto);//, empleadoCodigo, propietarioDni, codigosRepuestos, cantidades);
-        return ResponseEntity.ok(nuevaOrden);
-
-    }
-    /*{
-  "patente": "ABC123",
-  "marca": "Toyota",
-  "modelo": "Corolla",
-  "detalleFalla": "No arranca",
-  "horasTrabajadas": 5,
-  "estado": "ACTIVO",
-  "fechaIngreso": "2024-10-07",
-  "empleado": {
-    "id": 1 // ID del empleado asignado
-  },
-  "propietario": {
-    "dni": "12345678A",
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "telefono": "123456789",
-    "direccion": "Calle Falsa 123"
-  },
-  "repuestosUtilizados": [
-    {
-      "codigoInventario": "REP001",
-      "cantidad": 2
-    },
-    {
-      "codigoInventario": "REP002",
-      "cantidad": 1
-    }
-  ]
-}
- */
-
-
- 
-    @GetMapping
-    public ResponseEntity<List<OrdenTrabajo>> listarOrdenes() {
-        return ResponseEntity.ok(service.listarOrdenes());
+    public ResponseEntity<OrdenTrabajo> crearOrdenTrabajo(@RequestBody OrdenTrabajoDTO ordenTrabajo) {
+        OrdenTrabajo nuevaOrden = tallerService.crearOrdenTrabajo(ordenTrabajo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOrden);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<OrdenTrabajo> modificarOrden(@PathVariable Long id, @RequestBody OrdenTrabajoDTO ordenTrabajoDto){//,         @RequestParam(required = false) List<String> codigosRepuestos){
-        ordenTrabajoDto.setId(id);
-        OrdenTrabajo ordenModificada = service.modificarOrdenTrabajo(id, ordenTrabajoDto);
-
-        return ResponseEntity.ok(ordenModificada);
-    }
-
-      @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOrdenTrabajo(@PathVariable Long id) {
-        service.eliminarOrdenTrabajo(id);
-        return ResponseEntity.noContent().build(); // Devuelve 204 No Content
+        tallerService.eliminarOrdenTrabajo(id);
+        return ResponseEntity.noContent().build();
     }
 }

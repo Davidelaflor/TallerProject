@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Propietarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Lista de Propietarios</h1>
+        <div id="errorMessage" class="error-message hidden"></div>
+        <table id="propietariosTable">
+            <thead>
+                <tr>
+                    <th>DNI</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                </tr>
+            </thead>
+            <tbody id="propietariosBody">
+                <!-- Aquí se llenarán los datos de los propietarios -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchPropietarios() {
+            try {
+                const response = await fetch('/api/propietarios');
+                if (!response.ok) {
+                    throw new Error('Error al obtener la lista de propietarios');
+                }
+                const propietarios = await response.json();
+                populateTable(propietarios);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'Hubo un problema al obtener los propietarios.';
+                document.getElementById('errorMessage').classList.remove('hidden');
+            }
+        }
+
+        function populateTable(propietarios) {
+            const tbody = document.getElementById('propietariosBody');
+            tbody.innerHTML = ''; // Limpiar el contenido anterior
+
+            propietarios.forEach(propietario => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${propietario.dni}</td>
+                    <td>${propietario.nombre}</td>
+                    <td>${propietario.apellido}</td>
+                    <td>${propietario.direccion}</td>
+                    <td>${propietario.telefono}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Cargar la lista de propietarios al cargar la página
+        window.onload = fetchPropietarios;
+    </script>
+
+</body>
+</html>
