@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Propietarios</title>
+    <title>Listado de Repuestos</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
-        .container {
+        .table-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
             width: 90%;
             max-width: 800px;
             margin: 50px auto;
-            background-color: #fff;
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
         }
         h1 {
             text-align: center;
@@ -45,10 +45,12 @@
             width: 100%;
             border-collapse: collapse;
         }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
         th, td {
             padding: 12px;
             text-align: left;
-            border: 1px solid #ddd;
         }
         th {
             background-color: #4CAF50;
@@ -57,12 +59,12 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-        .error-message {
-            color: red;
+        .loading-message {
             text-align: center;
+            color: #999;
         }
         .hidden {
-            display: none; /* Oculta el mensaje de error cuando no hay error */
+            display: none;
         }
         .back-btn {
             background-color: #2196F3; /* Color del botón de volver */
@@ -85,29 +87,27 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Lista de Propietarios</h1>
-        <div id="errorMessage" class="error-message hidden"></div>
+    <div class="table-container">
+        <h1>Listado de Repuestos</h1>
+        <div id="loadingMessage" class="loading-message">Cargando repuestos...</div>
 
         <!-- Contenedor para el campo de búsqueda -->
         <div class="search-container">
-            <input type="text" id="dniFilter" placeholder="Buscar por DNI" oninput="filterPropietarios()">
+            <input type="text" id="codigoInventarioFilter" placeholder="Buscar por Código Inventario" oninput="filterRepuestos()">
         </div>
-        
+
         <!-- Contenedor para la tabla con scroll -->
         <div class="scrollable-table">
-            <table id="propietariosTable">
+            <table id="repuestosTable" class="hidden">
                 <thead>
                     <tr>
-                        <th>DNI</th>
+                        <th>Código Inventario</th>
                         <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Dirección</th>
-                        <th>Teléfono</th>
+                        <th>Cantidad</th> <!-- Campo cantidad agregado -->
+                        <th>Precio</th>
                     </tr>
                 </thead>
-                <tbody id="propietariosBody">
-                    <!-- Aquí se llenarán los datos de los propietarios -->
+                <tbody id="repuestosBody">
                 </tbody>
             </table>
         </div>
@@ -117,50 +117,55 @@
     </div>
 
     <script>
-        let propietariosData = []; // Almacena la lista de propietarios
+        let repuestosData = []; // Almacena la lista de repuestos
 
-        async function fetchPropietarios() {
+        async function fetchRepuestos() {
             try {
-                const response = await fetch('/api/propietarios');
+                const response = await fetch('/api/repuestos'); // Llamada a la API
                 if (!response.ok) {
-                    throw new Error('Error al obtener la lista de propietarios');
+                    throw new Error('Error al obtener los repuestos');
                 }
-                propietariosData = await response.json(); // Guarda los datos en la variable
-                populateTable(propietariosData);
+
+                repuestosData = await response.json(); // Parsear la respuesta
+                displayRepuestos(repuestosData); // Mostrar los repuestos en la tabla
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('errorMessage').textContent = 'Hubo un problema al obtener los propietarios.';
-                document.getElementById('errorMessage').classList.remove('hidden');
+                document.getElementById('loadingMessage').textContent = 'Error al cargar los repuestos';
             }
         }
 
-        function populateTable(propietarios) {
-            const tbody = document.getElementById('propietariosBody');
-            tbody.innerHTML = ''; // Limpiar el contenido anterior
+        function displayRepuestos(repuestos) {
+            const repuestosBody = document.getElementById('repuestosBody');
+            repuestosBody.innerHTML = ''; // Limpiar el cuerpo de la tabla
 
-            propietarios.forEach(propietario => {
+            repuestos.forEach(repuesto => {
                 const row = document.createElement('tr');
+
                 row.innerHTML = `
-                    <td>${propietario.dni}</td>
-                    <td>${propietario.nombre}</td>
-                    <td>${propietario.apellido}</td>
-                    <td>${propietario.direccion}</td>
-                    <td>${propietario.telefono}</td>
+                    <td>${repuesto.codigoInventario}</td> <!-- Cambiado a codigoInventario -->
+                    <td>${repuesto.nombre}</td>
+                    <td>${repuesto.cantidad}</td> <!-- Campo cantidad agregado -->
+                    <td>${repuesto.precio}</td>
                 `;
-                tbody.appendChild(row);
+
+                repuestosBody.appendChild(row);
             });
+
+            document.getElementById('loadingMessage').classList.add('hidden'); // Ocultar mensaje de carga
+            document.getElementById('repuestosTable').classList.remove('hidden'); // Mostrar la tabla
         }
 
-        function filterPropietarios() {
-            const filterValue = document.getElementById('dniFilter').value.toLowerCase();
-            const filteredPropietarios = propietariosData.filter(propietario => 
-                propietario.dni.toLowerCase().includes(filterValue)
+        function filterRepuestos() {
+            const filterValue = document.getElementById('codigoInventarioFilter').value.toLowerCase();
+            const filteredRepuestos = repuestosData.filter(repuesto => 
+                repuesto.codigoInventario.toLowerCase().includes(filterValue)
             );
-            populateTable(filteredPropietarios);
+            displayRepuestos(filteredRepuestos);
         }
 
-        // Cargar la lista de propietarios al cargar la página
-        window.onload = fetchPropietarios;
+        window.onload = function() {
+            fetchRepuestos(); // Cargar los repuestos al inicio
+        };
     </script>
 
 </body>

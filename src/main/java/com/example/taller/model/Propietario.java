@@ -32,9 +32,7 @@ public class Propietario {
     @Column(name = "telefono")
     private String telefono;
 
-  // Constructor por defecto
   public Propietario() {
-    // Inicializaciones si son necesarias
 }
 
 public Propietario(String dni, String nombre, String apellido, String telefono, String direccion) {

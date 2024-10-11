@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.example.taller.model.OrdenTrabajo;
 
 @Repository
-public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, Long> { //aqui tenia que poner el nombre de la tabla de la base de datos??
- }
+public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, Long> { 
+    boolean existsByPatente(String patente);
+
+}

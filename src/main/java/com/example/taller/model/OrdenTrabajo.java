@@ -41,8 +41,7 @@ public class OrdenTrabajo {
     private String modelo;
     private String detalleFalla;
     private int horasTrabajadas;
-    @Enumerated(EnumType.STRING)
-    private Estado estado;
+    private String estado;
     @Column(name = "fecha_ingreso")
     private LocalDate fechaIngreso;
     @ManyToOne

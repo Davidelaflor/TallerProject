@@ -7,10 +7,8 @@ public class PropietarioDTO {
     private String telefono;
 
 
-    // Constructor por defecto
     public PropietarioDTO() {}
 
-    // Constructor parametrizado
     public PropietarioDTO(String dni, String nombre, String apellido, String direccion, String telefono) {
         this.dni = dni;
         this.nombre = nombre;

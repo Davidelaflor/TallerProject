@@ -1,4 +1,5 @@
 package com.example.taller.service;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,11 @@ import com.example.taller.repository.RepuestoRepository;
 public class RepuestoServiceImpl implements RepuestoService {
     @Autowired
     private RepuestoRepository repuestoRepository;
+
+@Override
+    public List<Repuesto> listarRepuestos() {
+        return repuestoRepository.findAll();
+    }
 
     @Override
     public Repuesto crearRepuesto(Repuesto repuesto) {

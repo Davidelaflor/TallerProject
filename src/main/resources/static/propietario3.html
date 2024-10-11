@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             width: 90%;
             max-width: 500px;
@@ -20,18 +22,22 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
+
         h1 {
             text-align: center;
             color: #333;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             color: #333;
         }
+
         input {
             width: 100%;
             padding: 10px;
@@ -39,8 +45,15 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
         button {
-            width: 100%;
+            flex: 1; /* Ocupa el mismo espacio */
             padding: 10px;
             background-color: #4CAF50;
             color: white;
@@ -48,69 +61,66 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            margin-right: 10px; /* Espaciado entre botones */
         }
+
         button:hover {
             background-color: #45a049;
         }
-        .success-message, .error-message {
+
+        .success-message,
+        .error-message {
             text-align: center;
             margin-top: 20px;
             font-weight: bold;
         }
+
         .success-message {
             color: green;
         }
+
         .error-message {
             color: red;
         }
-        .back-btn {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #2196F3; /* Color del botón de volver */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%; /* Ancho completo */
-        }
-        .back-btn:hover {
-            background-color: #1E88E5; /* Color al pasar el mouse */
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
         <h1>Crear Propietario</h1>
         <form id="propietarioForm" onsubmit="handleSubmit(event)">
             <div class="form-group">
-                <label for="dni">*DNI:</label>
+                <label for="dni">DNI:</label>
                 <input type="text" id="dni" name="dni" required>
             </div>
             <div class="form-group">
-                <label for="nombre">*Nombre:</label>
+                <label for="nombre">Nombre:</label>
                 <input type="text" id="nombre" name="nombre" required>
             </div>
             <div class="form-group">
-                <label for="apellido">*Apellido:</label>
+                <label for="apellido">Apellido:</label>
                 <input type="text" id="apellido" name="apellido" required>
             </div>
             <div class="form-group">
                 <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" name="direccion">
+                <input type="text" id="direccion" name="direccion" required>
             </div>
             <div class="form-group">
-                <label for="telefono">*Teléfono:</label>
+                <label for="telefono">Teléfono:</label>
                 <input type="tel" id="telefono" name="telefono" required>
             </div>
-            <button type="submit">Guardar Propietario</button>
+            <div class="button-container">
+                <button type="submit">Guardar Propietario</button>
+                <button type="button" id="redirectButton" onclick="redirectToOrden()">Ir a Crear Orden</button>
+            </div>
         </form>
         <div id="successMessage" class="success-message hidden"></div>
         <div id="errorMessage" class="error-message hidden"></div>
-        
-        <!-- Botón para volver a la pantalla inicial -->
-        <button class="back-btn" onclick="window.location.href='pantIni.html'">Volver a Pantalla Inicial</button>
     </div>
 
     <script>
@@ -150,12 +160,12 @@
                     document.getElementById('successMessage').textContent = `Propietario creado con éxito: ${result.nombre} ${result.apellido}`;
                     document.getElementById('successMessage').classList.remove('hidden');
                     document.getElementById('errorMessage').classList.add('hidden');
-                    
-                    // Redirigir a la página de crear orden después de un breve retraso
+
+                    // Redirigir a "crearOrden2.html" después de un breve retardo
                     setTimeout(() => {
-                        window.location.href = "crearOrden2.html"; // Redirección a la página de crear orden
-                    }, 2000); // Esperar 2 segundos antes de redirigir
-                    
+                        window.location.href = "crearOrden2.html"; // Redirige después de 2 segundos
+                    }, 2000);
+
                     // Resetear el formulario
                     document.getElementById('propietarioForm').reset();
                 } else {
@@ -168,7 +178,12 @@
                 document.getElementById('successMessage').classList.add('hidden');
             }
         }
+
+        function redirectToOrden() {
+            window.location.href = "crearOrden2.html"; // Redirige al formulario de crear orden
+        }
     </script>
 
 </body>
+
 </html>

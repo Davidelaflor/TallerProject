@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.taller.dto.OrdenTrabajoDTO;
 import com.example.taller.model.Empleado;
+import com.example.taller.model.Estado;
 import com.example.taller.model.OrdenTrabajo;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.Repuesto;
@@ -17,6 +18,8 @@ import com.example.taller.repository.OrdenTrabajoRepository;
 import com.example.taller.repository.PropietarioRepository;
 import com.example.taller.repository.RepuestoRepository;
 import com.example.taller.repository.RepuestoUtilizadoRepository;
+
+import jakarta.validation.constraints.Null;
 
 @Service
 public class TallerService implements TallerServiceInterface {
@@ -113,6 +116,12 @@ public class TallerService implements TallerServiceInterface {
 
     @Override
     public OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO dto) {
+
+        boolean exists = ordenTrabajoRepository.existsByPatente(dto.getPatente());
+        if (exists) {
+            throw new RuntimeException("Orden ya registrada para la patente: " + dto.getPatente());
+        }
+
         Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
@@ -120,7 +129,7 @@ public class TallerService implements TallerServiceInterface {
         OrdenTrabajo entity = generateOrdenTrabajoEntity(dto, empleado, propietario);
 
         return ordenTrabajoRepository.save(entity);
-        
+
     }
 
     private OrdenTrabajo generateOrdenTrabajoEntity(OrdenTrabajoDTO dto, Empleado empleado, Propietario propietario) {
@@ -129,12 +138,32 @@ public class TallerService implements TallerServiceInterface {
                 .marca(dto.getMarca())
                 .modelo(dto.getModelo())
                 .detalleFalla(dto.getDetalleFalla())
-                .horasTrabajadas(dto.getHorasTrabajadas())
-                .estado(dto.getEstado())
+                .horasTrabajadas(0)
+                .estado(Estado.ACTIVO.toString())
                 .empleado(empleado)
                 .propietario(propietario)
-                .fechaIngreso(LocalDate.now())
+                .fechaIngreso(dto.getFechaIngreso() != null ? dto.getFechaIngreso() : LocalDate.now())
                 .build();
+    }
+
+    @Override
+    public OrdenTrabajo modificarOrdenTrabajo(Long id, OrdenTrabajoDTO dto) {
+        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+        Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+        Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
+                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        ordenTrabajo.setPatente(dto.getPatente());
+        ordenTrabajo.setMarca(dto.getMarca());
+        ordenTrabajo.setModelo(dto.getModelo());
+        ordenTrabajo.setDetalleFalla(dto.getDetalleFalla());
+        ordenTrabajo.setHorasTrabajadas(dto.getHorasTrabajadas());
+        ordenTrabajo.setEstado(dto.getEstado().toString());
+        ordenTrabajo.setEmpleado(empleado);
+        ordenTrabajo.setPropietario(propietario);
+        ordenTrabajo.setFechaIngreso(LocalDate.now()); 
+        return ordenTrabajoRepository.save(ordenTrabajo);
     }
 
     @Override
