@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.taller.dto.PropietarioDTO;
+import com.example.taller.dto.PropietarioVehiculoDTO;
+import com.example.taller.dto.VehiculoDTO;
 import com.example.taller.model.Propietario;
 import com.example.taller.service.PropietarioService;
 
@@ -28,8 +30,9 @@ public class PropietarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Propietario> crearPropietario(@RequestBody PropietarioDTO propietario) {
-        Propietario nuevoPropietario = propietarioService.crearPropietario(propietario);
+    public ResponseEntity<Propietario> crearPropietarioConVehiculo(@RequestBody PropietarioVehiculoDTO dto) {
+        Propietario nuevoPropietario = propietarioService.crearPropietarioConVehiculo(dto.getPropietario(),
+                dto.getVehiculo());
         return ResponseEntity.ok(nuevoPropietario);
     }
 

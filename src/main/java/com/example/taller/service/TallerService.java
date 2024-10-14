@@ -117,10 +117,10 @@ public class TallerService implements TallerServiceInterface {
     @Override
     public OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO dto) {
 
-        boolean exists = ordenTrabajoRepository.existsByPatente(dto.getPatente());
+       /*  boolean exists = ordenTrabajoRepository.existsByPatente(dto.getPatente());
         if (exists) {
             throw new RuntimeException("Orden ya registrada para la patente: " + dto.getPatente());
-        }
+        }*/
 
         Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
@@ -134,9 +134,6 @@ public class TallerService implements TallerServiceInterface {
 
     private OrdenTrabajo generateOrdenTrabajoEntity(OrdenTrabajoDTO dto, Empleado empleado, Propietario propietario) {
         return OrdenTrabajo.builder()
-                .patente(dto.getPatente())
-                .marca(dto.getMarca())
-                .modelo(dto.getModelo())
                 .detalleFalla(dto.getDetalleFalla())
                 .horasTrabajadas(0)
                 .estado(Estado.ACTIVO.toString())
@@ -154,9 +151,6 @@ public class TallerService implements TallerServiceInterface {
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
-        ordenTrabajo.setPatente(dto.getPatente());
-        ordenTrabajo.setMarca(dto.getMarca());
-        ordenTrabajo.setModelo(dto.getModelo());
         ordenTrabajo.setDetalleFalla(dto.getDetalleFalla());
         ordenTrabajo.setHorasTrabajadas(dto.getHorasTrabajadas());
         ordenTrabajo.setEstado(dto.getEstado().toString());

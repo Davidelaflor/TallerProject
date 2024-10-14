@@ -1,16 +1,30 @@
 package com.example.taller.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Builder
-@Table(name = "propietarios") 
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "propietarios")
 public class Propietario {
     @Id
     @Column(name = "dni")
@@ -32,55 +46,13 @@ public class Propietario {
     @Column(name = "telefono")
     private String telefono;
 
-  public Propietario() {
-}
-
-public Propietario(String dni, String nombre, String apellido, String telefono, String direccion) {
-    this.dni = dni;
-    this.nombre = nombre;
-    this.apellido = apellido;
-    this.telefono = telefono;
-    this.direccion = direccion;
-}
-
-    public String getDni() {
-        return dni;
+    @Builder.Default
+    @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List <Vehiculo> vehiculos = new ArrayList<>(); 
+    
+    public void addVehiculo(Vehiculo vehiculo) {
+        this.vehiculos.add(vehiculo);
+        vehiculo.setPropietario(this); // Establece la relación bidireccional
     }
-
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getApellido() { // Getter para 'apellido'
-        return apellido;
-    }
-
-    public void setApellido(String apellido) { // Setter para 'apellido'
-        this.apellido = apellido;
-    }
-
+    
 }

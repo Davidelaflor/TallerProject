@@ -36,9 +36,6 @@ public class OrdenTrabajo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String patente;
-    private String marca;
-    private String modelo;
     private String detalleFalla;
     private int horasTrabajadas;
     private String estado;
@@ -52,4 +49,7 @@ public class OrdenTrabajo {
     private Propietario propietario;
     @OneToMany(mappedBy = "ordenTrabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RepuestoUtilizado> repuestoUtilizado;
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_patente")
+    private Vehiculo vehiculo;
 }

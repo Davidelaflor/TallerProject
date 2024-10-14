@@ -8,6 +8,6 @@ import com.example.taller.model.OrdenTrabajo;
 
 @Repository
 public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, Long> { 
-    boolean existsByPatente(String patente);
+    boolean existsByVehiculo_Patente(String patente);
 
 }

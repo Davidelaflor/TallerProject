@@ -20,15 +20,13 @@ public class OrdenTrabajoDTO {
 
     private Long id;
 
-    private String patente;
     private LocalDate fechaIngreso;
     private String propietarioDni;  
-    private String marca;
-    private String modelo;
     private String detalleFalla;
     private Estado estado; // Activo/Finalizado
     private List<RepuestoDTO> repuestosUtilizados;
     private int horasTrabajadas;
     private PropietarioDTO propietario;
     private Long empleadoId;
+    private String vehiculoPatente;
 }
