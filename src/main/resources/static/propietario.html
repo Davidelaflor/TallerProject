@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="custom.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Propietario y Orden de Trabajo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .orden-trabajo {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Formulario de Propietario</h1>
+    <form id="propietarioForm" onsubmit="handlePropietarioSubmit(event)">
+        <div class="form-group">
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" required>
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+        </div>
+        <div class="form-group">
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" required>
+        </div>
+        <div class="form-group">
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" required>
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" required>
+        </div>
+        <button type="submit">Guardar Propietario</button>
+    </form>
+
+    <div id="ordenTrabajo" class="hidden orden-trabajo">
+        <h2>Formulario de Orden de Trabajo</h2>
+        <form id="ordenForm" onsubmit="handleOrdenSubmit(event)">
+            <div class="form-group">
+                <label for="ordenId">ID de la Orden:</label>
+                <input type="text" id="ordenId" required>
+            </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción del Trabajo:</label>
+                <input type="text" id="descripcion" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha de Creación:</label>
+                <input type="date" id="fecha" required>
+            </div>
+            <button type="submit">Guardar Orden de Trabajo</button>
+        </form>
+    </div>
+
+    <script>
+        function handlePropietarioSubmit(event) {
+            event.preventDefault(); // Evitar que el formulario se envíe de la manera tradicional
+
+            // Obtener los datos del formulario del propietario
+            const dni = document.getElementById('dni').value;
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const direccion = document.getElementById('direccion').value;
+            const telefono = document.getElementById('telefono').value;
+
+            // Guardar los datos del propietario en el almacenamiento local
+            localStorage.setItem('propietario', JSON.stringify({ dni, nombre, apellido, direccion, telefono }));
+
+            // Mostrar la sección de formulario de la orden de trabajo
+            document.getElementById('ordenTrabajo').classList.remove('hidden');
+        }
+
+        async function handleOrdenSubmit(event) {
+            event.preventDefault(); // Evitar que el formulario se envíe de la manera tradicional
+
+            // Obtener los datos del formulario de la orden
+            const ordenId = document.getElementById('ordenId').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const fecha = document.getElementById('fecha').value;
+
+            // Obtener los datos del propietario almacenados
+            const propietario = JSON.parse(localStorage.getItem('propietario'));
+
+            // Crear el objeto para enviar a la API
+            const ordenData = {
+                ordenId,
+                descripcion,
+                fecha,
+                propietario // Incluye los datos del propietario
+            };
+
+            // Enviar los datos a la API
+            try {
+                const response = await fetch('api/ordenes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(ordenData),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al guardar la orden de trabajo');
+                }
+
+                const result = await response.json();
+                alert('Orden de trabajo guardada con éxito: ' + JSON.stringify(result));
+
+                // Resetear el formulario
+                document.getElementById('ordenForm').reset();
+                document.getElementById('ordenTrabajo').classList.add('hidden');
+                localStorage.removeItem('propietario'); // Limpiar los datos del propietario
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un problema al guardar la orden de trabajo.');
+            }
+        }
+    </script>
+
+</body>
+</html>

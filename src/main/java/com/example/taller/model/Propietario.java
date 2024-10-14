@@ -4,30 +4,35 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
 
 @Entity
+@Builder
 @Table(name = "propietarios") 
 public class Propietario {
     @Id
     @Column(name = "dni")
     private String dni;
 
+    @NotBlank(message = "El nombre no puede estar vacío")
     @Column(name = "nombre")
     private String nombre;
 
+    @NotBlank(message = "El apellido no puede estar vacío")
     @Column(name = "apellido")
     private String apellido;
 
+    @NotBlank(message = "La dirección no puede estar vacía")
     @Column(name = "direccion")
     private String direccion;
 
+    @NotBlank(message = "El teléfono no puede estar vacío")
     @Column(name = "telefono")
     private String telefono;
 
-  // Constructor por defecto
   public Propietario() {
-    // Inicializaciones si son necesarias
 }
 
 public Propietario(String dni, String nombre, String apellido, String telefono, String direccion) {

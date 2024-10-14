@@ -8,7 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+@AllArgsConstructor
 @Entity
 @Table(name = "repuestos_utilizados")
 public class RepuestoUtilizado {
@@ -25,7 +27,8 @@ public class RepuestoUtilizado {
     @JoinColumn(name = "repuesto_codigo", nullable = false)
     private Repuesto repuesto; // Referencia a Repuesto
 
-    private Integer cantidad; // Cantidad del repuesto utilizado
+    @NotNull(message = "La cantidad utilizada no puede ser nula")
+    private int cantidad; // Cantidad del repuesto utilizado
 
         // Constructor por defecto
         public RepuestoUtilizado() {
@@ -57,11 +60,11 @@ public class RepuestoUtilizado {
         this.ordenTrabajo = ordenTrabajo;
     }
 
-    public Integer getCantidad() {
+    public int getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(Integer cantidad) {
+    public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
 

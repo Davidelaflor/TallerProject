@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Propietario</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1; /* Ocupa el mismo espacio */
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px; /* Espaciado entre botones */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .success-message,
+        .error-message {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .success-message {
+            color: green;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Crear Propietario</h1>
+        <form id="propietarioForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="dni">DNI:</label>
+                <input type="text" id="dni" name="dni" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono" required>
+            </div>
+            <div class="button-container">
+                <button type="submit">Guardar Propietario</button>
+                <button type="button" id="redirectButton" onclick="redirectToOrden()">Ir a Crear Orden</button>
+            </div>
+        </form>
+        <div id="successMessage" class="success-message hidden"></div>
+        <div id="errorMessage" class="error-message hidden"></div>
+    </div>
+
+    <script>
+        // Función para manejar el envío del formulario
+        async function handleSubmit(event) {
+            event.preventDefault(); // Evitar el envío tradicional del formulario
+
+            // Obtener los valores de los inputs
+            const dni = document.getElementById('dni').value;
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const direccion = document.getElementById('direccion').value;
+            const telefono = document.getElementById('telefono').value;
+
+            // Crear el objeto con los datos del propietario
+            const propietarioData = {
+                dni: dni,
+                nombre: nombre,
+                apellido: apellido,
+                direccion: direccion,
+                telefono: telefono
+            };
+
+            // Enviar la solicitud POST a la API
+            try {
+                const response = await fetch('/api/propietarios', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(propietarioData),
+                });
+
+                // Manejar la respuesta de la API
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('successMessage').textContent = `Propietario creado con éxito: ${result.nombre} ${result.apellido}`;
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    document.getElementById('errorMessage').classList.add('hidden');
+
+                    // Redirigir a "crearOrden2.html" después de un breve retardo
+                    setTimeout(() => {
+                        window.location.href = "crearOrden2.html"; // Redirige después de 2 segundos
+                    }, 2000);
+
+                    // Resetear el formulario
+                    document.getElementById('propietarioForm').reset();
+                } else {
+                    throw new Error('Error al crear el propietario');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'Hubo un problema al crear el propietario.';
+                document.getElementById('errorMessage').classList.remove('hidden');
+                document.getElementById('successMessage').classList.add('hidden');
+            }
+        }
+
+        function redirectToOrden() {
+            window.location.href = "crearOrden2.html"; // Redirige al formulario de crear orden
+        }
+    </script>
+
+</body>
+
+</html>

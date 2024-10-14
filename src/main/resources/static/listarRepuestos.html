@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Repuestos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .table-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 70%; /* Ancho del campo de búsqueda */
+            margin-right: 10px; /* Espacio entre el campo y el botón */
+        }
+        .scrollable-table {
+            max-height: 300px; /* Altura máxima para habilitar scroll */
+            overflow-y: auto; /* Scroll vertical */
+            margin-top: 20px; /* Espacio entre el título y la tabla */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .loading-message {
+            text-align: center;
+            color: #999;
+        }
+        .hidden {
+            display: none;
+        }
+        .back-btn {
+            background-color: #2196F3; /* Color del botón de volver */
+            color: white;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block; /* Hacer que el botón sea un bloque */
+            width: 100%; /* Ancho completo */
+            max-width: 200px; /* Ancho máximo */
+            margin: 20px auto; /* Centrar el botón */
+            text-align: center; /* Centrar el texto del botón */
+        }
+        .back-btn:hover {
+            background-color: #1E88E5; /* Color al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="table-container">
+        <h1>Listado de Repuestos</h1>
+        <div id="loadingMessage" class="loading-message">Cargando repuestos...</div>
+
+        <!-- Contenedor para el campo de búsqueda -->
+        <div class="search-container">
+            <input type="text" id="codigoInventarioFilter" placeholder="Buscar por Código Inventario" oninput="filterRepuestos()">
+        </div>
+
+        <!-- Contenedor para la tabla con scroll -->
+        <div class="scrollable-table">
+            <table id="repuestosTable" class="hidden">
+                <thead>
+                    <tr>
+                        <th>Código Inventario</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th> <!-- Campo cantidad agregado -->
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody id="repuestosBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Botón de volver a la pantalla inicial -->
+        <button class="back-btn" onclick="window.location.href='pantIni.html'">Volver a Pantalla Inicial</button>
+    </div>
+
+    <script>
+        let repuestosData = []; // Almacena la lista de repuestos
+
+        async function fetchRepuestos() {
+            try {
+                const response = await fetch('/api/repuestos'); // Llamada a la API
+                if (!response.ok) {
+                    throw new Error('Error al obtener los repuestos');
+                }
+
+                repuestosData = await response.json(); // Parsear la respuesta
+                displayRepuestos(repuestosData); // Mostrar los repuestos en la tabla
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingMessage').textContent = 'Error al cargar los repuestos';
+            }
+        }
+
+        function displayRepuestos(repuestos) {
+            const repuestosBody = document.getElementById('repuestosBody');
+            repuestosBody.innerHTML = ''; // Limpiar el cuerpo de la tabla
+
+            repuestos.forEach(repuesto => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${repuesto.codigoInventario}</td> <!-- Cambiado a codigoInventario -->
+                    <td>${repuesto.nombre}</td>
+                    <td>${repuesto.cantidad}</td> <!-- Campo cantidad agregado -->
+                    <td>${repuesto.precio}</td>
+                `;
+
+                repuestosBody.appendChild(row);
+            });
+
+            document.getElementById('loadingMessage').classList.add('hidden'); // Ocultar mensaje de carga
+            document.getElementById('repuestosTable').classList.remove('hidden'); // Mostrar la tabla
+        }
+
+        function filterRepuestos() {
+            const filterValue = document.getElementById('codigoInventarioFilter').value.toLowerCase();
+            const filteredRepuestos = repuestosData.filter(repuesto => 
+                repuesto.codigoInventario.toLowerCase().includes(filterValue)
+            );
+            displayRepuestos(filteredRepuestos);
+        }
+
+        window.onload = function() {
+            fetchRepuestos(); // Cargar los repuestos al inicio
+        };
+    </script>
+
+</body>
+</html>

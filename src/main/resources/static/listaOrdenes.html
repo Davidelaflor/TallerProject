@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Órdenes de Trabajo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .refresh-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border: none;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            text-align: center;
+            margin: 0 auto 20px;
+            border-radius: 5px;
+        }
+        .refresh-btn:hover {
+            background-color: #45a049;
+        }
+        .loading-message {
+            text-align: center;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Listado de Órdenes de Trabajo</h1>
+        <div id="loadingMessage" class="loading-message">Cargando órdenes de trabajo...</div>
+        <table id="ordenesTable" class="hidden">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patente</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Fecha de Ingreso</th>
+                    <th>Detalle de la Falla</th>
+                </tr>
+            </thead>
+            <tbody id="ordenesBody">
+                <!-- Aquí se insertarán dinámicamente las órdenes de trabajo -->
+            </tbody>
+        </table>
+        <button class="refresh-btn" onclick="fetchOrdenes()">Actualizar Órdenes</button>
+    </div>
+
+    <script>
+        // Función para obtener las órdenes de trabajo desde la API
+        async function fetchOrdenes() {
+            try {
+                const response = await fetch('/api/ordenes');
+                if (!response.ok) {
+                    throw new Error('Error al obtener las órdenes de trabajo');
+                }
+
+                const ordenes = await response.json();
+                displayOrdenes(ordenes);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingMessage').textContent = 'Error al cargar las órdenes';
+            }
+        }
+
+        // Función para mostrar las órdenes en la tabla
+        function displayOrdenes(ordenes) {
+            const ordenesBody = document.getElementById('ordenesBody');
+            ordenesBody.innerHTML = ''; // Limpiar la tabla antes de insertar nuevos datos
+
+            ordenes.forEach(orden => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${orden.id}</td>
+                    <td>${orden.patente}</td>
+                    <td>${orden.marca}</td>
+                    <td>${orden.modelo}</td>
+                    <td>${orden.fechaIngreso}</td>
+                    <td>${orden.detalleFalla}</td>
+                `;
+
+                ordenesBody.appendChild(row);
+            });
+
+            document.getElementById('loadingMessage').classList.add('hidden'); // Ocultar mensaje de carga
+            document.getElementById('ordenesTable').classList.remove('hidden'); // Mostrar tabla
+        }
+
+        // Llamar a la función al cargar la página
+        window.onload = function() {
+            fetchOrdenes();
+        };
+
+        // Refrescar automáticamente cada 30 segundos
+        setInterval(fetchOrdenes, 30000);
+    </script>
+
+</body>
+</html>

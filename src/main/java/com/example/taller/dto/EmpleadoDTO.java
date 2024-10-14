@@ -2,22 +2,17 @@ package com.example.taller.dto;
 
 public class EmpleadoDTO {
     private Long id;
-
     private String nombre;
     private String apellido;
     private String telefono;
-
-  // Constructor por defecto
   public EmpleadoDTO() {}
-
-  // Constructor parametrizado
   public EmpleadoDTO(Long id, String nombre, String apellido, String telefono) {
       this.id = id; // Inicializa el id
       this.nombre = nombre;
       this.apellido = apellido;
       this.telefono = telefono;
   }
-
+  
     public Long getId() {
         return id;
     }

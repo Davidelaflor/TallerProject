@@ -1,5 +1,4 @@
 package com.example.taller.dto;
-
 public class PropietarioDTO {
     private String dni;
     private String nombre;
@@ -7,16 +6,17 @@ public class PropietarioDTO {
     private String direccion;
     private String telefono;
 
-    // Constructor por defecto
+
     public PropietarioDTO() {}
 
-    // Constructor parametrizado
     public PropietarioDTO(String dni, String nombre, String apellido, String direccion, String telefono) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido = apellido; // Inicializa el apellido
         this.direccion = direccion;
         this.telefono = telefono;
+      
+
     }
 
     public String getDni() {

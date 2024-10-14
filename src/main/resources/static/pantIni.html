@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Órdenes de Trabajo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .table-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .scrollable-table {
+            max-height: 300px; /* Altura máxima para habilitar scroll */
+            overflow-y: auto; /* Scroll vertical */
+            margin-top: 20px;
+        }
+        .refresh-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border: none;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            text-align: center;
+            margin: 0 auto 20px;
+            border-radius: 5px;
+        }
+        .refresh-btn:hover {
+            background-color: #45a049;
+        }
+        .nav-btn-container {
+            display: flex; /* Flexbox para disposición horizontal */
+            justify-content: center; /* Centrar los botones */
+            margin-top: 20px; /* Espacio entre la tabla y los botones */
+        }
+        .nav-btn {
+            background-color: #2196F3; /* Color del botón de navegación */
+            color: white;
+            padding: 10px 20px;
+            margin: 0 10px; /* Espaciado horizontal entre botones */
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* Transición suave */
+        }
+        .nav-btn:hover {
+            background-color: #1E88E5; /* Color al pasar el mouse */
+        }
+        .loading-message {
+            text-align: center;
+            color: #999;
+        }
+        .hidden {
+            display: none;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: space-between; /* Espacio entre elementos */
+            margin: 20px 0;
+        }
+        .filter-container input {
+            width: 70%; /* Ancho del campo de búsqueda */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .filter-container button {
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50; /* Color del botón de ordenar */
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px; /* Espacio entre botón y campo de búsqueda */
+        }
+        .filter-container button:hover {
+            background-color: #45a049; /* Color al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="table-container">
+        <h1>Listado de Órdenes de Trabajo</h1>
+        <div id="loadingMessage" class="loading-message">Cargando órdenes de trabajo...</div>
+
+        <!-- Contenedor para el filtro de patente y ordenar -->
+        <div class="filter-container">
+            <input type="text" id="patenteFilter" placeholder="Buscar por patente" oninput="filterOrdenes()">
+            <button onclick="sortOrdenes()">Ordenar por Fecha</button>
+        </div>
+
+        <div class="scrollable-table">
+            <table id="ordenesTable" class="hidden">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patente</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Detalle de la Falla</th>
+                        <th>Acciones</th> 
+                    </tr>
+                </thead>
+                <tbody id="ordenesBody">
+                </tbody>
+            </table>
+        </div>
+        <button class="refresh-btn" onclick="fetchOrdenes()">Actualizar Órdenes</button>
+
+        <!-- Contenedor para los botones de navegación -->
+        <div class="nav-btn-container">
+            <button class="nav-btn" onclick="window.location.href='listarPropietarios.html'">Ver Lista de Propietarios</button>
+            <button class="nav-btn" onclick="window.location.href='listarRepuestos.html'">Ver Inventario</button> <!-- Nuevo botón para ver inventario -->
+            <button class="nav-btn" onclick="window.location.href='crearOrden2.html'">Crear Nueva Orden</button> <!-- Botón para crear nueva orden -->
+            <button class="nav-btn" onclick="window.location.href='propietario2.html'">Registrar Nuevo Propietario</button> <!-- Botón para registrar nuevo propietario -->
+        </div>
+    </div>
+
+    <script>
+        let ordenesData = []; // Almacena las órdenes de trabajo
+
+        async function fetchOrdenes() {
+            try {
+                const response = await fetch('/api/ordenes');
+                if (!response.ok) {
+                    throw new Error('Error al obtener las órdenes de trabajo');
+                }
+
+                ordenesData = await response.json(); // Guarda los datos en ordenesData
+                displayOrdenes(ordenesData);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingMessage').textContent = 'Error al cargar las órdenes';
+            }
+        }
+
+        function displayOrdenes(ordenes) {
+            const ordenesBody = document.getElementById('ordenesBody');
+            ordenesBody.innerHTML = ''; 
+
+            ordenes.forEach(orden => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${orden.id}</td>
+                    <td>${orden.patente}</td>
+                    <td>${orden.marca}</td>
+                    <td>${orden.modelo}</td>
+                    <td>${orden.fechaIngreso}</td>
+                    <td>${orden.detalleFalla}</td>
+                    <td><button onclick="deleteOrden(${orden.id})">Eliminar</button></td> <!-- Botón para eliminar -->
+                `;
+
+                ordenesBody.appendChild(row);
+            });
+
+            document.getElementById('loadingMessage').classList.add('hidden'); 
+            document.getElementById('ordenesTable').classList.remove('hidden'); 
+        }
+
+        function filterOrdenes() {
+            const filterValue = document.getElementById('patenteFilter').value.toLowerCase();
+            const filteredOrdenes = ordenesData.filter(orden => orden.patente.toLowerCase().includes(filterValue));
+            displayOrdenes(filteredOrdenes);
+        }
+
+        function sortOrdenes() {
+            const sortedOrdenes = [...ordenesData].sort((a, b) => new Date(b.fechaIngreso) - new Date(a.fechaIngreso)); // Ordenar por fecha de ingreso
+            displayOrdenes(sortedOrdenes);
+        }
+
+        async function deleteOrden(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta orden?')) {
+                try {
+                    const response = await fetch(`/api/ordenes/${id}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar la orden');
+                    }
+
+                    fetchOrdenes();
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Hubo un problema al eliminar la orden.');
+                }
+            }
+        }
+
+        window.onload = function() {
+            fetchOrdenes();
+        };
+
+        setInterval(fetchOrdenes, 30000);
+    </script>
+
+</body>
+</html>
