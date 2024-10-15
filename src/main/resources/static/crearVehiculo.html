@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Nuevo Vehículo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .loading-message {
+            text-align: center;
+            color: #999;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <h1>Registrar Nuevo Vehículo</h1>
+        <div id="loadingMessage" class="loading-message">Cargando propietarios...</div>
+        <form id="vehicleForm" onsubmit="registerVehicle(event)">
+            <label for="dni">DNI del Propietario:</label>
+            <input type="text" id="dni" required placeholder="Ingrese el DNI del propietario" oninput="fetchOwnerByDNI()">
+
+            <div id="ownerDetails" class="hidden">
+                <h2>Detalles del Propietario</h2>
+                <p id="ownerName"></p>
+            </div>
+
+            <label for="patente">Patente:</label>
+            <input type="text" id="patente" required placeholder="Ingrese la patente del vehículo">
+
+            <label for="marca">Marca:</label>
+            <input type="text" id="marca" required placeholder="Ingrese la marca del vehículo">
+
+            <label for="modelo">Modelo:</label>
+            <input type="text" id="modelo" required placeholder="Ingrese el modelo del vehículo">
+
+            <button type="submit">Registrar Vehículo</button>
+        </form>
+    </div>
+
+    <script>
+        async function fetchOwnerByDNI() {
+            const dni = document.getElementById('dni').value.trim();
+            const ownerDetails = document.getElementById('ownerDetails');
+            const ownerName = document.getElementById('ownerName');
+
+            if (dni.length === 0) {
+                ownerDetails.classList.add('hidden');
+                ownerName.textContent = '';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/propietarios/dni/${dni}`); // Cambia esta URL por la de tu API
+                if (!response.ok) {
+                    ownerDetails.classList.add('hidden');
+                    ownerName.textContent = 'Propietario no encontrado.';
+                    return;
+                }
+
+                const owner = await response.json();
+                ownerName.textContent = `${owner.nombre} ${owner.apellido}`; // Asume que tienes nombre y apellido
+                ownerDetails.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                ownerDetails.classList.add('hidden');
+                ownerName.textContent = 'Error al buscar propietario.';
+            }
+        }
+
+        async function registerVehicle(event) {
+            event.preventDefault(); // Evitar el envío del formulario por defecto
+
+            const dni = document.getElementById('dni').value;
+            const patente = document.getElementById('patente').value;
+            const marca = document.getElementById('marca').value;
+            const modelo = document.getElementById('modelo').value;
+
+            const vehicleData = {
+                dni,
+                patente,
+                marca,
+                modelo
+            };
+
+            try {
+                const response = await fetch('/api/vehiculos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(vehicleData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al registrar el vehículo');
+                }
+
+                alert('Vehículo registrado exitosamente');
+                // Limpiar el formulario
+                document.getElementById('vehicleForm').reset();
+                document.getElementById('ownerDetails').classList.add('hidden'); // Ocultar detalles del propietario
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un problema al registrar el vehículo.');
+            }
+        }
+
+        window.onload = function () {
+            // Aquí puedes agregar lógica si necesitas inicializar algo
+        };
+    </script>
+
+</body>
+
+</html>

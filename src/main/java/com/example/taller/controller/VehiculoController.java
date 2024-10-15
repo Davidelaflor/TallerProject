@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,17 +28,29 @@ public class VehiculoController {
         return ResponseEntity.ok(nuevoVehiculo);
     }
 
+    @GetMapping
+public ResponseEntity<List<Vehiculo>> obtenerVehiculosPorDni(@RequestParam String dni) {
+    if (dni != null) {
+        List<Vehiculo> vehiculos = vehiculoService.obtenerVehiculosPorDni(dni);
+        return ResponseEntity.ok(vehiculos);
+    } else {
+        // Si no se proporciona un DNI, devuelve todos los vehículos
+        List<Vehiculo> vehiculos = vehiculoService.obtenerTodosLosVehiculos();
+        return ResponseEntity.ok(vehiculos);
+    }
+}
+
     @GetMapping("/{patente}")
     public ResponseEntity<Vehiculo> obtenerVehiculoPorPatente(@PathVariable String patente) {
         Vehiculo vehiculo = vehiculoService.obtenerVehiculoPorPatente(patente);
         return ResponseEntity.ok(vehiculo);
     }
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<Vehiculo>> obtenerTodosLosVehiculos() {
         List<Vehiculo> vehiculos = vehiculoService.obtenerTodosLosVehiculos();
         return ResponseEntity.ok(vehiculos);
-    }
+    }*/
 
     @DeleteMapping("/{patente}")
     public ResponseEntity<Void> eliminarVehiculo(@PathVariable String patente) {

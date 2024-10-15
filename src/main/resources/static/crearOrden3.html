@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Orden de Trabajo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        label {
+            flex: 1;
+            padding-right: 10px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            flex: 2;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 80px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .form-section {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #2196F3; /* Color del botón de volver */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%; /* Ancho completo */
+        }
+
+        .back-btn:hover {
+            background-color: #1E88E5; /* Color al pasar el mouse */
+        }
+    </style>
+
+    <script>
+        // Función para cargar vehículos según el DNI
+        async function cargarVehiculos(dni) {
+            const response = await fetch(`/api/vehiculos?dni=${dni}`);
+            if (response.ok) {
+                const vehiculos = await response.json();
+                const vehiculoSelect = document.getElementById("vehiculoSelect");
+                
+                vehiculoSelect.innerHTML = ""; // Limpiar el select antes de cargar
+                vehiculoSelect.appendChild(new Option("Seleccione un vehículo", "")); // Opción por defecto
+
+                if (vehiculos.length > 0) {
+                    vehiculos.forEach(vehiculo => {
+                        const option = document.createElement("option");
+                        option.value = vehiculo.patente; // Asignar la patente como valor
+                        option.textContent = `${vehiculo.patente} - ${vehiculo.marca} ${vehiculo.modelo}`; // Mostrar patente y marca/modelo
+                        vehiculoSelect.appendChild(option);
+                    });
+                } else {
+                    alert("No se encontraron vehículos para este propietario.");
+                }
+
+                document.getElementById("vehiculoSection").style.display = "block"; // Mostrar sección de vehículos
+            } else {
+                alert("Error al cargar los vehículos.");
+            }
+        }
+
+        async function handlePropietarioChange() {
+            const dni = document.getElementById("propietarioDni").value.trim();
+
+            // Verificar si el DNI tiene 9 caracteres
+            if (dni.length === 9) {
+                await cargarVehiculos(dni); // Cargar vehículos del propietario cuando el DNI tiene 9 dígitos
+            } else {
+                document.getElementById("vehiculoSection").style.display = "none"; // Ocultar sección de vehículos si no tiene 9 dígitos
+            }
+        }
+
+        async function submitForm(event) {
+            event.preventDefault();
+
+            const formData = {
+                patente: document.getElementById("vehiculoSelect").value,
+                fechaIngreso: document.getElementById("fechaIngreso").value,
+                detalleFalla: document.getElementById("detalleFalla").value,
+                empleadoId: parseInt(document.getElementById("empleadoId").value),
+                propietarioDni: document.getElementById("propietarioDni").value
+            };
+
+            fetch('/api/ordenes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Orden creada exitosamente!");
+                    window.location.href = 'pantIni.html';
+                } else {
+                    alert("Error al crear la orden.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Función para obtener el DNI de la URL y establecerlo en el input correspondiente
+        function obtenerDniDeUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dni = urlParams.get('dni');
+            if (dni) {
+                document.getElementById('propietarioDni').value = dni; // Establecer el DNI en el input
+                cargarVehiculos(dni); // Cargar vehículos para el propietario
+            }
+        }
+
+        window.onload = obtenerDniDeUrl; // Ejecutar al cargar la página
+    </script>
+</head>
+
+<body>
+    <h1>Crear Orden de Trabajo</h1>
+    <form onsubmit="submitForm(event)">
+        <div class="form-section">
+            <h3>Seleccionar Propietario</h3>
+            <div class="form-group">
+                <label for="propietarioDni">*DNI:</label>
+                <input type="text" id="propietarioDni" oninput="handlePropietarioChange()" required />
+            </div>
+        </div>
+
+        <div id="vehiculoSection" style="display:none;">
+            <h3>Seleccionar Vehículo</h3>
+            <div class="form-group">
+                <label for="vehiculoSelect">*Vehículo:</label>
+                <select id="vehiculoSelect" required>
+                    <option value="">Seleccione un vehículo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="fechaIngreso">Fecha de Ingreso:</label>
+            <input type="date" id="fechaIngreso" required />
+        </div>
+
+        <div class="form-group">
+            <label for="detalleFalla">*Detalle de la Falla:</label>
+            <textarea id="detalleFalla" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="empleadoId">*ID del Empleado:</label>
+            <input type="number" id="empleadoId" required />
+        </div>
+
+        <button type="submit">Crear Orden</button>
+
+        <!-- Botón para volver a la pantalla inicial -->
+        <button type="button" class="back-btn" onclick="window.location.href='pantIni.html'">Volver a Pantalla Inicial</button>
+    </form>
+</body>
+</html>

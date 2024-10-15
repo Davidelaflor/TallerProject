@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
             padding: 0;
             background-color: #f4f4f4;
         }
+
         .table-container {
             background-color: #fff;
             padding: 20px;
@@ -20,34 +22,47 @@
             max-width: 800px;
             margin: 50px auto;
         }
+
         h1 {
             text-align: center;
             color: #333;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
-        th, td {
+
+        th,
+        td {
             padding: 12px;
             text-align: left;
         }
+
         th {
             background-color: #4CAF50;
             color: white;
         }
+
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
         .scrollable-table {
-            max-height: 300px; /* Altura máxima para habilitar scroll */
-            overflow-y: auto; /* Scroll vertical */
+            max-height: 300px;
+            /* Altura máxima para habilitar scroll */
+            overflow-y: auto;
+            /* Scroll vertical */
             margin-top: 20px;
         }
+
         .refresh-btn {
             background-color: #4CAF50;
             color: white;
@@ -62,69 +77,113 @@
             margin: 0 auto 20px;
             border-radius: 5px;
         }
+
         .refresh-btn:hover {
             background-color: #45a049;
         }
+
         .nav-btn-container {
-            display: flex; /* Flexbox para disposición horizontal */
-            justify-content: center; /* Centrar los botones */
-            margin-top: 20px; /* Espacio entre la tabla y los botones */
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            position: relative;
+            /* Permitir posición relativa para el menú desplegable */
         }
-        .nav-btn {
-            background-color: #2196F3; /* Color del botón de navegación */
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: #2196F3;
             color: white;
             padding: 10px 20px;
-            margin: 0 10px; /* Espaciado horizontal entre botones */
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            transition: background-color 0.3s; /* Transición suave */
+            transition: background-color 0.3s;
+            /* Transición suave */
         }
-        .nav-btn:hover {
-            background-color: #1E88E5; /* Color al pasar el mouse */
+
+        .dropbtn:hover {
+            background-color: #1E88E5;
+            /* Color al pasar el mouse */
         }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            left: 0; /* Mantener en la parte izquierda */
+            top: 40px; /* Espacio debajo del botón */
+            background-color: #f9f9f9;
+            min-width: 250px; /* Ancho mínimo del menú */
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .dropdown-content input {
+            color: black;
+            padding: 8px;
+            text-decoration: none;
+            display: block;
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: calc(100% - 16px); /* Ajustar ancho con padding */
+        }
+
+        .dropdown-content button {
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .dropdown-content button:hover {
+            background-color: #45a049;
+            /* Color al pasar el mouse */
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
         .loading-message {
             text-align: center;
             color: #999;
         }
+
         .hidden {
             display: none;
         }
-        .filter-container {
-            display: flex;
-            justify-content: space-between; /* Espacio entre elementos */
-            margin: 20px 0;
-        }
-        .filter-container input {
-            width: 70%; /* Ancho del campo de búsqueda */
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .filter-container button {
-            padding: 10px;
-            border: none;
-            background-color: #4CAF50; /* Color del botón de ordenar */
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px; /* Espacio entre botón y campo de búsqueda */
-        }
-        .filter-container button:hover {
-            background-color: #45a049; /* Color al pasar el mouse */
-        }
     </style>
 </head>
+
 <body>
 
     <div class="table-container">
         <h1>Listado de Órdenes de Trabajo</h1>
         <div id="loadingMessage" class="loading-message">Cargando órdenes de trabajo...</div>
 
-        <!-- Contenedor para el filtro de patente y ordenar -->
+        <!-- Contenedor para los filtros organizados en un desplegable -->
         <div class="filter-container">
-            <input type="text" id="patenteFilter" placeholder="Buscar por patente" oninput="filterOrdenes()">
-            <button onclick="sortOrdenes()">Ordenar por Fecha</button>
+            <div class="dropdown">
+                <button class="dropbtn">Filtros</button>
+                <div class="dropdown-content">
+                    <input type="text" id="patenteFilter" placeholder="Buscar por patente" oninput="filterOrdenes()">
+                    <input type="text" id="marcaFilter" placeholder="Buscar por marca" oninput="filterOrdenes()">
+                    <input type="text" id="modeloFilter" placeholder="Buscar por modelo" oninput="filterOrdenes()">
+                    <button onclick="sortOrdenes()">Ordenar por Fecha</button>
+                </div>
+            </div>
         </div>
 
         <div class="scrollable-table">
@@ -137,7 +196,7 @@
                         <th>Modelo</th>
                         <th>Fecha de Ingreso</th>
                         <th>Detalle de la Falla</th>
-                        <th>Acciones</th> 
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="ordenesBody">
@@ -149,9 +208,9 @@
         <!-- Contenedor para los botones de navegación -->
         <div class="nav-btn-container">
             <button class="nav-btn" onclick="window.location.href='listarPropietarios.html'">Ver Lista de Propietarios</button>
-            <button class="nav-btn" onclick="window.location.href='listarRepuestos.html'">Ver Inventario</button> <!-- Nuevo botón para ver inventario -->
-            <button class="nav-btn" onclick="window.location.href='crearOrden2.html'">Crear Nueva Orden</button> <!-- Botón para crear nueva orden -->
-            <button class="nav-btn" onclick="window.location.href='propietario2.html'">Registrar Nuevo Propietario</button> <!-- Botón para registrar nuevo propietario -->
+            <button class="nav-btn" onclick="window.location.href='listarRepuestos.html'">Ver Inventario</button>
+            <button class="nav-btn" onclick="window.location.href='crearOrden3.html'">Crear Nueva Orden</button>
+            <button class="nav-btn" onclick="window.location.href='propietario3.html'">Registrar Nuevo Propietario</button>
         </div>
     </div>
 
@@ -175,31 +234,39 @@
 
         function displayOrdenes(ordenes) {
             const ordenesBody = document.getElementById('ordenesBody');
-            ordenesBody.innerHTML = ''; 
+            ordenesBody.innerHTML = '';
 
             ordenes.forEach(orden => {
                 const row = document.createElement('tr');
 
                 row.innerHTML = `
                     <td>${orden.id}</td>
-                    <td>${orden.patente}</td>
-                    <td>${orden.marca}</td>
-                    <td>${orden.modelo}</td>
+                    <td>${orden.vehiculo.patente}</td>
+                    <td>${orden.vehiculo.marca}</td>
+                    <td>${orden.vehiculo.modelo}</td>
                     <td>${orden.fechaIngreso}</td>
                     <td>${orden.detalleFalla}</td>
-                    <td><button onclick="deleteOrden(${orden.id})">Eliminar</button></td> <!-- Botón para eliminar -->
+                    <td><button onclick="deleteOrden(${orden.id})">Eliminar</button></td>
                 `;
 
                 ordenesBody.appendChild(row);
             });
 
-            document.getElementById('loadingMessage').classList.add('hidden'); 
-            document.getElementById('ordenesTable').classList.remove('hidden'); 
+            document.getElementById('loadingMessage').classList.add('hidden');
+            document.getElementById('ordenesTable').classList.remove('hidden');
         }
 
         function filterOrdenes() {
-            const filterValue = document.getElementById('patenteFilter').value.toLowerCase();
-            const filteredOrdenes = ordenesData.filter(orden => orden.patente.toLowerCase().includes(filterValue));
+            const patenteFilter = document.getElementById('patenteFilter').value.toLowerCase();
+            const marcaFilter = document.getElementById('marcaFilter').value.toLowerCase();
+            const modeloFilter = document.getElementById('modeloFilter').value.toLowerCase();
+
+            const filteredOrdenes = ordenesData.filter(orden => {
+                const matchesPatente = orden.vehiculo.patente.toLowerCase().includes(patenteFilter);
+                const matchesMarca = orden.vehiculo.marca.toLowerCase().includes(marcaFilter);
+                const matchesModelo = orden.vehiculo.modelo.toLowerCase().includes(modeloFilter);
+                return matchesPatente && matchesMarca && matchesModelo;
+            });
             displayOrdenes(filteredOrdenes);
         }
 
@@ -227,7 +294,7 @@
             }
         }
 
-        window.onload = function() {
+        window.onload = function () {
             fetchOrdenes();
         };
 
@@ -235,4 +302,5 @@
     </script>
 
 </body>
+
 </html>

@@ -13,6 +13,7 @@ import com.example.taller.model.OrdenTrabajo;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.Repuesto;
 import com.example.taller.model.RepuestoUtilizado;
+import com.example.taller.model.Vehiculo;
 import com.example.taller.repository.EmpleadoRepository;
 import com.example.taller.repository.OrdenTrabajoRepository;
 import com.example.taller.repository.PropietarioRepository;
@@ -117,28 +118,43 @@ public class TallerService implements TallerServiceInterface {
     @Override
     public OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO dto) {
 
-       /*  boolean exists = ordenTrabajoRepository.existsByPatente(dto.getPatente());
-        if (exists) {
-            throw new RuntimeException("Orden ya registrada para la patente: " + dto.getPatente());
-        }*/
+        /*
+         * boolean exists = ordenTrabajoRepository.existsByPatente(dto.getPatente());
+         * if (exists) {
+         * throw new RuntimeException("Orden ya registrada para la patente: " +
+         * dto.getPatente());
+         * }
+         */
 
         Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
-        OrdenTrabajo entity = generateOrdenTrabajoEntity(dto, empleado, propietario);
+
+        // Suponiendo que se ha seleccionado un vehículo de los que tiene el propietario
+        List<Vehiculo> vehiculos = propietario.getVehiculos();
+        if (vehiculos.isEmpty()) {
+            throw new RuntimeException("El propietario no tiene vehículos registrados.");
+        }
+
+        // Aquí seleccionas el vehículo de alguna forma, por ejemplo, el primero:
+        Vehiculo vehiculoSeleccionado = vehiculos.get(0); // Selecciona el vehículo correspondiente
+
+        OrdenTrabajo entity = generateOrdenTrabajoEntity(dto, empleado, propietario, vehiculoSeleccionado);
 
         return ordenTrabajoRepository.save(entity);
 
     }
 
-    private OrdenTrabajo generateOrdenTrabajoEntity(OrdenTrabajoDTO dto, Empleado empleado, Propietario propietario) {
+    private OrdenTrabajo generateOrdenTrabajoEntity(OrdenTrabajoDTO dto, Empleado empleado, Propietario propietario,
+            Vehiculo vehiculo) {
         return OrdenTrabajo.builder()
                 .detalleFalla(dto.getDetalleFalla())
                 .horasTrabajadas(0)
                 .estado(Estado.ACTIVO.toString())
                 .empleado(empleado)
                 .propietario(propietario)
+                .vehiculo(vehiculo)
                 .fechaIngreso(dto.getFechaIngreso() != null ? dto.getFechaIngreso() : LocalDate.now())
                 .build();
     }
@@ -156,7 +172,7 @@ public class TallerService implements TallerServiceInterface {
         ordenTrabajo.setEstado(dto.getEstado().toString());
         ordenTrabajo.setEmpleado(empleado);
         ordenTrabajo.setPropietario(propietario);
-        ordenTrabajo.setFechaIngreso(LocalDate.now()); 
+        ordenTrabajo.setFechaIngreso(LocalDate.now());
         return ordenTrabajoRepository.save(ordenTrabajo);
     }
 

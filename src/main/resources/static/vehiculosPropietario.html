@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehículos del Propietario</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Vehículos de <span id="propietarioNombre"></span></h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Patente</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                </tr>
+            </thead>
+            <tbody id="vehiculosTableBody">
+                <!-- Aquí se insertarán los vehículos -->
+            </tbody>
+        </table>
+        <!-- Botón para agregar un nuevo vehículo -->
+        <button onclick="redirectToAddVehiculo()">Agregar Nuevo Vehículo</button>
+    </div>
+
+    <script>
+        // Obtener DNI del propietario desde la URL
+        const params = new URLSearchParams(window.location.search);
+        const propietarioDni = params.get('dni');
+
+        async function fetchVehiculos() {
+            try {
+                const response = await fetch(`/api/vehiculos?propietarioDni=${propietarioDni}`);
+                if (response.ok) {
+                    const vehiculos = await response.json();
+                    const tableBody = document.getElementById('vehiculosTableBody');
+
+                    // Limpiar la tabla antes de cargar nuevos datos
+                    tableBody.innerHTML = "";
+
+                    if (vehiculos.length === 0) {
+                        tableBody.innerHTML = "<tr><td colspan='3'>No se encontraron vehículos para este propietario.</td></tr>";
+                    } else {
+                        vehiculos.forEach(vehiculo => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${vehiculo.patente}</td>
+                                <td>${vehiculo.marca}</td>
+                                <td>${vehiculo.modelo}</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    }
+
+                    // Obtener y mostrar el nombre del propietario (opcional)
+                    const propietarioResponse = await fetch(`/api/propietarios?dni=${propietarioDni}`);
+                    if (propietarioResponse.ok) {
+                        const propietario = await propietarioResponse.json();
+                        document.getElementById('propietarioNombre').textContent = `${propietario.nombre} ${propietario.apellido}`;
+                    }
+                } else {
+                    throw new Error('Error al obtener vehículos');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Redirigir al formulario de agregar vehículo
+        function redirectToAddVehiculo() {
+            window.location.href = `agregarVehiculo.html?dni=${propietarioDni}`;
+        }
+
+        // Llamar a la función para obtener los vehículos al cargar la página
+        fetchVehiculos();
+    </script>
+</body>
+</html>
