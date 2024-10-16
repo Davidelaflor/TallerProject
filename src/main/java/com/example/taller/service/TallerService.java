@@ -126,6 +126,8 @@ public class TallerService implements TallerServiceInterface {
          * }
          */
 
+
+         
         Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
