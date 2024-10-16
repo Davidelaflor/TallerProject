@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.taller.dto.OrdenTrabajoDTO;
+import com.example.taller.dto.RepuestoUtilizadoDTO;
 import com.example.taller.model.OrdenTrabajo;
 import com.example.taller.service.TallerServiceInterface;
 
@@ -51,5 +53,14 @@ public class OrdenTrabajoController {
     public ResponseEntity<Void> eliminarOrdenTrabajo(@PathVariable Long id) {
         tallerService.eliminarOrdenTrabajo(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{ordenTrabajoId}/repuestos/{repuestoUtilizadoId}")
+    public ResponseEntity<Void> agregarRepuestoAOrden(@PathVariable Long ordenTrabajoId, 
+                                                       @PathVariable String repuestoUtilizadoId,
+                                                       @RequestBody RepuestoUtilizadoDTO repuestoUtilizadoDTO) {
+                                                        int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
+        tallerService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
+        return ResponseEntity.ok().build();
     }
 }

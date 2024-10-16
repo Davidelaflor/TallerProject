@@ -8,6 +8,6 @@ import com.example.taller.model.RepuestoUtilizado; // Asegúrate de que esta imp
 
 @Repository
 @ComponentScan
-public interface RepuestoUtilizadoRepository extends JpaRepository<RepuestoUtilizado, Long> {
+public interface RepuestoUtilizadoRepository extends JpaRepository<RepuestoUtilizado, String> {
 
 }

@@ -28,6 +28,13 @@ public class RepuestoServiceImpl implements RepuestoService {
                 //.orElseThrow(() -> new RuntimeException("Repuesto no encontrado"));
     }
 
+
+    @Override
+    public Repuesto buscarRepuestoPorCodigo(String codigoInventario) {
+        return repuestoRepository.findById(codigoInventario)
+                .orElse(null);
+    }
+
     @Override
     public void eliminarRepuesto(Long codigo) {
        // repuestoRepository.deleteById(codigo);

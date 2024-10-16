@@ -5,7 +5,7 @@ import com.example.taller.model.RepuestoUtilizado;
 public interface RepuestoUtilizadoService {
     RepuestoUtilizado crearRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado);
 
-    RepuestoUtilizado obtenerRepuestoUtilizadoPorId(Long id);
+    RepuestoUtilizado obtenerRepuestoUtilizadoPorId(String id);
 
-    void eliminarRepuestoUtilizado(Long id);
+    void eliminarRepuestoUtilizado(String id);
 }

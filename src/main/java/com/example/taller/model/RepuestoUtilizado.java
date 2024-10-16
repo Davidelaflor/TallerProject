@@ -10,13 +10,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 @AllArgsConstructor
+@Data
+@Builder
 @Entity
 @Table(name = "repuestos_utilizados")
 public class RepuestoUtilizado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "orden_trabajo_id", nullable = false)
@@ -28,7 +32,8 @@ public class RepuestoUtilizado {
     private Repuesto repuesto; // Referencia a Repuesto
 
     @NotNull(message = "La cantidad utilizada no puede ser nula")
-    private int cantidad; // Cantidad del repuesto utilizado
+    @Builder.Default
+    private int cantidad = 1; // Cantidad del repuesto utilizado
 
         // Constructor por defecto
         public RepuestoUtilizado() {
@@ -36,11 +41,11 @@ public class RepuestoUtilizado {
     
     // Getters y Setters
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

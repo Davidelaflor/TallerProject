@@ -17,13 +17,13 @@ public class RepuestoUtilizadoServiceImpl implements RepuestoUtilizadoService {
     }
 
     @Override
-    public RepuestoUtilizado obtenerRepuestoUtilizadoPorId(Long id) {
+    public RepuestoUtilizado obtenerRepuestoUtilizadoPorId(String id) {
         return repuestoUtilizadoRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Repuesto Utilizado no encontrado"));
     }
 
     @Override
-    public void eliminarRepuestoUtilizado(Long id) {
+    public void eliminarRepuestoUtilizado(String id) {
         repuestoUtilizadoRepository.deleteById(id);
     }
 }

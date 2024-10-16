@@ -28,7 +28,8 @@ public class VehiculoController {
         return ResponseEntity.ok(nuevoVehiculo);
     }
 
-    @GetMapping
+    @GetMapping //http://localhost:8080/api/vehiculos?dni=12345678i
+
 public ResponseEntity<List<Vehiculo>> obtenerVehiculosPorDni(@RequestParam String dni) {
     if (dni != null) {
         List<Vehiculo> vehiculos = vehiculoService.obtenerVehiculosPorDni(dni);

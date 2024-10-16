@@ -14,6 +14,7 @@ public interface RepuestoService {
 
     List<Repuesto> listarRepuestos();
 
+    Repuesto buscarRepuestoPorCodigo(String codigoInventario);
 
     void eliminarRepuesto(Long codigo);
 }

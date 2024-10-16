@@ -179,6 +179,28 @@ public class TallerService implements TallerServiceInterface {
     }
 
     @Override
+    public void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad) {
+        // Obtener la orden de trabajo
+        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
+                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+    
+        // Obtener el repuesto (suponiendo que ya tienes la entidad Repuesto)
+        Repuesto repuesto = repuestoRepository.findById(repuestoUtilizadoId)
+                .orElseThrow(() -> new RuntimeException("Repuesto no encontrado"));
+    
+        // Crear un nuevo RepuestoUtilizado
+        RepuestoUtilizado repuestoUtilizado = new RepuestoUtilizado();
+        repuestoUtilizado.setRepuesto(repuesto);
+        // Si hay un atributo de cantidad en RepuestoUtilizado, puedes establecerlo aquí
+        repuestoUtilizado.setCantidad(1); // o la cantidad que necesites
+    
+        // Agregar el repuesto a la orden de trabajo
+        ordenTrabajo.addRepuestoUtilizado(repuestoUtilizado);
+        ordenTrabajoRepository.save(ordenTrabajo); // Guardar la orden con los nuevos repuestos
+    }
+    
+
+    @Override
     public OrdenTrabajo buscarOrdenTrabajoPorId(Long id) {
         return ordenTrabajoRepository.findById(id).orElse(null);
     }

@@ -39,5 +39,6 @@ public interface TallerServiceInterface {
     
     // Métodos para manejar Repuestos Utilizados
     RepuestoUtilizado guardarRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado);
+    void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);
 
 }
