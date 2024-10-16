@@ -1,6 +1,8 @@
 package com.example.taller.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,11 +24,13 @@ public class RepuestoUtilizado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "orden_trabajo_id", nullable = false)
     private OrdenTrabajo ordenTrabajo;
 
 
+    @JsonIgnore
    @ManyToOne
     @JoinColumn(name = "repuesto_codigo", nullable = false)
     private Repuesto repuesto; // Referencia a Repuesto
