@@ -19,7 +19,7 @@ public class EmpleadoController {
     @Autowired
     private EmpleadoService empleadoService;
 
-    @PostMapping
+   @PostMapping
     public ResponseEntity<Empleado> crearEmpleado(@RequestBody Empleado empleado) {
         Empleado nuevoEmpleado = empleadoService.crearEmpleado(empleado);
         return ResponseEntity.ok(nuevoEmpleado);

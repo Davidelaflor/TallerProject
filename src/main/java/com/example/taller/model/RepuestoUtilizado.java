@@ -10,6 +10,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(hidden = true)
 @AllArgsConstructor
 @Entity
 @Table(name = "repuestos_utilizados")
