@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.example.taller.model.Repuesto;
 
 @Repository
-public interface RepuestoRepository  extends JpaRepository<Repuesto, String> {
+public interface RepuestoRepository extends JpaRepository<Repuesto, String> {
 }

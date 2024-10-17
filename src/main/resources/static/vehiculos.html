@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Vehículos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .scrollable-table {
+            max-height: 300px; /* Altura máxima para habilitar scroll */
+            overflow-y: auto; /* Scroll vertical */
+            margin-top: 20px; /* Espacio entre el título y la tabla */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+        .hidden {
+            display: none; /* Oculta el mensaje de error cuando no hay error */
+        }
+        .back-btn {
+            background-color: #2196F3; /* Color del botón de volver */
+            color: white;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block; /* Hacer que el botón sea un bloque */
+            width: 100%; /* Ancho completo */
+            max-width: 200px; /* Ancho máximo */
+            margin: 20px auto; /* Centrar el botón */
+            text-align: center; /* Centrar el texto del botón */
+        }
+        .back-btn:hover {
+            background-color: #1E88E5; /* Color al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Lista de Vehículos</h1>
+        <div id="errorMessage" class="error-message hidden"></div>
+
+        <!-- Contenedor para la tabla con scroll -->
+        <div class="scrollable-table">
+            <table id="vehiculosTable">
+                <thead>
+                    <tr>
+                        <th>Patente</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                    </tr>
+                </thead>
+                <tbody id="vehiculosBody">
+                    <!-- Aquí se llenarán los datos de los vehículos -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Botón para añadir un nuevo vehículo -->
+        <button class="back-btn" onclick="window.location.href='crearVehiculoNuevo.html?dni=' + encodeURIComponent(dni)">Añadir Nuevo Vehículo</button>
+
+        <!-- Botón de volver a la lista de propietarios -->
+        <button class="back-btn" onclick="window.location.href='listarPropietarios.html'">Volver a Lista de Propietarios</button>
+    </div>
+
+    <script>
+        let vehiculosData = []; // Almacena la lista de vehículos
+        let dni; // Variable para almacenar el DNI del propietario
+
+        async function fetchVehiculos() {
+            const urlParams = new URLSearchParams(window.location.search);
+            dni = urlParams.get('dni'); // Obtener el DNI de los parámetros de la URL
+            try {
+                const response = await fetch(`/api/vehiculos?dni=${dni}`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener la lista de vehículos');
+                }
+                vehiculosData = await response.json(); // Guarda los datos en la variable
+                populateTable(vehiculosData);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'Hubo un problema al obtener los vehículos.';
+                document.getElementById('errorMessage').classList.remove('hidden');
+            }
+        }
+
+        function populateTable(vehiculos) {
+            const tbody = document.getElementById('vehiculosBody');
+            tbody.innerHTML = ''; // Limpiar el contenido anterior
+
+            if (vehiculos.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="3" style="text-align: center;">No se encontraron vehículos</td>`;
+                tbody.appendChild(row);
+                return;
+            }
+
+            vehiculos.forEach(vehiculo => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${vehiculo.patente}</td> <!-- Cambié 'placa' por 'patente' -->
+                    <td>${vehiculo.marca}</td>
+                    <td>${vehiculo.modelo}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Cargar la lista de vehículos al cargar la página
+        window.onload = fetchVehiculos;
+    </script>
+
+</body>
+</html>

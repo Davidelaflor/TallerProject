@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Orden de Trabajo</title>
+    <style>
+        /* Estilo básico para el detalle */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .detail {
+            margin: 15px 0;
+        }
+        .back-btn {
+            display: block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 200px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Detalle de Orden de Trabajo</h1>
+        <div id="ordenDetails"></div>
+        <button class="back-btn" onclick="window.history.back()">Volver</button>
+    </div>
+
+    <script>
+        async function fetchOrdenDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            try {
+                const response = await fetch(`/api/ordenes/${id}`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener los detalles de la orden');
+                }
+
+                const orden = await response.json();
+                displayOrdenDetails(orden);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('ordenDetails').innerText = 'Error al cargar los detalles de la orden';
+            }
+        }
+
+        function displayOrdenDetails(orden) {
+            const ordenDetailsDiv = document.getElementById('ordenDetails');
+            ordenDetailsDiv.innerHTML = `
+                <div class="detail"><strong>ID:</strong> ${orden.id}</div>
+                <div class="detail"><strong>Detalle de la Falla:</strong> ${orden.detalleFalla}</div>
+                <div class="detail"><strong>Horas Trabajadas:</strong> ${orden.horasTrabajadas}</div>
+                <div class="detail"><strong>Estado:</strong> ${orden.estado}</div>
+                <div class="detail"><strong>Fecha de Ingreso:</strong> ${new Date(orden.fechaIngreso).toLocaleDateString()}</div>
+                <div class="detail"><strong>Empleado:</strong> ${orden.empleado.nombre} ${orden.empleado.apellido}</div>
+                <h3>Repuestos Utilizados</h3>
+                <ul>
+                    ${orden.repuestosUtilizados.map(repuesto => `
+                        <li>${repuesto.nombre} (Código: ${repuesto.codigoInventario}) - Cantidad: ${repuesto.cantidad} - Precio: €${repuesto.precio}</li>
+                    `).join('')}
+                </ul>
+                <h3>Propietario</h3>
+                <div>${orden.propietario.nombre} - ${orden.propietario.telefono}</div>
+            `;
+        }
+
+        window.onload = fetchOrdenDetails;
+    </script>
+</body>
+</html>

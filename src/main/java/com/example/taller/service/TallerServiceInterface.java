@@ -32,13 +32,12 @@ public interface TallerServiceInterface {
     // Métodos para manejar Ordenes de Trabajo
     List<OrdenTrabajo> listarOrdenes();
     OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO ordenTrabajo);
-    OrdenTrabajo modificarOrdenTrabajo(Long id, OrdenTrabajoDTO dto);
-
+    OrdenTrabajo obtenerOrdenTrabajo(Long id);
     OrdenTrabajo buscarOrdenTrabajoPorId(Long id);
     void eliminarOrdenTrabajo(Long id);
     
     // Métodos para manejar Repuestos Utilizados
     RepuestoUtilizado guardarRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado);
     void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);
-
+    void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas); // Añadir este método
 }

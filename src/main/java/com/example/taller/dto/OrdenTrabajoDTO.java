@@ -24,7 +24,7 @@ public class OrdenTrabajoDTO {
     private String propietarioDni;  
     private String detalleFalla;
     private Estado estado; // Activo/Finalizado
-    private List<RepuestoDTO> repuestosUtilizados;
+    private List<RepuestoUtilizadoDTO> repuestosUtilizados;
     private int horasTrabajadas;
     private PropietarioDTO propietario;
     private Long empleadoId;

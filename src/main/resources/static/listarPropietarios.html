@@ -33,13 +33,13 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            width: 70%; /* Ancho del campo de búsqueda */
-            margin-right: 10px; /* Espacio entre el campo y el botón */
+            width: 70%;
+            margin-right: 10px;
         }
         .scrollable-table {
-            max-height: 300px; /* Altura máxima para habilitar scroll */
-            overflow-y: auto; /* Scroll vertical */
-            margin-top: 20px; /* Espacio entre el título y la tabla */
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
         }
         table {
             width: 100%;
@@ -49,6 +49,7 @@
             padding: 12px;
             text-align: left;
             border: 1px solid #ddd;
+            cursor: pointer; /* Cambia el cursor al pasar por encima de las celdas */
         }
         th {
             background-color: #4CAF50;
@@ -62,24 +63,24 @@
             text-align: center;
         }
         .hidden {
-            display: none; /* Oculta el mensaje de error cuando no hay error */
+            display: none;
         }
         .back-btn {
-            background-color: #2196F3; /* Color del botón de volver */
+            background-color: #2196F3;
             color: white;
             padding: 10px 20px;
             margin: 20px 0;
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            display: block; /* Hacer que el botón sea un bloque */
-            width: 100%; /* Ancho completo */
-            max-width: 200px; /* Ancho máximo */
-            margin: 20px auto; /* Centrar el botón */
-            text-align: center; /* Centrar el texto del botón */
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 20px auto;
+            text-align: center;
         }
         .back-btn:hover {
-            background-color: #1E88E5; /* Color al pasar el mouse */
+            background-color: #1E88E5;
         }
     </style>
 </head>
@@ -89,12 +90,10 @@
         <h1>Lista de Propietarios</h1>
         <div id="errorMessage" class="error-message hidden"></div>
 
-        <!-- Contenedor para el campo de búsqueda -->
         <div class="search-container">
             <input type="text" id="dniFilter" placeholder="Buscar por DNI" oninput="filterPropietarios()">
         </div>
         
-        <!-- Contenedor para la tabla con scroll -->
         <div class="scrollable-table">
             <table id="propietariosTable">
                 <thead>
@@ -112,12 +111,11 @@
             </table>
         </div>
 
-        <!-- Botón de volver a la pantalla inicial -->
         <button class="back-btn" onclick="window.location.href='pantIni.html'">Volver a Pantalla Inicial</button>
     </div>
 
     <script>
-        let propietariosData = []; // Almacena la lista de propietarios
+        let propietariosData = [];
 
         async function fetchPropietarios() {
             try {
@@ -125,7 +123,7 @@
                 if (!response.ok) {
                     throw new Error('Error al obtener la lista de propietarios');
                 }
-                propietariosData = await response.json(); // Guarda los datos en la variable
+                propietariosData = await response.json();
                 populateTable(propietariosData);
             } catch (error) {
                 console.error('Error:', error);
@@ -136,7 +134,7 @@
 
         function populateTable(propietarios) {
             const tbody = document.getElementById('propietariosBody');
-            tbody.innerHTML = ''; // Limpiar el contenido anterior
+            tbody.innerHTML = '';
 
             propietarios.forEach(propietario => {
                 const row = document.createElement('tr');
@@ -147,6 +145,10 @@
                     <td>${propietario.direccion}</td>
                     <td>${propietario.telefono}</td>
                 `;
+                // Añadir un evento clic a la fila para redirigir a la página de vehículos
+                row.onclick = () => {
+                    window.location.href = `vehiculos.html?dni=${propietario.dni}`;
+                };
                 tbody.appendChild(row);
             });
         }

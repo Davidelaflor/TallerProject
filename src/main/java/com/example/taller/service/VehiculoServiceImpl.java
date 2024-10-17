@@ -5,8 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.taller.model.Propietario;
 import com.example.taller.model.Vehiculo;
 import com.example.taller.repository.VehiculoRepository;
+import com.example.taller.repository.PropietarioRepository; // Cambia esto según tu estructura de paquetes
+
 @Service
 public class VehiculoServiceImpl implements VehiculoService {
     @Autowired

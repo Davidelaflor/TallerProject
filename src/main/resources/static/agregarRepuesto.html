@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Repuestos a Orden de Trabajo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+        button {
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block; /* Permite que el botón se adapte al contenido */
+            margin: 5px 0; /* Espacio entre botones */
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .repuesto-container {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .remove-repuesto-btn {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block; /* Cambiado para adaptarse al tamaño del texto */
+        }
+        .remove-repuesto-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Agregar Repuestos a la Orden de Trabajo</h2>
+
+        <form id="agregarRepuestoForm">
+            <label for="ordenTrabajoId">ID de la Orden de Trabajo</label>
+            <input type="text" id="ordenTrabajoId" name="ordenTrabajoId" placeholder="Ingrese el ID de la orden de trabajo" required>
+
+            <div id="repuestosList"></div>
+
+            <button type="button" id="addRepuestoBtn">Agregar Repuesto</button>
+
+            <button type="submit">Agregar</button>
+        </form>
+
+        <div class="message" id="responseMessage"></div>
+    </div>
+
+    <script>
+        // Cargar el ID de la orden de trabajo al cargar la página
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ordenTrabajoId = urlParams.get('ordenTrabajoId'); // Asumiendo que se pasa como parámetro en la URL
+            document.getElementById('ordenTrabajoId').value = ordenTrabajoId || ''; // Si no se pasa, dejar vacío
+        });
+
+        // Agregar un nuevo campo para el repuesto
+        document.getElementById('addRepuestoBtn').addEventListener('click', function() {
+            const repuestosList = document.getElementById('repuestosList');
+            const repuestoContainer = document.createElement('div');
+            repuestoContainer.className = 'repuesto-container';
+            repuestoContainer.innerHTML = `
+                <label for="repuestoUtilizadoId">ID del Repuesto Utilizado</label>
+                <input type="text" class="repuestoUtilizadoId" placeholder="Ingrese el ID del repuesto utilizado" required>
+
+                <label for="cantidad">Cantidad Utilizada</label>
+                <input type="number" class="cantidad" min="1" placeholder="Ingrese la cantidad utilizada" required>
+
+                <button type="button" class="remove-repuesto-btn">Eliminar Repuesto</button>
+            `;
+            repuestosList.appendChild(repuestoContainer);
+
+            // Evento para eliminar el repuesto
+            repuestoContainer.querySelector('.remove-repuesto-btn').addEventListener('click', function() {
+                repuestosList.removeChild(repuestoContainer);
+            });
+        });
+
+        // Manejar la suma del formulario
+        document.getElementById('agregarRepuestoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const ordenTrabajoId = document.getElementById('ordenTrabajoId').value;
+            const repuestosUtilizados = Array.from(document.querySelectorAll('.repuesto-container')).map(container => {
+                return {
+                    repuestoUtilizadoId: container.querySelector('.repuestoUtilizadoId').value,
+                    cantidadUtilizada: container.querySelector('.cantidad').value
+                };
+            });
+
+            // Realiza la solicitud POST al servidor usando Fetch API
+            Promise.all(repuestosUtilizados.map(repuesto => {
+                return fetch(`api/ordenes/${ordenTrabajoId}/repuestos/${repuesto.repuestoUtilizadoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cantidadUtilizada: repuesto.cantidadUtilizada }),
+                });
+            }))
+            .then(responses => {
+                // Verificar si todas las respuestas son exitosas
+                if (responses.every(response => response.ok)) {
+                    document.getElementById('responseMessage').innerText = 'Repuestos agregados correctamente a la orden de trabajo.';
+                    document.getElementById('agregarRepuestoForm').reset();
+                    setTimeout(() => {
+                        window.location.href = 'pantIni.html'; // Redirigir a pantIni.html después de un tiempo
+                    }, 2000); // Esperar 2 segundos antes de redirigir
+                } else {
+                    throw new Error('Error al agregar algunos repuestos.');
+                }
+            })
+            .catch(error => {
+                document.getElementById('responseMessage').innerText = error.message;
+            });
+        });
+    </script>
+
+</body>
+</html>

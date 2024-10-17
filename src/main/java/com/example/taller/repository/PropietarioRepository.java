@@ -10,4 +10,6 @@ import com.example.taller.model.Propietario;
 
 @Repository
 public interface PropietarioRepository extends JpaRepository<Propietario, String> {
+    Propietario findByDni(String dni);
+
 }

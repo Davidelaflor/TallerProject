@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listado de Órdenes de Trabajo</title>
     <style>
+        /* Aquí se queda el estilo que ya tienes */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -57,9 +58,7 @@
 
         .scrollable-table {
             max-height: 300px;
-            /* Altura máxima para habilitar scroll */
             overflow-y: auto;
-            /* Scroll vertical */
             margin-top: 20px;
         }
 
@@ -86,74 +85,34 @@
             display: flex;
             justify-content: center;
             margin-top: 20px;
-            position: relative;
-            /* Permitir posición relativa para el menú desplegable */
         }
 
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropbtn {
-            background-color: #2196F3;
+        .add-repuesto-btn {
+            background-color: #FF9800;
             color: white;
-            padding: 10px 20px;
+            padding: 6px 12px;
+            margin-right: 10px;
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            transition: background-color 0.3s;
-            /* Transición suave */
         }
 
-        .dropbtn:hover {
-            background-color: #1E88E5;
-            /* Color al pasar el mouse */
+        .add-repuesto-btn:hover {
+            background-color: #F57C00;
         }
 
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            left: 0; /* Mantener en la parte izquierda */
-            top: 40px; /* Espacio debajo del botón */
-            background-color: #f9f9f9;
-            min-width: 250px; /* Ancho mínimo del menú */
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-            border-radius: 5px;
-            padding: 10px;
-        }
-
-        .dropdown-content input {
-            color: black;
-            padding: 8px;
-            text-decoration: none;
-            display: block;
-            background: none;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            width: calc(100% - 16px); /* Ajustar ancho con padding */
-        }
-
-        .dropdown-content button {
-            padding: 10px;
-            border: none;
-            background-color: #4CAF50;
+        .add-horas-btn {
+            background-color: #FF5722;
             color: white;
-            border-radius: 5px;
+            padding: 6px 12px;
+            margin-right: 10px;
+            border: none;
             cursor: pointer;
-            width: 100%;
-            text-align: center;
+            border-radius: 5px;
         }
 
-        .dropdown-content button:hover {
-            background-color: #45a049;
-            /* Color al pasar el mouse */
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
+        .add-horas-btn:hover {
+            background-color: #E64A19;
         }
 
         .loading-message {
@@ -172,19 +131,6 @@
     <div class="table-container">
         <h1>Listado de Órdenes de Trabajo</h1>
         <div id="loadingMessage" class="loading-message">Cargando órdenes de trabajo...</div>
-
-        <!-- Contenedor para los filtros organizados en un desplegable -->
-        <div class="filter-container">
-            <div class="dropdown">
-                <button class="dropbtn">Filtros</button>
-                <div class="dropdown-content">
-                    <input type="text" id="patenteFilter" placeholder="Buscar por patente" oninput="filterOrdenes()">
-                    <input type="text" id="marcaFilter" placeholder="Buscar por marca" oninput="filterOrdenes()">
-                    <input type="text" id="modeloFilter" placeholder="Buscar por modelo" oninput="filterOrdenes()">
-                    <button onclick="sortOrdenes()">Ordenar por Fecha</button>
-                </div>
-            </div>
-        </div>
 
         <div class="scrollable-table">
             <table id="ordenesTable" class="hidden">
@@ -205,7 +151,6 @@
         </div>
         <button class="refresh-btn" onclick="fetchOrdenes()">Actualizar Órdenes</button>
 
-        <!-- Contenedor para los botones de navegación -->
         <div class="nav-btn-container">
             <button class="nav-btn" onclick="window.location.href='listarPropietarios.html'">Ver Lista de Propietarios</button>
             <button class="nav-btn" onclick="window.location.href='listarRepuestos.html'">Ver Inventario</button>
@@ -215,7 +160,7 @@
     </div>
 
     <script>
-        let ordenesData = []; // Almacena las órdenes de trabajo
+        let ordenesData = [];
 
         async function fetchOrdenes() {
             try {
@@ -224,7 +169,7 @@
                     throw new Error('Error al obtener las órdenes de trabajo');
                 }
 
-                ordenesData = await response.json(); // Guarda los datos en ordenesData
+                ordenesData = await response.json();
                 displayOrdenes(ordenesData);
             } catch (error) {
                 console.error('Error:', error);
@@ -237,16 +182,29 @@
             ordenesBody.innerHTML = '';
 
             ordenes.forEach(orden => {
+                const vehiculo = orden.propietario.vehiculos[0]; // Primer vehículo del propietario
+
                 const row = document.createElement('tr');
+                
+                // Agregar un evento de clic a la fila para redirigir a los detalles de la orden, excepto en la columna de acciones
+                row.onclick = (event) => {
+                    if (event.target.tagName !== 'BUTTON') {
+                        window.location.href = `ordenTrabajoDetallado.html?id=${orden.id}`;
+                    }
+                };
 
                 row.innerHTML = `
                     <td>${orden.id}</td>
-                    <td>${orden.vehiculo.patente}</td>
-                    <td>${orden.vehiculo.marca}</td>
-                    <td>${orden.vehiculo.modelo}</td>
+                    <td>${vehiculo.patente}</td>
+                    <td>${vehiculo.marca}</td>
+                    <td>${vehiculo.modelo}</td>
                     <td>${orden.fechaIngreso}</td>
                     <td>${orden.detalleFalla}</td>
-                    <td><button onclick="deleteOrden(${orden.id})">Eliminar</button></td>
+                    <td>
+                        <button class="add-repuesto-btn" onclick="window.location.href='agregarRepuesto.html?ordenTrabajoId=${orden.id}'">Agregar Repuesto</button>
+                        <button class="add-horas-btn" onclick="sumarHoras(${orden.id})">Sumar Horas</button>
+                        <button onclick="deleteOrden(${orden.id})">Eliminar</button>
+                    </td>
                 `;
 
                 ordenesBody.appendChild(row);
@@ -256,51 +214,46 @@
             document.getElementById('ordenesTable').classList.remove('hidden');
         }
 
-        function filterOrdenes() {
-            const patenteFilter = document.getElementById('patenteFilter').value.toLowerCase();
-            const marcaFilter = document.getElementById('marcaFilter').value.toLowerCase();
-            const modeloFilter = document.getElementById('modeloFilter').value.toLowerCase();
-
-            const filteredOrdenes = ordenesData.filter(orden => {
-                const matchesPatente = orden.vehiculo.patente.toLowerCase().includes(patenteFilter);
-                const matchesMarca = orden.vehiculo.marca.toLowerCase().includes(marcaFilter);
-                const matchesModelo = orden.vehiculo.modelo.toLowerCase().includes(modeloFilter);
-                return matchesPatente && matchesMarca && matchesModelo;
-            });
-            displayOrdenes(filteredOrdenes);
-        }
-
-        function sortOrdenes() {
-            const sortedOrdenes = [...ordenesData].sort((a, b) => new Date(b.fechaIngreso) - new Date(a.fechaIngreso)); // Ordenar por fecha de ingreso
-            displayOrdenes(sortedOrdenes);
-        }
-
-        async function deleteOrden(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta orden?')) {
+        async function sumarHoras(ordenTrabajoId) {
+            const horas = prompt("¿Cuántas horas deseas agregar?", "0");
+            if (horas !== null && !isNaN(horas) && horas > 0) {
                 try {
-                    const response = await fetch(`/api/ordenes/${id}`, {
-                        method: 'DELETE',
+                    const response = await fetch(`/api/ordenes/${ordenTrabajoId}/horas`, { // Endpoint corregido
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ horasTrabajadas: parseFloat(horas) }),
                     });
-
                     if (!response.ok) {
-                        throw new Error('Error al eliminar la orden');
+                        throw new Error('Error al sumar horas');
                     }
-
-                    fetchOrdenes();
+                    fetchOrdenes(); // Actualizar la lista después de sumar horas
                 } catch (error) {
-                    console.error('Error:', error);
-                    alert('Hubo un problema al eliminar la orden.');
+                    alert(error);
                 }
             }
         }
 
-        window.onload = function () {
-            fetchOrdenes();
-        };
+        async function deleteOrden(ordenId) {
+            const confirmDelete = confirm('¿Estás seguro de que deseas eliminar esta orden?');
+            if (confirmDelete) {
+                try {
+                    const response = await fetch(`/api/ordenes/${ordenId}`, {
+                        method: 'DELETE',
+                    });
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar la orden');
+                    }
+                    fetchOrdenes(); // Actualizar la lista después de eliminar la orden
+                } catch (error) {
+                    alert(error);
+                }
+            }
+        }
 
-        setInterval(fetchOrdenes, 30000);
+        window.onload = fetchOrdenes;
     </script>
-
 </body>
 
 </html>

@@ -26,13 +26,13 @@ public class RepuestoUtilizadoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RepuestoUtilizado> obtenerRepuestoUtilizadoPorId(@PathVariable Long id) {
+    public ResponseEntity<RepuestoUtilizado> obtenerRepuestoUtilizadoPorId(@PathVariable String id) {
         RepuestoUtilizado repuestoUtilizado = repuestoUtilizadoService.obtenerRepuestoUtilizadoPorId(id);
         return ResponseEntity.ok(repuestoUtilizado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarRepuestoUtilizado(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarRepuestoUtilizado(@PathVariable String id) {
         repuestoUtilizadoService.eliminarRepuestoUtilizado(id);
         return ResponseEntity.noContent().build();
     }

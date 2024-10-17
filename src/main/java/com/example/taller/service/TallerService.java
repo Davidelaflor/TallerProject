@@ -2,11 +2,17 @@ package com.example.taller.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import com.example.taller.dto.OrdenTrabajoDTO;
+import com.example.taller.dto.OrdenTrabajoResponseDTO;
+import com.example.taller.dto.RepuestoUtilizadoDTO;
+import com.example.taller.dto.RepuestoUtilizadoResponseDTO;
 import com.example.taller.model.Empleado;
 import com.example.taller.model.Estado;
 import com.example.taller.model.OrdenTrabajo;
@@ -20,7 +26,7 @@ import com.example.taller.repository.PropietarioRepository;
 import com.example.taller.repository.RepuestoRepository;
 import com.example.taller.repository.RepuestoUtilizadoRepository;
 
-import jakarta.validation.constraints.Null;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class TallerService implements TallerServiceInterface {
@@ -117,17 +123,6 @@ public class TallerService implements TallerServiceInterface {
 
     @Override
     public OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO dto) {
-
-        /*
-         * boolean exists = ordenTrabajoRepository.existsByPatente(dto.getPatente());
-         * if (exists) {
-         * throw new RuntimeException("Orden ya registrada para la patente: " +
-         * dto.getPatente());
-         * }
-         */
-
-
-         
         Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
@@ -152,7 +147,7 @@ public class TallerService implements TallerServiceInterface {
             Vehiculo vehiculo) {
         return OrdenTrabajo.builder()
                 .detalleFalla(dto.getDetalleFalla())
-                .horasTrabajadas(0)
+                .horasTrabajadas(dto.getHorasTrabajadas())  // Tomar el valor desde el DTO
                 .estado(Estado.ACTIVO.toString())
                 .empleado(empleado)
                 .propietario(propietario)
@@ -161,48 +156,51 @@ public class TallerService implements TallerServiceInterface {
                 .build();
     }
 
-    @Override
-    public OrdenTrabajo modificarOrdenTrabajo(Long id, OrdenTrabajoDTO dto) {
-        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
-        Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
-        Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
-        ordenTrabajo.setDetalleFalla(dto.getDetalleFalla());
-        ordenTrabajo.setHorasTrabajadas(dto.getHorasTrabajadas());
-        ordenTrabajo.setEstado(dto.getEstado().toString());
-        ordenTrabajo.setEmpleado(empleado);
-        ordenTrabajo.setPropietario(propietario);
-        ordenTrabajo.setFechaIngreso(LocalDate.now());
-        return ordenTrabajoRepository.save(ordenTrabajo);
-    }
-
+   
     @Override
     public void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad) {
         // Obtener la orden de trabajo
         OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
                 .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
-    
+
         // Obtener el repuesto (suponiendo que ya tienes la entidad Repuesto)
         Repuesto repuesto = repuestoRepository.findById(repuestoUtilizadoId)
                 .orElseThrow(() -> new RuntimeException("Repuesto no encontrado"));
-    
+
         // Crear un nuevo RepuestoUtilizado
         RepuestoUtilizado repuestoUtilizado = new RepuestoUtilizado();
         repuestoUtilizado.setRepuesto(repuesto);
         // Si hay un atributo de cantidad en RepuestoUtilizado, puedes establecerlo aquí
-        repuestoUtilizado.setCantidad(1); // o la cantidad que necesites
-    
+        repuestoUtilizado.setCantidad(cantidad); // o la cantidad que necesites
+
         // Agregar el repuesto a la orden de trabajo
         ordenTrabajo.addRepuestoUtilizado(repuestoUtilizado);
         ordenTrabajoRepository.save(ordenTrabajo); // Guardar la orden con los nuevos repuestos
     }
-    
+
+@Override
+public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
+    // Obtener la orden de trabajo
+    OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
+            .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+
+    // Sumar horas al campo horasTrabajadas
+    ordenTrabajo.setHorasTrabajadas(ordenTrabajo.getHorasTrabajadas() + horas);
+
+    // Guardar la orden con el nuevo total de horas
+    ordenTrabajoRepository.save(ordenTrabajo);
+}
 
     @Override
     public OrdenTrabajo buscarOrdenTrabajoPorId(Long id) {
         return ordenTrabajoRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public OrdenTrabajo obtenerOrdenTrabajo(Long id) {
+        return ordenTrabajoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Orden de trabajo no encontrada con id: " + id));
+
     }
 
     @Override
