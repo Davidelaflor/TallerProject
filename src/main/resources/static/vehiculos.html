@@ -69,6 +69,17 @@
         .back-btn:hover {
             background-color: #1E88E5; /* Color al pasar el mouse */
         }
+        .delete-btn {
+            background-color: #f44336; /* Color del botón de eliminar */
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f; /* Color al pasar el mouse sobre el botón de eliminar */
+        }
     </style>
 </head>
 <body>
@@ -85,6 +96,7 @@
                         <th>Patente</th>
                         <th>Marca</th>
                         <th>Modelo</th>
+                        <th>Acciones</th> <!-- Columna para las acciones -->
                     </tr>
                 </thead>
                 <tbody id="vehiculosBody">
@@ -92,9 +104,6 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Botón para añadir un nuevo vehículo -->
-        <button class="back-btn" onclick="window.location.href='crearVehiculoNuevo.html?dni=' + encodeURIComponent(dni)">Añadir Nuevo Vehículo</button>
 
         <!-- Botón de volver a la lista de propietarios -->
         <button class="back-btn" onclick="window.location.href='listarPropietarios.html'">Volver a Lista de Propietarios</button>
@@ -127,7 +136,7 @@
 
             if (vehiculos.length === 0) {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="3" style="text-align: center;">No se encontraron vehículos</td>`;
+                row.innerHTML = `<td colspan="4" style="text-align: center;">No se encontraron vehículos</td>`;
                 tbody.appendChild(row);
                 return;
             }
@@ -138,9 +147,31 @@
                     <td>${vehiculo.patente}</td> <!-- Cambié 'placa' por 'patente' -->
                     <td>${vehiculo.marca}</td>
                     <td>${vehiculo.modelo}</td>
+                    <td>
+                        <button class="delete-btn" onclick="eliminarVehiculo('${vehiculo.patente}')">Eliminar</button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        async function eliminarVehiculo(patente) {
+            if (confirm(`¿Estás seguro de que deseas eliminar el vehículo con patente ${patente}?`)) {
+                try {
+                    const response = await fetch(`/api/vehiculos/${patente}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar el vehículo');
+                    }
+                    // Volver a cargar la lista de vehículos después de eliminar
+                    fetchVehiculos();
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('errorMessage').textContent = 'Hubo un problema al eliminar el vehículo.';
+                    document.getElementById('errorMessage').classList.remove('hidden');
+                }
+            }
         }
 
         // Cargar la lista de vehículos al cargar la página

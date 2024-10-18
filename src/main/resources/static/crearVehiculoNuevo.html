@@ -105,7 +105,8 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Error al crear el vehículo');
+                    const errorMessage = await response.text(); // Obtener el mensaje de error
+                    throw new Error(errorMessage || 'Error al crear el vehículo');
                 }
 
                 // Redirigir o mostrar un mensaje de éxito
@@ -113,7 +114,7 @@
                 window.location.href = 'listarPropietarios.html'; // Redirigir a la lista de propietarios
             } catch (error) {
                 console.error('Error:', error);
-                alert('Hubo un problema al crear el vehículo.');
+                alert('Hubo un problema al crear el vehículo: ' + error.message);
             }
         }
     </script>
