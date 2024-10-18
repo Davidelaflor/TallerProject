@@ -28,7 +28,7 @@
         .detail {
             margin: 15px 0;
         }
-        .back-btn {
+        .back-btn, .calculate-btn {
             display: block;
             background-color: #4CAF50;
             color: white;
@@ -41,8 +41,13 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .back-btn:hover {
+        .back-btn:hover, .calculate-btn:hover {
             background-color: #45a049;
+        }
+        .total-cost {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -50,10 +55,14 @@
     <div class="container">
         <h1>Detalle de Orden de Trabajo</h1>
         <div id="ordenDetails"></div>
+        <button class="calculate-btn" onclick="calcularCostoTotal()">Calcular Costo Total</button>
+        <div id="totalCost" class="total-cost"></div>
         <button class="back-btn" onclick="window.history.back()">Volver</button>
     </div>
 
     <script>
+        let ordenData; // Variable para almacenar los datos de la orden
+
         async function fetchOrdenDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
@@ -64,8 +73,8 @@
                     throw new Error('Error al obtener los detalles de la orden');
                 }
 
-                const orden = await response.json();
-                displayOrdenDetails(orden);
+                ordenData = await response.json(); // Almacena los datos de la orden
+                displayOrdenDetails(ordenData);
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('ordenDetails').innerText = 'Error al cargar los detalles de la orden';
@@ -90,6 +99,24 @@
                 <h3>Propietario</h3>
                 <div>${orden.propietario.nombre} - ${orden.propietario.telefono}</div>
             `;
+        }
+
+        function calcularCostoTotal() {
+            const costoPorHora = 50; // Costo por hora en euros
+            const horasTrabajadas = ordenData.horasTrabajadas; // Obtiene horas trabajadas
+            const repuestos = ordenData.repuestosUtilizados; // Obtiene los repuestos utilizados
+
+            // Calcular el costo de los repuestos
+            let costoRepuestos = 0;
+            repuestos.forEach(repuesto => {
+                costoRepuestos += repuesto.precio * repuesto.cantidad; // Cálculo del costo total de cada repuesto
+            });
+
+            // Calcular el costo total
+            const costoTotal = (horasTrabajadas * costoPorHora) + costoRepuestos;
+
+            // Mostrar el costo total en el div correspondiente
+            document.getElementById('totalCost').innerText = `Costo Total: €${costoTotal.toFixed(2)}`;
         }
 
         window.onload = fetchOrdenDetails;

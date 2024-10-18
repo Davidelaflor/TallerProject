@@ -35,7 +35,8 @@ public interface TallerServiceInterface {
     OrdenTrabajo obtenerOrdenTrabajo(Long id);
     OrdenTrabajo buscarOrdenTrabajoPorId(Long id);
     void eliminarOrdenTrabajo(Long id);
-    
+    double calcularCostoTotal(OrdenTrabajoDTO ordenTrabajoDTO);
+
     // Métodos para manejar Repuestos Utilizados
     RepuestoUtilizado guardarRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado);
     void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);

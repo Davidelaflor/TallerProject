@@ -212,4 +212,27 @@ public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
     public RepuestoUtilizado guardarRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado) {
         return repuestoUtilizadoRepository.save(repuestoUtilizado);
     }
+
+    public double calcularCostoTotal(OrdenTrabajoDTO ordenTrabajoDTO) {
+        // Costo por hora fijo
+        final double costoPorHora = 50.0;
+
+        // Calcular costo de la mano de obra
+        double costoManoObra = ordenTrabajoDTO.getHorasTrabajadas() * costoPorHora;
+
+        // Calcular costo total de los repuestos utilizados
+        double costoRepuestos = calcularCostoRepuestos(ordenTrabajoDTO.getRepuestosUtilizados());
+
+        // Calcular costo total
+        return costoManoObra + costoRepuestos;
+    }
+
+    private double calcularCostoRepuestos(List<RepuestoUtilizadoDTO> repuestosUtilizados) {
+        double total = 0;
+        for (RepuestoUtilizadoDTO repuestoUtilizado : repuestosUtilizados) {
+            // Suponiendo que el precio se multiplica por la cantidad utilizada
+            total += repuestoUtilizado.getRepuesto().getPrecio() * repuestoUtilizado.getCantidadUtilizada();
+        }
+        return total;
+    }
 }

@@ -1,5 +1,9 @@
 package com.example.taller.controller;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+import com.example.taller.dto.VehiculoDTO;
 import com.example.taller.model.Vehiculo;
 import com.example.taller.service.VehiculoService;
 
@@ -57,5 +60,17 @@ public ResponseEntity<List<Vehiculo>> obtenerVehiculosPorDni(@RequestParam Strin
     public ResponseEntity<Void> eliminarVehiculo(@PathVariable String patente) {
         vehiculoService.eliminarVehiculo(patente);
         return ResponseEntity.noContent().build();
+    }
+    private static final Logger logger = LoggerFactory.getLogger(VehiculoController.class);
+
+    @PostMapping("/propietario/{dni}")
+    public ResponseEntity<Vehiculo> agregarVehiculoAPropietario(@PathVariable String dni, @RequestBody VehiculoDTO vehiculoDTO) {
+    try {
+        Vehiculo nuevoVehiculo = vehiculoService.agregarVehiculoAPropietario(dni, vehiculoDTO);
+        return ResponseEntity.ok(nuevoVehiculo);
+    } catch (RuntimeException e) {
+        logger.error("Error al agregar vehículo al propietario con DNI {}: {}", dni, e.getMessage());
+        return ResponseEntity.badRequest().body(null);  // Devolver 400 si ocurre un error
+    }
     }
 }

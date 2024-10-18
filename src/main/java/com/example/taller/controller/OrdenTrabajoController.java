@@ -172,4 +172,10 @@ public class OrdenTrabajoController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/calcular-costo")
+    public double calcularCosto(@RequestBody OrdenTrabajoDTO ordenTrabajoDTO) {
+        // Calcular el costo total utilizando el servicio
+        return tallerService.calcularCostoTotal(ordenTrabajoDTO);
+    }
+
 }

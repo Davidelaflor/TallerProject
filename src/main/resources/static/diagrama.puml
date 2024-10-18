@@ -1,0 +1,10 @@
+@startuml
+entity "repuestos" {
+    + codigo_inventario : varchar(50) NOT NULL
+    + nombre : varchar(100) NOT NULL
+    + cantidad : int NOT NULL
+    + precio : decimal(10,2) NOT NULL
+    --
+    + PRIMARY KEY (codigo_inventario)
+}
+@enduml
