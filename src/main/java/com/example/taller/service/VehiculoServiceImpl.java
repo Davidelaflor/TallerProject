@@ -19,14 +19,14 @@ public class VehiculoServiceImpl implements VehiculoService {
     @Autowired
     private PropietarioRepository propietarioRepository;
 
-     @Override
+    @Override
     public List<Vehiculo> obtenerVehiculosPorDni(String dni) {
         List<Vehiculo> vehiculos = vehiculoRepository.findByPropietarioDni(dni);
-    
+
         if (vehiculos.isEmpty()) {
             throw new RuntimeException("No se encontraron vehículos para el propietario con DNI: " + dni);
         }
-        
+
         return vehiculos;
     }
 

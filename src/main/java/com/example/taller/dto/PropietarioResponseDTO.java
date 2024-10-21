@@ -17,5 +17,4 @@ public class PropietarioResponseDTO {
   private String dni;
     private String nombre;
     private String telefono;
-    private List<VehiculoResponseDTO> vehiculos;
 }

@@ -127,22 +127,18 @@ public class TallerService implements TallerServiceInterface {
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
-
-        // Suponiendo que se ha seleccionado un vehículo de los que tiene el propietario
-        List<Vehiculo> vehiculos = propietario.getVehiculos();
-        if (vehiculos.isEmpty()) {
-            throw new RuntimeException("El propietario no tiene vehículos registrados.");
-        }
-
-        // Aquí seleccionas el vehículo de alguna forma, por ejemplo, el primero:
-        Vehiculo vehiculoSeleccionado = vehiculos.get(0); // Selecciona el vehículo correspondiente
-
+    
+        // Buscar el vehículo por la patente dentro de los vehículos del propietario
+        Vehiculo vehiculoSeleccionado = propietario.getVehiculos().stream()
+                .filter(vehiculo -> vehiculo.getPatente().equals(dto.getVehiculoPatente()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado para este propietario"));
+    
         OrdenTrabajo entity = generateOrdenTrabajoEntity(dto, empleado, propietario, vehiculoSeleccionado);
-
+    
         return ordenTrabajoRepository.save(entity);
-
     }
-
+    
     private OrdenTrabajo generateOrdenTrabajoEntity(OrdenTrabajoDTO dto, Empleado empleado, Propietario propietario,
             Vehiculo vehiculo) {
         return OrdenTrabajo.builder()

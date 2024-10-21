@@ -21,5 +21,6 @@ public class OrdenTrabajoResponseDTO {
     private LocalDate fechaIngreso;
     private EmpleadoResponseDTO empleado;
     private List<RepuestoUtilizadoResponseDTO> repuestosUtilizados;
-    private PropietarioResponseDTO propietario;
+    private PropietarioResponseDTO propietario; 
+    private VehiculoResponseDTO vehiculo; // Agrega esta línea
 }

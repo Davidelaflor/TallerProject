@@ -46,6 +46,7 @@ public class OrdenTrabajo {
     @ManyToOne 
     @JoinColumn(name = "propietario_dni")
     private Propietario propietario;
+    @Builder.Default
     @OneToMany(mappedBy = "ordenTrabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RepuestoUtilizado> repuestoUtilizado = new ArrayList<>();
     
