@@ -24,159 +24,170 @@ import com.example.taller.dto.PropietarioResponseDTO;
 import com.example.taller.dto.RepuestoUtilizadoDTO;
 import com.example.taller.dto.RepuestoUtilizadoResponseDTO;
 import com.example.taller.dto.VehiculoResponseDTO;
+import com.example.taller.model.Empleado;
 import com.example.taller.model.OrdenTrabajo;
+import com.example.taller.model.Propietario;
 import com.example.taller.model.RepuestoUtilizado;
+import com.example.taller.model.Vehiculo;
 import com.example.taller.service.TallerServiceInterface;
-
 
 @RestController
 @RequestMapping("/api/ordenes")
 public class OrdenTrabajoController {
-    @Autowired
-    private TallerServiceInterface tallerService;
+        @Autowired
+        private TallerServiceInterface tallerService;
 
-    @GetMapping
-    public ResponseEntity<List<OrdenTrabajoResponseDTO>> listarOrdenes() {
-        List<OrdenTrabajo> ordenesTrabajo = tallerService.listarOrdenes();
+        @GetMapping
+        public ResponseEntity<List<OrdenTrabajoResponseDTO>> listarOrdenes() {
+                List<OrdenTrabajo> ordenesTrabajo = tallerService.listarOrdenes();
 
-        // Mapeo de la lista de órdenes de trabajo a una lista de
-        // OrdenTrabajoResponseDTO
-        List<OrdenTrabajoResponseDTO> ordenesTrabajoDTO = ordenesTrabajo.stream()
-                .map(ordenTrabajo -> {
+                // Mapeo de la lista de órdenes de trabajo a una lista de
+                // OrdenTrabajoResponseDTO
+                List<OrdenTrabajoResponseDTO> ordenesTrabajoDTO = ordenesTrabajo.stream()
+                                .map(ordenTrabajo -> {
 
-                    // Mapeo de repuestos utilizados a DTO
-                    List<RepuestoUtilizadoResponseDTO> repuestosUtilizados = ordenTrabajo.getRepuestoUtilizado()
-                            .stream()
-                            .map(repuestoUtilizado -> new RepuestoUtilizadoResponseDTO(
-                                    repuestoUtilizado.getRepuesto().getCodigoInventario(),
-                                    repuestoUtilizado.getRepuesto().getNombre(),
-                                    repuestoUtilizado.getRepuesto().getPrecio(),
-                                    repuestoUtilizado.getCantidad()))
-                            .toList();
+                                        // Mapeo de repuestos utilizados a DTO
+                                        List<RepuestoUtilizadoResponseDTO> repuestosUtilizados = ordenTrabajo
+                                                        .getRepuestoUtilizado()
+                                                        .stream()
+                                                        .map(repuestoUtilizado -> new RepuestoUtilizadoResponseDTO(
+                                                                        repuestoUtilizado.getRepuesto()
+                                                                                        .getCodigoInventario(),
+                                                                        repuestoUtilizado.getRepuesto().getNombre(),
+                                                                        repuestoUtilizado.getRepuesto().getPrecio(),
+                                                                        repuestoUtilizado.getCantidad()))
+                                                        .toList();
 
-                    // Mapeo de los vehículos del propietario a DTO
-                    List<VehiculoResponseDTO> vehiculos = ordenTrabajo.getPropietario().getVehiculos().stream()
-                            .map(vehiculo -> new VehiculoResponseDTO(
-                                    vehiculo.getPatente(),
-                                    vehiculo.getMarca(),
-                                    vehiculo.getModelo()))
-                            .toList();
+                                        // Mapeo del vehículo **asociado** a la orden de trabajo
+                                        Vehiculo vehiculo = ordenTrabajo.getVehiculo();
+                                        VehiculoResponseDTO vehiculoDTO = null;
+                                        if (vehiculo != null) {
+                                                vehiculoDTO = new VehiculoResponseDTO(
+                                                                vehiculo.getPatente(),
+                                                                vehiculo.getMarca(),
+                                                                vehiculo.getModelo());
+                                        }
 
-                    // Mapeo del propietario a DTO
-                    PropietarioResponseDTO propietarioDTO = new PropietarioResponseDTO(
-                            ordenTrabajo.getPropietario().getDni(),
-                            ordenTrabajo.getPropietario().getNombre(),
-                            ordenTrabajo.getPropietario().getTelefono(),
-                            vehiculos);
+                                        // Mapeo del propietario a DTO (solo con el vehículo asociado)
+                                        Propietario propietario = ordenTrabajo.getPropietario();
+                                        PropietarioResponseDTO propietarioDTO = null;
+                                        if (propietario != null) {
+                                                propietarioDTO = new PropietarioResponseDTO(
+                                                                propietario.getDni(),
+                                                                propietario.getNombre(),
+                                                                propietario.getTelefono(),
+                                                                vehiculoDTO); // **Incluye solo el vehículo asociado a
+                                                                              // la orden**
+                                        }
 
-                    // Mapeo del empleado a DTO (con apellido y teléfono)
-                    EmpleadoResponseDTO empleadoDTO = new EmpleadoResponseDTO(
-                            ordenTrabajo.getEmpleado().getId(),
-                            ordenTrabajo.getEmpleado().getNombre(),
-                            ordenTrabajo.getEmpleado().getApellido(), // Añadir apellido
-                            ordenTrabajo.getEmpleado().getTelefono()); // Añadir teléfono
+                                        // Mapeo del empleado a DTO (con apellido y teléfono)
+                                        Empleado empleado = ordenTrabajo.getEmpleado();
+                                        EmpleadoResponseDTO empleadoDTO = new EmpleadoResponseDTO(
+                                                        empleado.getId(),
+                                                        empleado.getNombre(),
+                                                        empleado.getApellido(),
+                                                        empleado.getTelefono());
+                                        // Crear DTO de respuesta de la orden de trabajo
+                                        return new OrdenTrabajoResponseDTO(
+                                                        ordenTrabajo.getId(),
+                                                        ordenTrabajo.getDetalleFalla(),
+                                                        ordenTrabajo.getHorasTrabajadas(),
+                                                        ordenTrabajo.getEstado(),
+                                                        ordenTrabajo.getFechaIngreso(), // Mapeo de la fecha de ingreso
+                                                        empleadoDTO, // Mapeo del empleado
+                                                        repuestosUtilizados,
+                                                        propietarioDTO);
 
-                    // Crear DTO de respuesta de la orden de trabajo
-                    return new OrdenTrabajoResponseDTO(
-                            ordenTrabajo.getId(),
-                            ordenTrabajo.getDetalleFalla(),
-                            ordenTrabajo.getHorasTrabajadas(),
-                            ordenTrabajo.getEstado(),
-                            ordenTrabajo.getFechaIngreso(), // Mapeo de la fecha de ingreso
-                            empleadoDTO, // Mapeo del empleado
-                            repuestosUtilizados,
-                            propietarioDTO);
+                                }).toList();
 
-                }).toList();
-
-        return ResponseEntity.ok(ordenesTrabajoDTO);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<OrdenTrabajoResponseDTO> obtenerOrden(@PathVariable Long id) {
-        OrdenTrabajo ordenTrabajo = tallerService.obtenerOrdenTrabajo(id);
-        if (ordenTrabajo == null) {
-            return ResponseEntity.notFound().build();
+                return ResponseEntity.ok(ordenesTrabajoDTO);
         }
 
-        // Mapeo de repuestos utilizados a DTO
-        List<RepuestoUtilizadoResponseDTO> repuestosUtilizados = ordenTrabajo.getRepuestoUtilizado().stream()
-                .map(repuestoUtilizado -> new RepuestoUtilizadoResponseDTO(
-                        repuestoUtilizado.getRepuesto().getCodigoInventario(),
-                        repuestoUtilizado.getRepuesto().getNombre(),
-                        repuestoUtilizado.getRepuesto().getPrecio(),
-                        repuestoUtilizado.getCantidad()))
-                .toList();
+        @GetMapping("/{id}")
+        public ResponseEntity<OrdenTrabajoResponseDTO> obtenerOrden(@PathVariable Long id) {
+                OrdenTrabajo ordenTrabajo = tallerService.obtenerOrdenTrabajo(id);
+                if (ordenTrabajo == null) {
+                        return ResponseEntity.notFound().build();
+                }
 
-        // Mapeo de los vehículos del propietario a DTO
-        List<VehiculoResponseDTO> vehiculos = ordenTrabajo.getPropietario().getVehiculos().stream()
-                .map(vehiculo -> new VehiculoResponseDTO(
-                        vehiculo.getPatente(),
-                        vehiculo.getMarca(),
-                        vehiculo.getModelo()))
-                .toList();
+                // Mapeo de repuestos utilizados a DTO
+                List<RepuestoUtilizadoResponseDTO> repuestosUtilizados = ordenTrabajo.getRepuestoUtilizado().stream()
+                                .map(repuestoUtilizado -> new RepuestoUtilizadoResponseDTO(
+                                                repuestoUtilizado.getRepuesto().getCodigoInventario(),
+                                                repuestoUtilizado.getRepuesto().getNombre(),
+                                                repuestoUtilizado.getRepuesto().getPrecio(),
+                                                repuestoUtilizado.getCantidad()))
+                                .toList();
 
-        // Mapeo del propietario a DTO
-        PropietarioResponseDTO propietarioDTO = new PropietarioResponseDTO(
-                ordenTrabajo.getPropietario().getDni(),
-                ordenTrabajo.getPropietario().getNombre(),
-                ordenTrabajo.getPropietario().getTelefono(),
-                vehiculos);
+                // Mapeo de los vehículos del propietario a DTO
+                List<VehiculoResponseDTO> vehiculos = ordenTrabajo.getPropietario().getVehiculos().stream()
+                                .map(vehiculo -> new VehiculoResponseDTO(
+                                                vehiculo.getPatente(),
+                                                vehiculo.getMarca(),
+                                                vehiculo.getModelo()))
+                                .toList();
 
-        EmpleadoResponseDTO empleadoDTO = new EmpleadoResponseDTO(
-                ordenTrabajo.getEmpleado().getId(),
-                ordenTrabajo.getEmpleado().getNombre(),
-                ordenTrabajo.getEmpleado().getApellido(), // Añadir apellido
-                ordenTrabajo.getEmpleado().getTelefono());
+                // Mapeo del propietario a DTO
+                PropietarioResponseDTO propietarioDTO = new PropietarioResponseDTO(
+                                ordenTrabajo.getPropietario().getDni(),
+                                ordenTrabajo.getPropietario().getNombre(),
+                                ordenTrabajo.getPropietario().getTelefono(),
+                                vehiculos);
 
-        // Crear DTO de respuesta de la orden de trabajo
-        OrdenTrabajoResponseDTO responseDTO = new OrdenTrabajoResponseDTO(
-                ordenTrabajo.getId(),
-                ordenTrabajo.getDetalleFalla(),
-                ordenTrabajo.getHorasTrabajadas(),
-                ordenTrabajo.getEstado(),
-                ordenTrabajo.getFechaIngreso(), // Mapeo de la fecha de ingreso
-                empleadoDTO, // Mapeo del empleado
-                repuestosUtilizados,
-                propietarioDTO);
-        return ResponseEntity.ok(responseDTO);
-        // return ordenTrabajo != null ? ResponseEntity.ok(ordenTrabajo) :
-        // ResponseEntity.notFound().build();
-    }
+                EmpleadoResponseDTO empleadoDTO = new EmpleadoResponseDTO(
+                                ordenTrabajo.getEmpleado().getId(),
+                                ordenTrabajo.getEmpleado().getNombre(),
+                                ordenTrabajo.getEmpleado().getApellido(), // Añadir apellido
+                                ordenTrabajo.getEmpleado().getTelefono());
 
-    @PostMapping
-    public ResponseEntity<OrdenTrabajo> crearOrdenTrabajo(@RequestBody OrdenTrabajoDTO ordenTrabajo) {
-        OrdenTrabajo nuevaOrden = tallerService.crearOrdenTrabajo(ordenTrabajo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOrden);
-    }
+                // Crear DTO de respuesta de la orden de trabajo
+                OrdenTrabajoResponseDTO responseDTO = new OrdenTrabajoResponseDTO(
+                                ordenTrabajo.getId(),
+                                ordenTrabajo.getDetalleFalla(),
+                                ordenTrabajo.getHorasTrabajadas(),
+                                ordenTrabajo.getEstado(),
+                                ordenTrabajo.getFechaIngreso(), // Mapeo de la fecha de ingreso
+                                empleadoDTO, // Mapeo del empleado
+                                repuestosUtilizados,
+                                propietarioDTO);
+                return ResponseEntity.ok(responseDTO);
+                // return ordenTrabajo != null ? ResponseEntity.ok(ordenTrabajo) :
+                // ResponseEntity.notFound().build();
+        }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarOrdenTrabajo(@PathVariable Long id) {
-        tallerService.eliminarOrdenTrabajo(id);
-        return ResponseEntity.noContent().build();
-    }
+        @PostMapping
+        public ResponseEntity<OrdenTrabajo> crearOrdenTrabajo(@RequestBody OrdenTrabajoDTO ordenTrabajo) {
+                OrdenTrabajo nuevaOrden = tallerService.crearOrdenTrabajo(ordenTrabajo);
+                return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOrden);
+        }
 
-    @PostMapping("/{ordenTrabajoId}/repuestos/{repuestoUtilizadoId}")
-    public ResponseEntity<Void> agregarRepuestoAOrden(@PathVariable Long ordenTrabajoId,
-            @PathVariable String repuestoUtilizadoId,
-            @RequestBody RepuestoUtilizadoDTO repuestoUtilizadoDTO) {
-        int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
-        tallerService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
-        return ResponseEntity.ok().build();
-    }
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> eliminarOrdenTrabajo(@PathVariable Long id) {
+                tallerService.eliminarOrdenTrabajo(id);
+                return ResponseEntity.noContent().build();
+        }
 
-    @PostMapping("/{ordenTrabajoId}/horas")
-    public ResponseEntity<Void> agregarHorasAOrden(@PathVariable Long ordenTrabajoId,
-            @RequestBody HorasTrabajadasDTO horasTrabajadasDTO) {
-        int horas = horasTrabajadasDTO.getHorasTrabajadas();
-        tallerService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
-        return ResponseEntity.ok().build();
-    }
+        @PostMapping("/{ordenTrabajoId}/repuestos/{repuestoUtilizadoId}")
+        public ResponseEntity<Void> agregarRepuestoAOrden(@PathVariable Long ordenTrabajoId,
+                        @PathVariable String repuestoUtilizadoId,
+                        @RequestBody RepuestoUtilizadoDTO repuestoUtilizadoDTO) {
+                int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
+                tallerService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
+                return ResponseEntity.ok().build();
+        }
 
-    @PostMapping("/calcular-costo")
-    public double calcularCosto(@RequestBody OrdenTrabajoDTO ordenTrabajoDTO) {
-        // Calcular el costo total utilizando el servicio
-        return tallerService.calcularCostoTotal(ordenTrabajoDTO);
-    }
+        @PostMapping("/{ordenTrabajoId}/horas")
+        public ResponseEntity<Void> agregarHorasAOrden(@PathVariable Long ordenTrabajoId,
+                        @RequestBody HorasTrabajadasDTO horasTrabajadasDTO) {
+                int horas = horasTrabajadasDTO.getHorasTrabajadas();
+                tallerService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/calcular-costo")
+        public double calcularCosto(@RequestBody OrdenTrabajoDTO ordenTrabajoDTO) {
+                // Calcular el costo total utilizando el servicio
+                return tallerService.calcularCostoTotal(ordenTrabajoDTO);
+        }
 
 }
