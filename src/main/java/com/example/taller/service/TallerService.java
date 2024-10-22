@@ -136,7 +136,11 @@ public class TallerService implements TallerServiceInterface {
                 .filter(vehiculo -> vehiculo.getPatente().equals(dto.getVehiculoPatente()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Vehículo no encontrado para el propietario"));
-    
+       // Verificar si el vehículo ya está en alguna orden de trabajo existente
+       boolean vehiculoRegistrado = ordenTrabajoRepository.existsByVehiculo(vehiculoSeleccionado);
+       if (vehiculoRegistrado) {
+           throw new RuntimeException("El vehículo ya tiene una orden de trabajo registrada.");
+       }
         // Crear la entidad OrdenTrabajo directamente
         OrdenTrabajo nuevaOrden = OrdenTrabajo.builder()
                 .detalleFalla(dto.getDetalleFalla())
