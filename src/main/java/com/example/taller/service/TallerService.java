@@ -123,38 +123,36 @@ public class TallerService implements TallerServiceInterface {
 
     @Override
     public OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO dto) {
+        // Buscar empleado por ID
         Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+        
+        // Buscar propietario por DNI
         Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
-
-        // Suponiendo que se ha seleccionado un vehículo de los que tiene el propietario
-        List<Vehiculo> vehiculos = propietario.getVehiculos();
-        if (vehiculos.isEmpty()) {
-            throw new RuntimeException("El propietario no tiene vehículos registrados.");
-        }
-
-        // Aquí seleccionas el vehículo de alguna forma, por ejemplo, el primero:
-        Vehiculo vehiculoSeleccionado = vehiculos.get(0); // Selecciona el vehículo correspondiente
-
-        OrdenTrabajo entity = generateOrdenTrabajoEntity(dto, empleado, propietario, vehiculoSeleccionado);
-
-        return ordenTrabajoRepository.save(entity);
-
-    }
-
-    private OrdenTrabajo generateOrdenTrabajoEntity(OrdenTrabajoDTO dto, Empleado empleado, Propietario propietario,
-            Vehiculo vehiculo) {
-        return OrdenTrabajo.builder()
+    
+        // Buscar el vehículo por patente dentro de los vehículos del propietario
+        Vehiculo vehiculoSeleccionado = propietario.getVehiculos().stream()
+                .filter(vehiculo -> vehiculo.getPatente().equals(dto.getVehiculoPatente()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado para el propietario"));
+    
+        // Crear la entidad OrdenTrabajo directamente
+        OrdenTrabajo nuevaOrden = OrdenTrabajo.builder()
                 .detalleFalla(dto.getDetalleFalla())
                 .horasTrabajadas(dto.getHorasTrabajadas())  // Tomar el valor desde el DTO
-                .estado(Estado.ACTIVO.toString())
+                .estado(Estado.ACTIVO.toString())  // Puedes ajustar si el estado es dinámico
                 .empleado(empleado)
                 .propietario(propietario)
-                .vehiculo(vehiculo)
-                .fechaIngreso(dto.getFechaIngreso() != null ? dto.getFechaIngreso() : LocalDate.now())
+                .vehiculo(vehiculoSeleccionado)
+                .fechaIngreso(dto.getFechaIngreso() != null ? dto.getFechaIngreso() : LocalDate.now())  // Fecha por defecto
                 .build();
+    
+        // Guardar y devolver la nueva orden
+        return ordenTrabajoRepository.save(nuevaOrden);
     }
+    
+    
 
    
     @Override

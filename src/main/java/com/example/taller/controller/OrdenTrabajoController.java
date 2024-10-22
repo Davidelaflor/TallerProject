@@ -68,17 +68,15 @@ public class OrdenTrabajoController {
                                                                 vehiculo.getModelo());
                                         }
 
-                                        // Mapeo del propietario a DTO (solo con el vehículo asociado)
+                                        // Mapeo del propietario a DTO (incluyendo solo el vehículo específico)
                                         Propietario propietario = ordenTrabajo.getPropietario();
-                                        PropietarioResponseDTO propietarioDTO = null;
-                                        if (propietario != null) {
-                                                propietarioDTO = new PropietarioResponseDTO(
-                                                                propietario.getDni(),
-                                                                propietario.getNombre(),
-                                                                propietario.getTelefono(),
-                                                                vehiculoDTO); // **Incluye solo el vehículo asociado a
-                                                                              // la orden**
-                                        }
+                                        List<VehiculoResponseDTO> vehiculosDTO = vehiculo != null ? List.of(vehiculoDTO)
+                                                        : List.of(); // Solo el vehículo de la orden
+                                        PropietarioResponseDTO propietarioDTO = new PropietarioResponseDTO(
+                                                        propietario.getDni(),
+                                                        propietario.getNombre(),
+                                                        propietario.getTelefono(),
+                                                        vehiculosDTO); // Incluye solo el vehículo asociado a la orden
 
                                         // Mapeo del empleado a DTO (con apellido y teléfono)
                                         Empleado empleado = ordenTrabajo.getEmpleado();

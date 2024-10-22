@@ -28,5 +28,5 @@ public class OrdenTrabajoDTO {
     private int horasTrabajadas;
     private PropietarioDTO propietario;
     private Long empleadoId;
-    //private String vehiculoPatente;
+    private String vehiculoPatente;
 }
