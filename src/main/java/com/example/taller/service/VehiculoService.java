@@ -1,5 +1,6 @@
 package com.example.taller.service;
 
+import com.example.taller.dto.CrearVehiculoParaPropietarioDTO;
 import com.example.taller.dto.VehiculoDTO;
 import com.example.taller.model.Vehiculo;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface VehiculoService {
 
     List<Vehiculo> obtenerTodosLosVehiculos();
 
-    Vehiculo agregarVehiculoAPropietario(String dni, VehiculoDTO vehiculoDTO);
+    Vehiculo agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioDTO vehiculoDTO);
 
 
     void eliminarVehiculo(String patente);

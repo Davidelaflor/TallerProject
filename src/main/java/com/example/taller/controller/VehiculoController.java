@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.taller.dto.CrearVehiculoParaPropietarioDTO;
 import com.example.taller.dto.VehiculoDTO;
 import com.example.taller.model.Vehiculo;
 import com.example.taller.service.VehiculoService;
@@ -64,7 +65,7 @@ public ResponseEntity<List<Vehiculo>> obtenerVehiculosPorDni(@RequestParam Strin
     private static final Logger logger = LoggerFactory.getLogger(VehiculoController.class);
 
     @PostMapping("/propietario/{dni}")
-    public ResponseEntity<Vehiculo> agregarVehiculoAPropietario(@PathVariable String dni, @RequestBody VehiculoDTO vehiculoDTO) {
+    public ResponseEntity<Vehiculo> agregarVehiculoAPropietario(@PathVariable String dni, @RequestBody CrearVehiculoParaPropietarioDTO vehiculoDTO) {
     try {
         Vehiculo nuevoVehiculo = vehiculoService.agregarVehiculoAPropietario(dni, vehiculoDTO);
         return ResponseEntity.ok(nuevoVehiculo);
