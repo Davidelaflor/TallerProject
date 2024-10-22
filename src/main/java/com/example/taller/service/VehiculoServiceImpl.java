@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 
 import com.example.taller.dto.CrearVehiculoParaPropietarioDTO;
 import com.example.taller.dto.VehiculoDTO;
+import com.example.taller.exception.VehiculoYaRegistradoException;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.Vehiculo;
 import com.example.taller.repository.VehiculoRepository;
@@ -59,47 +60,61 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-public Vehiculo agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioDTO vehiculoDTO) {
-    // Buscar al propietario en la base de datos por DNI
-    Propietario propietario = propietarioRepository.findById(dni)
-            .orElseThrow(() -> new RuntimeException("Propietario con DNI " + dni + " no encontrado"));
-
-    // Buscar si el vehículo ya existe en la base de datos
-    Optional<Vehiculo> vehiculoEnBD = vehiculoRepository.findById(vehiculoDTO.getPatente());
-
-    Vehiculo nuevoVehiculo;
-
-    if (vehiculoEnBD.isPresent()) {
-        // Si el vehículo ya existe, verifica si está asociado al mismo propietario
-        nuevoVehiculo = vehiculoEnBD.get();
-        
-        // Si el vehículo ya está asociado a este propietario, lanzar error
-        if (nuevoVehiculo.getPropietario() != null && nuevoVehiculo.getPropietario().equals(propietario)) {
-            throw new RuntimeException("El vehículo ya está registrado para este propietario.");
+    public Vehiculo agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioDTO vehiculoDTO) {
+        // Buscar al propietario en la base de datos por DNI
+        Propietario propietario = propietarioRepository.findById(dni)
+                .orElseThrow(() -> new RuntimeException("Propietario con DNI " + dni + " no encontrado"));
+    
+        // Buscar si el vehículo ya existe en la base de datos
+        Optional<Vehiculo> vehiculoEnBD = vehiculoRepository.findById(vehiculoDTO.getPatente());
+    
+        // Declarar la variable nuevoVehiculo
+        Vehiculo nuevoVehiculo;
+    
+        if (vehiculoEnBD.isPresent()) {
+            // Si el vehículo ya existe, verificar si está asociado a un propietario
+            Vehiculo vehiculoExistente = vehiculoEnBD.get();
+    
+            // Si el vehículo ya tiene un propietario diferente, lanzar error
+            if (vehiculoExistente.getPropietario() != null && !vehiculoExistente.getPropietario().equals(propietario)) {
+                throw new VehiculoYaRegistradoException("El vehículo con patente " + vehiculoDTO.getPatente() + " ya está registrado para otro propietario.");
+            }
+    
+            // Si el vehículo ya está asociado a este propietario, lanzar error
+            if (vehiculoExistente.getPropietario().equals(propietario)) {
+                throw new VehiculoYaRegistradoException("El vehículo con patente " + vehiculoDTO.getPatente() + " ya está registrado para este propietario.");
+            }
+    
+            // Detach para asegurar que no haya conflicto con la sesión actual
+            entityManager.detach(vehiculoExistente);
+            
+            // Actualizar la asociación del vehículo con el propietario
+            vehiculoExistente.setPropietario(propietario);
+            propietario.addVehiculo(vehiculoExistente);
+    
+            // Asignar el vehículo existente a nuevoVehiculo para devolverlo
+            nuevoVehiculo = vehiculoExistente;
+        } else {
+            // Si el vehículo no existe, creamos uno nuevo
+            nuevoVehiculo = Vehiculo.builder()
+                    .patente(vehiculoDTO.getPatente())
+                    .marca(vehiculoDTO.getMarca())
+                    .modelo(vehiculoDTO.getModelo())
+                    .propietario(propietario) // Asignamos el propietario
+                    .build();
+    
+            // Agregar el vehículo al propietario
+            propietario.addVehiculo(nuevoVehiculo);
+            
+            // Guardar el vehículo en la base de datos
+            vehiculoRepository.save(nuevoVehiculo);
         }
-
-        // Detach para asegurar que no haya conflicto con la sesión actual
-        entityManager.detach(nuevoVehiculo);
-        
-        // Actualizar la asociación del vehículo con el propietario
-        nuevoVehiculo.setPropietario(propietario);
-    } else {
-        // Si el vehículo no existe, creamos uno nuevo
-        nuevoVehiculo = Vehiculo.builder()
-                .patente(vehiculoDTO.getPatente())
-                .marca(vehiculoDTO.getMarca())
-                .modelo(vehiculoDTO.getModelo())
-                .propietario(propietario) // Asignamos el propietario
-                .build();
+    
+        // Guardar los cambios en el propietario (esto asegura la relación bidireccional)
+        propietarioRepository.save(propietario);
+    
+        return nuevoVehiculo; // Devolver el vehículo (nuevo o existente)
     }
-
-    // Agregar el vehículo al propietario
-    propietario.addVehiculo(nuevoVehiculo);
-
-    // Guardar los cambios en el vehículo y en el propietario
-    vehiculoRepository.save(nuevoVehiculo);
-    propietarioRepository.save(propietario);
-
-    return nuevoVehiculo;
-}
+    
+    
 }
