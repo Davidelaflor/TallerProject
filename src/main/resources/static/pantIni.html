@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-     <!--<link rel="stylesheet" type="text/css" href="bootstrap.css" /> -->
+    <!--<link rel="stylesheet" type="text/css" href="bootstrap.css" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listado de Órdenes de Trabajo</title>
     <style>
@@ -124,7 +124,52 @@
         .hidden {
             display: none;
         }
-    </style> 
+
+        .filter-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .filter-fields {
+            display: none; /* Ocultar campos de filtro por defecto */
+            margin-top: 10px;
+        }
+
+        .filter-fields input {
+            margin-right: 10px;
+            padding: 5px;
+        }
+
+        .show-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .show-button:hover {
+            background-color: #1976D2;
+        }
+
+        .sort-button {
+            background-color: #FFC107;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .sort-button:hover {
+            background-color: #FFA000;
+        }
+    </style>
 </head>
 
 <body>
@@ -132,6 +177,17 @@
     <div class="table-container">
         <h1>Listado de Órdenes de Trabajo</h1>
         <div id="loadingMessage" class="loading-message">Cargando órdenes de trabajo...</div>
+
+        <!-- Sección de filtros -->
+        <div class="filter-container">
+            <button class="show-button" onclick="toggleFilterFields()">Mostrar/Ocultar Filtros</button>
+            <div class="filter-fields" id="filterFields">
+                <input id="patenteInput" type="text" placeholder="Ingrese Patente" oninput="filterOrdenes()" />
+                <input id="marcaInput" type="text" placeholder="Ingrese Marca" oninput="filterOrdenes()" />
+                <input id="modeloInput" type="text" placeholder="Ingrese Modelo" oninput="filterOrdenes()" />
+            </div>
+            <button class="sort-button" onclick="sortByFecha()">Ordenar por Fecha</button>
+        </div>
 
         <div class="scrollable-table">
             <table id="ordenesTable" class="hidden">
@@ -213,6 +269,33 @@
 
             document.getElementById('loadingMessage').classList.add('hidden');
             document.getElementById('ordenesTable').classList.remove('hidden');
+        }
+
+        function toggleFilterFields() {
+            const filterFields = document.getElementById('filterFields');
+            filterFields.style.display = filterFields.style.display === 'none' || filterFields.style.display === '' ? 'block' : 'none';
+        }
+
+        function filterOrdenes() {
+            const patenteValue = document.getElementById('patenteInput').value.toLowerCase();
+            const marcaValue = document.getElementById('marcaInput').value.toLowerCase();
+            const modeloValue = document.getElementById('modeloInput').value.toLowerCase();
+
+            const filteredOrdenes = ordenesData.filter(orden => {
+                const vehiculo = orden.propietario.vehiculos[0]; // Primer vehículo del propietario
+                return (
+                    vehiculo.patente.toLowerCase().includes(patenteValue) &&
+                    vehiculo.marca.toLowerCase().includes(marcaValue) &&
+                    vehiculo.modelo.toLowerCase().includes(modeloValue)
+                );
+            });
+
+            displayOrdenes(filteredOrdenes);
+        }
+
+        function sortByFecha() {
+            ordenesData.sort((a, b) => new Date(a.fechaIngreso) - new Date(b.fechaIngreso));
+            displayOrdenes(ordenesData);
         }
 
         async function sumarHoras(ordenTrabajoId) {
