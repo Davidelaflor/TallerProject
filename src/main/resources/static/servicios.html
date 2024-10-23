@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios del Taller</title>
+    <!-- Font awesome style -->
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+</head>
+
+<body>
+ <!-- Header -->
+ <header class="bg-light py-3 mb-4">
+    <div class="container d-flex justify-content-between">
+        <img src="images/OIP.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
+        <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+        <div class="nav-btn-container mt-2">
+            <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
+            <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
+            <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
+            <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
+        </div>
+    </div>
+</header>
+
+    <!-- Contenedor de botones -->
+    <div class="container d-flex justify-content-center align-items-center flex-column" style="height: 80vh;">
+        <div class="row text-center">
+            <div class="col">
+                <button class="btn btn-outline-secondary" onclick="window.location.href='crearOrden4.html'">
+                    <img src="images/crearOrden.webp" alt="Nueva Orden" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                    Nueva Orden
+                </button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary" onclick="window.location.href='propietario3.html'">
+                    <img src="images/propietario.png" alt="Nuevo Propietario" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                    Nuevo Propietario
+                </button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary" onclick="window.location.href='nuevoVehiculo.html'">
+                    <img src="images/vehiculo.jpg" alt="Nuevo Vehículo" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                    Nuevo Vehículo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="text-muted mb-0">© 2024 Taller Innoauto. Todos los derechos reservados.</p>
+            <p class="text-muted">Contacto: info@innoauto.com | Teléfono: (123) 456-7890</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

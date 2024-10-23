@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Vehículo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+        }
+        .btn-custom {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center">Registrar Vehículo</h2>
+    <form id="vehicleForm">
+        <div class="form-group">
+            <label for="propietarioDni">*DNI del Propietario:</label>
+            <input type="text" class="form-control" id="propietarioDni" required>
+        </div>
+        <div class="form-group">
+            <label for="patente">*Patente:</label>
+            <input type="text" class="form-control" id="patente" required>
+        </div>
+        <div class="form-group">
+            <label for="marca">*Marca:</label>
+            <input type="text" class="form-control" id="marca" required>
+        </div>
+        <div class="form-group">
+            <label for="modelo">*Modelo:</label>
+            <input type="text" class="form-control" id="modelo" required>
+        </div>
+        <button type="submit" class="btn btn-custom">Registrar Vehículo</button>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='pantIni.html'">Volver a Pantalla Inicial</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("vehicleForm").onsubmit = async function(event) {
+        event.preventDefault(); // Prevenir el envío por defecto del formulario
+
+        const dni = document.getElementById("propietarioDni").value;
+        const patente = document.getElementById("patente").value;
+        const marca = document.getElementById("marca").value;
+        const modelo = document.getElementById("modelo").value;
+
+        const vehiculoData = {
+            patente: patente,
+            marca: marca,
+            modelo: modelo
+        };
+
+        try {
+            // Enviar la solicitud POST a la API
+            const response = await fetch(`/api/vehiculos/propietario/${dni}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(vehiculoData)
+            });
+
+            if (response.ok) {
+                alert("Vehículo registrado exitosamente!");
+                window.location.href = 'crearOrden4.html'; // Redirigir a la página de creación de órdenes
+            } else {
+                const errorData = await response.json();
+                alert("Error: " + (errorData.message || "Error al registrar el vehículo."));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert("Error de red al intentar registrar el vehículo.");
+        }
+    };
+</script>
+
+</body>
+</html>
