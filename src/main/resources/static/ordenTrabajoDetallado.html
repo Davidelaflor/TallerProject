@@ -4,61 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Orden de Trabajo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+    <link href="css/responsive.css" rel="stylesheet" />
     <style>
-        /* Estilo básico para el detalle */
+        /* Estilo adicional para el detalle */
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #f4f4f4;
         }
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .detail {
-            margin: 15px 0;
-        }
-        .back-btn, .calculate-btn {
-            display: block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            margin: 20px auto;
-            width: 100%;
-            max-width: 200px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .back-btn:hover, .calculate-btn:hover {
-            background-color: #45a049;
-        }
         .total-cost {
-            font-size: 1.2em;
+            font-size: 1.5em;
             font-weight: bold;
             margin-top: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Detalle de Orden de Trabajo</h1>
-        <div id="ordenDetails"></div>
-        <button class="calculate-btn" onclick="calcularCostoTotal()">Calcular Costo Total</button>
-        <div id="totalCost" class="total-cost"></div>
-        <button class="back-btn" onclick="window.history.back()">Volver</button>
+
+      <!-- Header -->
+      <header class="bg-light py-3 mb-4">
+        <div class="container d-flex justify-content-between">
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
+            <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+            <div class="nav-btn-container mt-2">
+                <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
+                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
+                <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
+                <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <h2 class="text-center text-dark">Detalle de Orden de Trabajo</h2>
+        <div id="ordenDetails" class="mt-4"></div>
+
+        <button class="btn btn-success btn-block" onclick="calcularCostoTotal()">Calcular Costo Total</button>
+        <div id="totalCost" class="total-cost text-center"></div>
     </div>
+
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="text-muted mb-0">© 2024 Taller Innoauto. Todos los derechos reservados.</p>
+            <p class="text-muted">Contacto: info@innoauto.com | Teléfono: (123) 456-7890</p>
+        </div>
+    </footer>
 
     <script>
         let ordenData; // Variable para almacenar los datos de la orden
@@ -84,20 +74,22 @@
         function displayOrdenDetails(orden) {
             const ordenDetailsDiv = document.getElementById('ordenDetails');
             ordenDetailsDiv.innerHTML = `
-                <div class="detail"><strong>ID:</strong> ${orden.id}</div>
-                <div class="detail"><strong>Detalle de la Falla:</strong> ${orden.detalleFalla}</div>
-                <div class="detail"><strong>Horas Trabajadas:</strong> ${orden.horasTrabajadas}</div>
-                <div class="detail"><strong>Estado:</strong> ${orden.estado}</div>
-                <div class="detail"><strong>Fecha de Ingreso:</strong> ${new Date(orden.fechaIngreso).toLocaleDateString()}</div>
-                <div class="detail"><strong>Empleado:</strong> ${orden.empleado.nombre} ${orden.empleado.apellido}</div>
-                <h3>Repuestos Utilizados</h3>
-                <ul>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>ID:</strong> ${orden.id}</li>
+                    <li class="list-group-item"><strong>Detalle de la Falla:</strong> ${orden.detalleFalla}</li>
+                    <li class="list-group-item"><strong>Horas Trabajadas:</strong> ${orden.horasTrabajadas}</li>
+                    <li class="list-group-item"><strong>Estado:</strong> ${orden.estado}</li>
+                    <li class="list-group-item"><strong>Fecha de Ingreso:</strong> ${new Date(orden.fechaIngreso).toLocaleDateString()}</li>
+                    <li class="list-group-item"><strong>Empleado:</strong> ${orden.empleado.nombre} ${orden.empleado.apellido}</li>
+                </ul>
+                <h3 class="mt-4">Repuestos Utilizados</h3>
+                <ul class="list-group">
                     ${orden.repuestosUtilizados.map(repuesto => `
-                        <li>${repuesto.nombre} (Código: ${repuesto.codigoInventario}) - Cantidad: ${repuesto.cantidad} - Precio: €${repuesto.precio}</li>
+                        <li class="list-group-item">${repuesto.nombre} (Código: ${repuesto.codigoInventario}) - Cantidad: ${repuesto.cantidad} - Precio: €${repuesto.precio}</li>
                     `).join('')}
                 </ul>
-                <h3>Propietario</h3>
-                <div>${orden.propietario.nombre} - ${orden.propietario.telefono}</div>
+                <h3 class="mt-4">Propietario</h3>
+                <div class="list-group-item">${orden.propietario.nombre} - ${orden.propietario.telefono}</div>
             `;
         }
 
@@ -121,5 +113,9 @@
 
         window.onload = fetchOrdenDetails;
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

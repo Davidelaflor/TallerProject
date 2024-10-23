@@ -2,90 +2,103 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="bootstrap.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Vehículo</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 50px;
-            max-width: 600px;
-        }
-        .btn-custom {
-            background-color: #28a745;
-            color: white;
-        }
-        .btn-custom:hover {
-            background-color: #218838;
-        }
-    </style>
+    <!-- Bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+    <!-- Custom styles for this template -->
+    <link href="css/responsive.css" rel="stylesheet" />
 </head>
 <body>
-
-<div class="container">
-    <h2 class="text-center">Registrar Vehículo</h2>
-    <form id="vehicleForm">
-        <div class="form-group">
-            <label for="propietarioDni">*DNI del Propietario:</label>
-            <input type="text" class="form-control" id="propietarioDni" required>
+    <!-- Header -->
+    <header class="bg-light py-3 mb-4">
+        <div class="container d-flex justify-content-between">
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
+            <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+            <div class="nav-btn-container mt-2">
+                <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
+                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
+                <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
+                <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="patente">*Patente:</label>
-            <input type="text" class="form-control" id="patente" required>
+    </header>
+
+    <div class="container mt-5">
+        <h2 class="text-center text-dark">Registrar Vehículo</h2>
+        <form id="vehicleForm" onsubmit="handleSubmit(event)">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">Datos del Vehículo</h4>
+                    <div class="form-group mb-3">
+                        <label for="propietarioDni">*DNI del Propietario:</label>
+                        <input type="text" class="form-control" id="propietarioDni" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="patente">*Patente:</label>
+                        <input type="text" class="form-control" id="patente" required autocomplete="off">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="marca">*Marca:</label>
+                        <input type="text" class="form-control" id="marca" required autocomplete="off">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="modelo">*Modelo:</label>
+                        <input type="text" class="form-control" id="modelo" required autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-secondary">Registrar Vehículo</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="text-muted mb-0">© 2024 Taller Innoauto. Todos los derechos reservados.</p>
+            <p class="text-muted">Contacto: info@innoauto.com | Teléfono: (123) 456-7890</p>
         </div>
-        <div class="form-group">
-            <label for="marca">*Marca:</label>
-            <input type="text" class="form-control" id="marca" required>
-        </div>
-        <div class="form-group">
-            <label for="modelo">*Modelo:</label>
-            <input type="text" class="form-control" id="modelo" required>
-        </div>
-        <button type="submit" class="btn btn-custom">Registrar Vehículo</button>
-        <button type="button" class="btn btn-secondary" onclick="window.location.href='pantIni.html'">Volver a Pantalla Inicial</button>
-    </form>
-</div>
+    </footer>
 
-<script>
-    document.getElementById("vehicleForm").onsubmit = async function(event) {
-        event.preventDefault(); // Prevenir el envío por defecto del formulario
+    <script>
+        async function handleSubmit(event) {
+            event.preventDefault(); // Prevenir el envío por defecto del formulario
 
-        const dni = document.getElementById("propietarioDni").value;
-        const patente = document.getElementById("patente").value;
-        const marca = document.getElementById("marca").value;
-        const modelo = document.getElementById("modelo").value;
+            const dni = document.getElementById("propietarioDni").value;
+            const patente = document.getElementById("patente").value;
+            const marca = document.getElementById("marca").value;
+            const modelo = document.getElementById("modelo").value;
 
-        const vehiculoData = {
-            patente: patente,
-            marca: marca,
-            modelo: modelo
-        };
+            const vehiculoData = {
+                patente: patente,
+                marca: marca,
+                modelo: modelo
+            };
 
-        try {
-            // Enviar la solicitud POST a la API
-            const response = await fetch(`/api/vehiculos/propietario/${dni}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(vehiculoData)
-            });
+            try {
+                // Enviar la solicitud POST a la API
+                const response = await fetch(`/api/vehiculos/propietario/${dni}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(vehiculoData)
+                });
 
-            if (response.ok) {
-                alert("Vehículo registrado exitosamente!");
-                window.location.href = 'crearOrden4.html'; // Redirigir a la página de creación de órdenes
-            } else {
-                const errorData = await response.json();
-                alert("Error: " + (errorData.message || "Error al registrar el vehículo."));
+                if (response.ok) {
+                    alert("Vehículo registrado exitosamente!");
+                    window.location.href = 'crearOrden4.html'; // Redirigir a la página de creación de órdenes
+                } else {
+                    const errorData = await response.json();
+                    alert("Error: " + (errorData.message || "Error al registrar el vehículo."));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("Error de red al intentar registrar el vehículo.");
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert("Error de red al intentar registrar el vehículo.");
         }
-    };
-</script>
+    </script>
 
 </body>
 </html>

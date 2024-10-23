@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
 
 import com.example.taller.dto.CrearVehiculoParaPropietarioDTO;
+import com.example.taller.dto.NuevoPropietarioDTO;
 import com.example.taller.dto.VehiculoDTO;
 import com.example.taller.exception.VehiculoYaRegistradoException;
 import com.example.taller.model.Propietario;
@@ -114,6 +115,20 @@ public class VehiculoServiceImpl implements VehiculoService {
         propietarioRepository.save(propietario);
     
         return nuevoVehiculo; // Devolver el vehículo (nuevo o existente)
+    }
+
+    @Override
+    public Propietario crearPropietario(NuevoPropietarioDTO propietarioDTO) {
+        // Convertir NuevoPropietarioDTO a Propietario
+        Propietario propietario = new Propietario();
+        propietario.setDni(propietarioDTO.getDni());
+        propietario.setNombre(propietarioDTO.getNombre());
+        propietario.setApellido(propietarioDTO.getApellido());
+        propietario.setDireccion(propietarioDTO.getDireccion());
+        propietario.setTelefono(propietarioDTO.getTelefono());
+
+        // Guardar propietario
+        return propietarioRepository.save(propietario);
     }
     
     

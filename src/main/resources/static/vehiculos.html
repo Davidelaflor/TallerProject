@@ -4,99 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Vehículos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .scrollable-table {
-            max-height: 300px; /* Altura máxima para habilitar scroll */
-            overflow-y: auto; /* Scroll vertical */
-            margin-top: 20px; /* Espacio entre el título y la tabla */
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .error-message {
-            color: red;
-            text-align: center;
-        }
-        .hidden {
-            display: none; /* Oculta el mensaje de error cuando no hay error */
-        }
-        .back-btn {
-            background-color: #2196F3; /* Color del botón de volver */
-            color: white;
-            padding: 10px 20px;
-            margin: 20px 0;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            display: block; /* Hacer que el botón sea un bloque */
-            width: 100%; /* Ancho completo */
-            max-width: 200px; /* Ancho máximo */
-            margin: 20px auto; /* Centrar el botón */
-            text-align: center; /* Centrar el texto del botón */
-        }
-        .back-btn:hover {
-            background-color: #1E88E5; /* Color al pasar el mouse */
-        }
-        .delete-btn {
-            background-color: #f44336; /* Color del botón de eliminar */
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .delete-btn:hover {
-            background-color: #d32f2f; /* Color al pasar el mouse sobre el botón de eliminar */
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+    <link href="css/responsive.css" rel="stylesheet" />
 </head>
 <body>
 
-    <div class="container">
-        <h1>Lista de Vehículos</h1>
-        <div id="errorMessage" class="error-message hidden"></div>
+    <!-- Header -->
+    <header class="bg-light py-3 mb-4">
+        <div class="container d-flex justify-content-between">
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
+            <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+            <div class="nav-btn-container mt-2">
+                <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
+                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
+                <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
+                <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
+            </div>
+        </div>
+    </header>
 
-        <!-- Contenedor para la tabla con scroll -->
-        <div class="scrollable-table">
-            <table id="vehiculosTable">
-                <thead>
+    <div class="container mt-5">
+        <!-- Título que cambia dinámicamente -->
+        <h2 id="vehiculosTitle" class="text-center text-dark mt-3">Lista de vehículos del propietario con DNI</h2>
+        <div id="errorMessage" class="error-message text-danger text-center hidden"></div>
+
+        <div class="scrollable-table mb-4">
+            <table id="vehiculosTable" class="table table-striped table-bordered hidden">
+                <thead class="thead-light">
                     <tr>
                         <th>Patente</th>
                         <th>Marca</th>
                         <th>Modelo</th>
-                        <th>Acciones</th> <!-- Columna para las acciones -->
                     </tr>
                 </thead>
                 <tbody id="vehiculosBody">
@@ -105,9 +44,15 @@
             </table>
         </div>
 
-        <!-- Botón de volver a la lista de propietarios -->
-        <button class="back-btn" onclick="window.location.href='listarPropietarios.html'">Volver a Lista de Propietarios</button>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="text-muted mb-0">© 2024 Taller Innoauto. Todos los derechos reservados.</p>
+            <p class="text-muted">Contacto: info@innoauto.com | Teléfono: (123) 456-7890</p>
+        </div>
+    </footer>
 
     <script>
         let vehiculosData = []; // Almacena la lista de vehículos
@@ -116,6 +61,11 @@
         async function fetchVehiculos() {
             const urlParams = new URLSearchParams(window.location.search);
             dni = urlParams.get('dni'); // Obtener el DNI de los parámetros de la URL
+            
+            // Actualizar el título con el DNI del propietario
+            const vehiculosTitle = document.getElementById('vehiculosTitle');
+            vehiculosTitle.textContent = `Lista de vehículos del propietario con DNI ${dni}`;
+            
             try {
                 const response = await fetch(`/api/vehiculos?dni=${dni}`);
                 if (!response.ok) {
@@ -136,7 +86,7 @@
 
             if (vehiculos.length === 0) {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="4" style="text-align: center;">No se encontraron vehículos</td>`;
+                row.innerHTML = `<td colspan="3" style="text-align: center;">No se encontraron vehículos</td>`;
                 tbody.appendChild(row);
                 return;
             }
@@ -144,39 +94,22 @@
             vehiculos.forEach(vehiculo => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${vehiculo.patente}</td> <!-- Cambié 'placa' por 'patente' -->
+                    <td>${vehiculo.patente}</td>
                     <td>${vehiculo.marca}</td>
                     <td>${vehiculo.modelo}</td>
-                    <td>
-                        <button class="delete-btn" onclick="eliminarVehiculo('${vehiculo.patente}')">Eliminar</button>
-                    </td>
                 `;
                 tbody.appendChild(row);
             });
-        }
 
-        async function eliminarVehiculo(patente) {
-            if (confirm(`¿Estás seguro de que deseas eliminar el vehículo con patente ${patente}?`)) {
-                try {
-                    const response = await fetch(`/api/vehiculos/${patente}`, {
-                        method: 'DELETE'
-                    });
-                    if (!response.ok) {
-                        throw new Error('Error al eliminar el vehículo');
-                    }
-                    // Volver a cargar la lista de vehículos después de eliminar
-                    fetchVehiculos();
-                } catch (error) {
-                    console.error('Error:', error);
-                    document.getElementById('errorMessage').textContent = 'Hubo un problema al eliminar el vehículo.';
-                    document.getElementById('errorMessage').classList.remove('hidden');
-                }
-            }
+            document.getElementById('vehiculosTable').classList.remove('hidden'); // Mostrar la tabla
         }
 
         // Cargar la lista de vehículos al cargar la página
         window.onload = fetchVehiculos;
     </script>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

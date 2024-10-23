@@ -4,117 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listado de Repuestos</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .table-container {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 90%;
-            max-width: 800px;
-            margin: 50px auto;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .search-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .search-container input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 70%; /* Ancho del campo de búsqueda */
-            margin-right: 10px; /* Espacio entre el campo y el botón */
-        }
-        .scrollable-table {
-            max-height: 300px; /* Altura máxima para habilitar scroll */
-            overflow-y: auto; /* Scroll vertical */
-            margin-top: 20px; /* Espacio entre el título y la tabla */
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .loading-message {
-            text-align: center;
-            color: #999;
-        }
-        .hidden {
-            display: none;
-        }
-        .back-btn {
-            background-color: #2196F3; /* Color del botón de volver */
-            color: white;
-            padding: 10px 20px;
-            margin: 20px 0;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            display: block; /* Hacer que el botón sea un bloque */
-            width: 100%; /* Ancho completo */
-            max-width: 200px; /* Ancho máximo */
-            margin: 20px auto; /* Centrar el botón */
-            text-align: center; /* Centrar el texto del botón */
-        }
-        .back-btn:hover {
-            background-color: #1E88E5; /* Color al pasar el mouse */
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+    <link href="css/responsive.css" rel="stylesheet" />
 </head>
 <body>
 
-    <div class="table-container">
-        <h1>Listado de Repuestos</h1>
-        <div id="loadingMessage" class="loading-message">Cargando repuestos...</div>
+      <!-- Header -->
+      <header class="bg-light py-3 mb-4">
+        <div class="container d-flex justify-content-between">
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
+            <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+            <div class="nav-btn-container mt-2">
+                <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
+                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
+                <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
+                <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
+            </div>
+        </div>
+    </header>
 
-        <!-- Contenedor para el campo de búsqueda -->
-        <div class="search-container">
-            <input type="text" id="codigoInventarioFilter" placeholder="Buscar por Código Inventario" oninput="filterRepuestos()">
+    <div class="container mt-5">
+        <h2 class="text-center text-dark mt-3">Listado de Repuestos</h2>
+        <div id="errorMessage" class="error-message text-danger text-center hidden"></div>
+
+        <div class="search-container mb-4 text-center">
+            <input type="text" id="codigoInventarioFilter" class="form-control w-50" placeholder="Buscar por Código Inventario" oninput="filterRepuestos()">
         </div>
 
-        <!-- Contenedor para la tabla con scroll -->
-        <div class="scrollable-table">
-            <table id="repuestosTable" class="hidden">
-                <thead>
+        <div class="scrollable-table mb-4">
+            <table id="repuestosTable" class="table table-striped table-bordered hidden">
+                <thead class="thead-light">
                     <tr>
                         <th>Código Inventario</th>
                         <th>Nombre</th>
-                        <th>Cantidad</th> <!-- Campo cantidad agregado -->
+                        <th>Cantidad</th>
                         <th>Precio</th>
                     </tr>
                 </thead>
                 <tbody id="repuestosBody">
+                    <!-- Aquí se llenarán los datos de los repuestos -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Botón de volver a la pantalla inicial -->
-        <button class="back-btn" onclick="window.location.href='pantIni.html'">Volver a Pantalla Inicial</button>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="text-muted mb-0">© 2024 Taller Innoauto. Todos los derechos reservados.</p>
+            <p class="text-muted">Contacto: info@innoauto.com | Teléfono: (123) 456-7890</p>
+        </div>
+    </footer>
 
     <script>
         let repuestosData = []; // Almacena la lista de repuestos
@@ -131,6 +73,8 @@
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('loadingMessage').textContent = 'Error al cargar los repuestos';
+                document.getElementById('errorMessage').textContent = 'Hubo un problema al obtener los repuestos.';
+                document.getElementById('errorMessage').classList.remove('hidden');
             }
         }
 
@@ -142,9 +86,9 @@
                 const row = document.createElement('tr');
 
                 row.innerHTML = `
-                    <td>${repuesto.codigoInventario}</td> <!-- Cambiado a codigoInventario -->
+                    <td>${repuesto.codigoInventario}</td>
                     <td>${repuesto.nombre}</td>
-                    <td>${repuesto.cantidad}</td> <!-- Campo cantidad agregado -->
+                    <td>${repuesto.cantidad}</td>
                     <td>${repuesto.precio}</td>
                 `;
 
@@ -168,5 +112,8 @@
         };
     </script>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
