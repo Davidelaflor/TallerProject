@@ -12,7 +12,6 @@ public interface PropietarioService {
 
     Propietario obtenerPropietarioPorDni(String dni);
 
-Propietario crearPropietario (NuevoPropietarioDTO propietarioDTO);
 
     List<Propietario> listarPropietarios();
 
