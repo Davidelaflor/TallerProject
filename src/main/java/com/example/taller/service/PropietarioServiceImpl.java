@@ -26,8 +26,19 @@ public class PropietarioServiceImpl implements PropietarioService {
 
     @Override
     public Propietario crearPropietarioConVehiculo(PropietarioDTO propietarioDTO, VehiculoDTO vehiculoDTO) {
+          // Verificar si el propietario ya existe
+          if (propietarioRepository.existsByDni(propietarioDTO.getDni())) {
+            throw new IllegalArgumentException("El propietario con DNI " + propietarioDTO.getDni() + " ya está registrado.");
+        }
+
+        // Verificar si el vehículo ya existe
+        if (vehiculoRepository.existsByPatente(vehiculoDTO.getPatente())) {
+            throw new IllegalArgumentException("El vehículo con patente " + vehiculoDTO.getPatente() + " ya está registrado.");
+        }
+        
         Propietario entity = generatePropietarioEntity(propietarioDTO);
         Vehiculo vehiculoEntity = generateVehiculoEntity(vehiculoDTO);
+        
         entity.addVehiculo(vehiculoEntity); 
 
         return propietarioRepository.save(entity);

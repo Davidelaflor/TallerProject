@@ -9,4 +9,6 @@ import com.example.taller.model.Vehiculo;
 @Repository
 public interface VehiculoRepository extends JpaRepository<Vehiculo, String> {
     List<Vehiculo> findByPropietarioDni(String dni);
+    boolean existsByPatente(String patente); // Verificar si el vehículo ya existe por patente
+
 }

@@ -32,11 +32,16 @@ public class PropietarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Propietario> crearPropietarioConVehiculo(@RequestBody PropietarioVehiculoDTO dto) {
-        Propietario nuevoPropietario = propietarioService.crearPropietarioConVehiculo(dto.getPropietario(),
-                dto.getVehiculo());
-        return ResponseEntity.ok(nuevoPropietario);
+    public ResponseEntity<?> crearPropietarioConVehiculo(@RequestBody PropietarioVehiculoDTO dto) {
+        try {
+            Propietario nuevoPropietario = propietarioService.crearPropietarioConVehiculo(dto.getPropietario(), dto.getVehiculo());
+            return ResponseEntity.ok(nuevoPropietario);
+        } catch (IllegalArgumentException e) {
+            // Enviar un error 400 si ya existe el propietario o el vehículo
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+    
  // Nuevo método para crear propietario sin vehículo
     @PostMapping("/sin-vehiculo")
     public ResponseEntity<Propietario> crearPropietario(@RequestBody NuevoPropietarioDTO propietarioDTO) {
