@@ -21,11 +21,11 @@
 </head>
 <body>
 
-      <!-- Header -->
-      <header class="bg-light py-3 mb-4">
+    <!-- Header -->
+    <header class="bg-light py-3 mb-4">
         <div class="container d-flex justify-content-between">
-            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
-            <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" />
+            <h1 class="text-dark">Taller Innoauto</h1>
             <div class="nav-btn-container mt-2">
                 <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
                 <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
@@ -41,6 +41,10 @@
 
         <button class="btn btn-success btn-block" onclick="calcularCostoTotal()">Calcular Costo Total</button>
         <div id="totalCost" class="total-cost text-center"></div>
+
+        <div class="mt-4">
+            <button class="btn btn-primary btn-block mt-2" onclick="generarFactura()">Imprimir Factura</button>
+        </div>
     </div>
 
     <footer class="bg-light text-center py-3 mt-4">
@@ -50,8 +54,13 @@
         </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
-        let ordenData; // Variable para almacenar los datos de la orden
+        let ordenData;
 
         async function fetchOrdenDetails() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -63,7 +72,7 @@
                     throw new Error('Error al obtener los detalles de la orden');
                 }
 
-                ordenData = await response.json(); // Almacena los datos de la orden
+                ordenData = await response.json();
                 displayOrdenDetails(ordenData);
             } catch (error) {
                 console.error('Error:', error);
@@ -78,7 +87,7 @@
                     <li class="list-group-item"><strong>ID:</strong> ${orden.id}</li>
                     <li class="list-group-item"><strong>Detalle de la Falla:</strong> ${orden.detalleFalla}</li>
                     <li class="list-group-item"><strong>Horas Trabajadas:</strong> ${orden.horasTrabajadas}</li>
-                    <li class="list-group-item"><strong>Estado:</strong> ${orden.estado}</li>
+                    <li class="list-group-item"><strong>Estado:</strong> Finalizado</li>
                     <li class="list-group-item"><strong>Fecha de Ingreso:</strong> ${new Date(orden.fechaIngreso).toLocaleDateString()}</li>
                     <li class="list-group-item"><strong>Empleado:</strong> ${orden.empleado.nombre} ${orden.empleado.apellido}</li>
                 </ul>
@@ -94,28 +103,49 @@
         }
 
         function calcularCostoTotal() {
-            const costoPorHora = 50; // Costo por hora en euros
-            const horasTrabajadas = ordenData.horasTrabajadas; // Obtiene horas trabajadas
-            const repuestos = ordenData.repuestosUtilizados; // Obtiene los repuestos utilizados
+            const costoPorHora = 50;
+            const horasTrabajadas = ordenData.horasTrabajadas;
+            const repuestos = ordenData.repuestosUtilizados;
 
-            // Calcular el costo de los repuestos
             let costoRepuestos = 0;
             repuestos.forEach(repuesto => {
-                costoRepuestos += repuesto.precio * repuesto.cantidad; // Cálculo del costo total de cada repuesto
+                costoRepuestos += repuesto.precio * repuesto.cantidad;
             });
 
-            // Calcular el costo total
             const costoTotal = (horasTrabajadas * costoPorHora) + costoRepuestos;
 
-            // Mostrar el costo total en el div correspondiente
             document.getElementById('totalCost').innerText = `Costo Total: €${costoTotal.toFixed(2)}`;
+        }
+
+        function generarFactura() {
+            // Crear el contenido del PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text("Factura - Taller Innoauto", 14, 22);
+            doc.setFontSize(12);
+            doc.text(`ID de Orden: ${ordenData.id}`, 14, 40);
+            doc.text(`Detalle de la Falla: ${ordenData.detalleFalla}`, 14, 50);
+            doc.text(`Horas Trabajadas: ${ordenData.horasTrabajadas}`, 14, 60);
+            doc.text(`Estado: Finalizado`, 14, 70); // Estado agregado aquí
+            doc.text(`Fecha de Ingreso: ${new Date(ordenData.fechaIngreso).toLocaleDateString()}`, 14, 80);
+            doc.text(`Empleado: ${ordenData.empleado.nombre} ${ordenData.empleado.apellido}`, 14, 90);
+            
+            doc.text("Repuestos Utilizados:", 14, 100);
+            ordenData.repuestosUtilizados.forEach((repuesto, index) => {
+                doc.text(`${repuesto.nombre} - Cantidad: ${repuesto.cantidad} - Precio: €${repuesto.precio}`, 14, 110 + (index * 10));
+            });
+
+            const costoPorHora = 50;
+            const costoTotal = (ordenData.horasTrabajadas * costoPorHora) + ordenData.repuestosUtilizados.reduce((total, repuesto) => total + (repuesto.precio * repuesto.cantidad), 0);
+            doc.text(`Costo Total: €${costoTotal.toFixed(2)}`, 14, 130 + (ordenData.repuestosUtilizados.length * 10));
+
+            // Generar el PDF y guardarlo
+            doc.save(`factura_orden_${ordenData.id}.pdf`);
+            alert("Factura generada. Puede descargarla ahora.");
         }
 
         window.onload = fetchOrdenDetails;
     </script>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
