@@ -21,6 +21,7 @@ import com.example.taller.dto.EmpleadoResponseDTO;
 import com.example.taller.dto.OrdenTrabajoDTO;
 import com.example.taller.dto.OrdenTrabajoResponseDTO;
 import com.example.taller.dto.PropietarioResponseDTO;
+import com.example.taller.dto.PropietarioVehiculoDTO;
 import com.example.taller.dto.RepuestoUtilizadoDTO;
 import com.example.taller.dto.RepuestoUtilizadoResponseDTO;
 import com.example.taller.dto.VehiculoResponseDTO;
@@ -31,13 +32,25 @@ import com.example.taller.model.RepuestoUtilizado;
 import com.example.taller.model.Vehiculo;
 import com.example.taller.service.TallerServiceInterface;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/ordenes")
+@Tag(name = "Ordenes de trabajo", description = "Controlador para las ordenes de trabajo.")
+
 public class OrdenTrabajoController {
         @Autowired
         private TallerServiceInterface tallerService;
 
         @GetMapping
+        @Operation(summary = "Listar ordenes de trabajo", description = "Obtiene una lista de todas las ordenes de trabajo registradas en el sistema")
+
         public ResponseEntity<List<OrdenTrabajoResponseDTO>> listarOrdenes() {
                 List<OrdenTrabajo> ordenesTrabajo = tallerService.listarOrdenes();
 
@@ -102,7 +115,12 @@ public class OrdenTrabajoController {
         }
 
         @GetMapping("/{id}")
-        public ResponseEntity<OrdenTrabajoResponseDTO> obtenerOrden(@PathVariable Long id) {
+        @Operation(summary = "Obtener orden de trabajo concreta", description = "Obtener una orden de trabajo a traves de su id")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrdenTrabajoResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Orden de trabajo no encontrada", content = @Content)
+        })
+        public ResponseEntity<OrdenTrabajoResponseDTO> obtenerOrden( @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long id) {
                 OrdenTrabajo ordenTrabajo = tallerService.obtenerOrdenTrabajo(id);
                 if (ordenTrabajo == null) {
                         return ResponseEntity.notFound().build();
@@ -154,6 +172,11 @@ public class OrdenTrabajoController {
         }
 
         @PostMapping
+        @Operation(summary = "Crear ordenes de trabajo", description = "Crea una nueva orden de trabajo")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrdenTrabajoResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Vehiculo no encontrado para el propietario, propietario no encontrado, el vehiculo ya tiene una orden de trabajo registrada, empleado no encontrado", content = @Content)
+        })
         public ResponseEntity<OrdenTrabajo> crearOrdenTrabajo(@RequestBody OrdenTrabajoDTO ordenTrabajo) {
                 OrdenTrabajo nuevaOrden = tallerService.crearOrdenTrabajo(ordenTrabajo);
                 return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOrden);
@@ -166,23 +189,37 @@ public class OrdenTrabajoController {
         }
 
         @PostMapping("/{ordenTrabajoId}/repuestos/{repuestoUtilizadoId}")
-        public ResponseEntity<Void> agregarRepuestoAOrden(@PathVariable Long ordenTrabajoId,
-                        @PathVariable String repuestoUtilizadoId,
-                        @RequestBody RepuestoUtilizadoDTO repuestoUtilizadoDTO) {
+        @Operation(summary = "Añadir repuestos", description = "Añadir repuestos a una orden de trabajo")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "OK", content = @Content),
+                        @ApiResponse(responseCode = "500", description = "Repuesto no encontrado, orden de trabajo no encontrada", content = @Content)
+        })
+        public ResponseEntity<Void> agregarRepuestoAOrden(
+                        @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long ordenTrabajoId,
+                        @Parameter(description = "Codigo del repuesto en el inventario", required = true) @PathVariable String repuestoUtilizadoId,
+                        @Parameter(description = "Datos del repuesto que se va a añadir", required = true) @RequestBody RepuestoUtilizadoDTO repuestoUtilizadoDTO) {
                 int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
                 tallerService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
                 return ResponseEntity.ok().build();
         }
 
         @PostMapping("/{ordenTrabajoId}/horas")
-        public ResponseEntity<Void> agregarHorasAOrden(@PathVariable Long ordenTrabajoId,
-                        @RequestBody HorasTrabajadasDTO horasTrabajadasDTO) {
+        @Operation(summary = "Añadir horas", description = "Añadir horas trabajadas a una orden de trabajo")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "OK", content = @Content),
+                @ApiResponse(responseCode = "500", description = "Orden de trabajo no encontrada", content = @Content)
+})
+        public ResponseEntity<Void> agregarHorasAOrden(
+                @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long ordenTrabajoId,
+                @Parameter(description = "Numero de horas que se quieren añadir", required = true) @RequestBody HorasTrabajadasDTO horasTrabajadasDTO) {
                 int horas = horasTrabajadasDTO.getHorasTrabajadas();
                 tallerService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
                 return ResponseEntity.ok().build();
         }
 
         @PostMapping("/calcular-costo")
+        @Operation(summary = "Calcular coste", description = "Calcular el precio de la orden de trabajo sumando horas de trabajo y repuestos")
+
         public double calcularCosto(@RequestBody OrdenTrabajoDTO ordenTrabajoDTO) {
                 // Calcular el costo total utilizando el servicio
                 return tallerService.calcularCostoTotal(ordenTrabajoDTO);

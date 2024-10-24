@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/propietarios")
-@Tag(name = "Propietarios", description = "API para la gestión de propietarios y vehículos")
+@Tag(name = "Propietarios", description = "Controlador para la gestión de propietarios.")
 
 public class PropietarioController {
     @Autowired

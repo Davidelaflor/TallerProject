@@ -18,5 +18,4 @@ public class PropietarioDTO {
     private String apellido;
     private String direccion;
     private String telefono;
-    private VehiculoDTO vehiculo;
 }
