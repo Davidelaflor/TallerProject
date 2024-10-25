@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import com.example.taller.dto.CrearVehiculoParaPropietarioDTO;
 import com.example.taller.dto.NuevoPropietarioDTO;
 import com.example.taller.dto.VehiculoDTO;
-import com.example.taller.exception.VehiculoYaRegistradoException;
+import com.example.taller.generics.exception.VehiculoYaRegistradoException;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.Vehiculo;
 import com.example.taller.repository.VehiculoRepository;

@@ -3,9 +3,10 @@ package com.example.taller.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 
-import com.example.taller.exception.VehiculoYaRegistradoException;
+import com.example.taller.generics.exception.VehiculoYaRegistradoException;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @ControllerAdvice
 public class GolbalExceptionHandler {

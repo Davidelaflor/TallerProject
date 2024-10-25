@@ -1,4 +1,4 @@
-package com.example.taller.repository;
+package com.example.taller.ordenes.infrastructure.adapter;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

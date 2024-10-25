@@ -1,4 +1,4 @@
-package com.example.taller.dto;
+package com.example.taller.ordenes.application;
 
 import java.time.LocalDate;
 import java.util.List;

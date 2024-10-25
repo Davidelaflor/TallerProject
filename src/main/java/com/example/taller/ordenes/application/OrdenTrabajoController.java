@@ -1,4 +1,4 @@
-package com.example.taller.controller;
+package com.example.taller.ordenes.application;
 
 import java.util.List;
 
@@ -16,20 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.taller.dto.HorasTrabajadasDTO;
-
-import com.example.taller.dto.EmpleadoResponseDTO;
-import com.example.taller.dto.OrdenTrabajoDTO;
-import com.example.taller.dto.OrdenTrabajoResponseDTO;
 import com.example.taller.dto.PropietarioResponseDTO;
 import com.example.taller.dto.RepuestoUtilizadoDTO;
 import com.example.taller.dto.RepuestoUtilizadoResponseDTO;
 import com.example.taller.dto.VehiculoResponseDTO;
-import com.example.taller.model.Empleado;
+import com.example.taller.empleados.domain.EmpleadoResponseDTO;
+import com.example.taller.empleados.infrastructure.adapter.Empleado;
 import com.example.taller.model.OrdenTrabajo;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.RepuestoUtilizado;
 import com.example.taller.model.Vehiculo;
-import com.example.taller.service.TallerServiceInterface;
+import com.example.taller.ordenes.domain.OrdenTrabajoResponseDTO;
+import com.example.taller.ordenes.infrastructure.adapter.TallerServiceInterface;
 
 @RestController
 @RequestMapping("/api/ordenes")

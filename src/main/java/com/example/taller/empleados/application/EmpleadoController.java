@@ -1,4 +1,4 @@
-package com.example.taller.controller;
+package com.example.taller.empleados.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.taller.model.Empleado;
-import com.example.taller.service.EmpleadoService;
+import com.example.taller.empleados.infrastructure.adapter.Empleado;
+import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 
 @RestController
 @RequestMapping("/api/empleados")
 public class EmpleadoController {
     @Autowired
-    private EmpleadoService empleadoService;
+    private EmpleadoApplicationService empleadoService;
 
     @PostMapping
     public ResponseEntity<Empleado> crearEmpleado(@RequestBody Empleado empleado) {

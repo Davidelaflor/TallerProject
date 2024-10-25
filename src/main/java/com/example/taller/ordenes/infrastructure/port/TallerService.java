@@ -1,4 +1,4 @@
-package com.example.taller.service;
+package com.example.taller.ordenes.infrastructure.port;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,19 +9,19 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import com.example.taller.dto.OrdenTrabajoDTO;
-import com.example.taller.dto.OrdenTrabajoResponseDTO;
+
 import com.example.taller.dto.RepuestoUtilizadoDTO;
 import com.example.taller.dto.RepuestoUtilizadoResponseDTO;
-import com.example.taller.model.Empleado;
+import com.example.taller.empleados.infrastructure.adapter.Empleado;
+import com.example.taller.empleados.infrastructure.adapter.EmpleadoRepository;
 import com.example.taller.model.Estado;
 import com.example.taller.model.OrdenTrabajo;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.Repuesto;
 import com.example.taller.model.RepuestoUtilizado;
 import com.example.taller.model.Vehiculo;
-import com.example.taller.repository.EmpleadoRepository;
-import com.example.taller.repository.OrdenTrabajoRepository;
+import com.example.taller.ordenes.application.OrdenTrabajoDTO;
+import com.example.taller.ordenes.domain.OrdenTrabajoResponseDTO;
 import com.example.taller.repository.PropietarioRepository;
 import com.example.taller.repository.RepuestoRepository;
 import com.example.taller.repository.RepuestoUtilizadoRepository;

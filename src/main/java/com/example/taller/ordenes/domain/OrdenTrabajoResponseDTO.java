@@ -1,7 +1,10 @@
-package com.example.taller.dto;
+package com.example.taller.ordenes.domain;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import com.example.taller.empleados.domain.EmpleadoResponseDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

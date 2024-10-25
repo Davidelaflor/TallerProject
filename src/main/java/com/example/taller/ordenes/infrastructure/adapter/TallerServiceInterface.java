@@ -1,13 +1,13 @@
-package com.example.taller.service;
+package com.example.taller.ordenes.infrastructure.adapter;
 
 import java.util.List;
 
-import com.example.taller.dto.OrdenTrabajoDTO;
-import com.example.taller.model.Empleado;
+import com.example.taller.empleados.infrastructure.adapter.Empleado;
 import com.example.taller.model.OrdenTrabajo;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.Repuesto;
 import com.example.taller.model.RepuestoUtilizado;
+import com.example.taller.ordenes.application.OrdenTrabajoDTO;
 
 public interface TallerServiceInterface {
     // Métodos para manejar Empleados

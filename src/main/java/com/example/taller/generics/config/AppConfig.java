@@ -1,4 +1,4 @@
-package com.example.taller.config;
+package com.example.taller.generics.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

@@ -1,4 +1,4 @@
-package com.example.taller.dto;
+package com.example.taller.empleados.application;
 
 public class EmpleadoDTO {
     private Long id;
