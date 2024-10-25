@@ -36,7 +36,6 @@
             <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
             <div class="nav-btn-container mt-2">
                 <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
-                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
                 <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
                 <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
             </div>
@@ -86,23 +85,29 @@
 
     <script>
         // Función para cargar vehículos según el DNI
-        async function cargarVehiculos(dni) {
+        async function cargarVehiculos(dni, patenteSeleccionada = null) {
             const response = await fetch(`/api/vehiculos?dni=${dni}`);
             if (response.ok) {
                 const vehiculos = await response.json();
                 const vehiculoSelect = document.getElementById("vehiculoSelect");
-                
+
                 vehiculoSelect.innerHTML = ""; // Limpiar el select antes de cargar
                 vehiculoSelect.appendChild(new Option("Seleccione un vehículo", "")); // Opción por defecto
 
                 if (vehiculos.length > 0) {
                     vehiculos.forEach(vehiculo => {
                         const option = document.createElement("option");
-                        option.value = vehiculo.patente; // Asignar la patente como valor
-                        option.textContent = `${vehiculo.patente} - ${vehiculo.marca} ${vehiculo.modelo}`; // Mostrar patente y marca/modelo
+                        option.value = vehiculo.patente;
+                        option.textContent = `${vehiculo.patente} - ${vehiculo.marca} ${vehiculo.modelo}`;
+
+                        // Si la patente coincide con la seleccionada, establecer como seleccionada
+                        if (vehiculo.patente === patenteSeleccionada) {
+                            option.selected = true;
+                        }
+
                         vehiculoSelect.appendChild(option);
                     });
-                    document.getElementById("vehiculoSection").style.display = "block"; // Mostrar sección de vehículos
+                    document.getElementById("vehiculoSection").style.display = "block";
                 } else {
                     alert("No se encontraron vehículos para este propietario.");
                 }
@@ -114,11 +119,10 @@
         async function handlePropietarioChange() {
             const dni = document.getElementById("propietarioDni").value.trim();
 
-            // Verificar si el DNI tiene 9 caracteres
             if (dni.length === 9) {
-                await cargarVehiculos(dni); // Cargar vehículos del propietario
+                await cargarVehiculos(dni);
             } else {
-                document.getElementById("vehiculoSection").style.display = "none"; // Ocultar sección de vehículos si no tiene 9 dígitos
+                document.getElementById("vehiculoSection").style.display = "none";
             }
         }
 
@@ -143,7 +147,7 @@
             .then(response => {
                 if (response.ok) {
                     alert("Orden creada exitosamente!");
-                    window.location.href = 'pantIni.html'; // Redirigir a la pantalla inicial
+                    window.location.href = 'pantIni.html';
                 } else {
                     alert("Error al crear la orden.");
                 }
@@ -151,13 +155,15 @@
             .catch(error => console.error('Error:', error));
         }
 
-        // Función para obtener el DNI de la URL y establecerlo en el input correspondiente
+        // Obtener DNI y patente de la URL y establecerlos en los campos correspondientes
         function obtenerDniDeUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const dni = urlParams.get('dni');
+            const patente = urlParams.get('patente'); // Obtener la patente
+
             if (dni) {
-                document.getElementById('propietarioDni').value = dni; // Establecer el DNI en el input
-                cargarVehiculos(dni); // Cargar vehículos para el propietario
+                document.getElementById('propietarioDni').value = dni;
+                cargarVehiculos(dni, patente); // Cargar vehículos y seleccionar patente si está disponible
             }
         }
 

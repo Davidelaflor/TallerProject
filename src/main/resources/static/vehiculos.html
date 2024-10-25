@@ -13,11 +13,10 @@
     <!-- Header -->
     <header class="bg-light py-3 mb-4">
         <div class="container d-flex justify-content-between">
-            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
-            <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" />
+            <h1 class="text-dark">Taller Innoauto</h1>
             <div class="nav-btn-container mt-2">
                 <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
-                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
                 <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
                 <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
             </div>
@@ -25,9 +24,10 @@
     </header>
 
     <div class="container mt-5">
-        <!-- Título que cambia dinámicamente -->
         <h2 id="vehiculosTitle" class="text-center text-dark mt-3">Lista de vehículos del propietario con DNI</h2>
         <div id="errorMessage" class="error-message text-danger text-center hidden"></div>
+
+       
 
         <div class="scrollable-table mb-4">
             <table id="vehiculosTable" class="table table-striped table-bordered hidden">
@@ -36,6 +36,7 @@
                         <th>Patente</th>
                         <th>Marca</th>
                         <th>Modelo</th>
+                        <th class="acciones-col">Acciones</th> <!-- Columna para el botón -->
                     </tr>
                 </thead>
                 <tbody id="vehiculosBody">
@@ -43,7 +44,10 @@
                 </tbody>
             </table>
         </div>
-
+ <!-- Botón para registrar vehículo -->
+ <div class="text mb-4">
+    <button class="btn btn-secondary" onclick="registrarVehiculo()">Registrar Vehículo</button>
+</div>
     </div>
 
     <!-- Footer -->
@@ -55,12 +59,12 @@
     </footer>
 
     <script>
-        let vehiculosData = []; // Almacena la lista de vehículos
-        let dni; // Variable para almacenar el DNI del propietario
+        let vehiculosData = [];
+        let dni;
 
         async function fetchVehiculos() {
             const urlParams = new URLSearchParams(window.location.search);
-            dni = urlParams.get('dni'); // Obtener el DNI de los parámetros de la URL
+            dni = urlParams.get('dni');
             
             // Actualizar el título con el DNI del propietario
             const vehiculosTitle = document.getElementById('vehiculosTitle');
@@ -71,7 +75,7 @@
                 if (!response.ok) {
                     throw new Error('Error al obtener la lista de vehículos');
                 }
-                vehiculosData = await response.json(); // Guarda los datos en la variable
+                vehiculosData = await response.json();
                 populateTable(vehiculosData);
             } catch (error) {
                 console.error('Error:', error);
@@ -82,11 +86,11 @@
 
         function populateTable(vehiculos) {
             const tbody = document.getElementById('vehiculosBody');
-            tbody.innerHTML = ''; // Limpiar el contenido anterior
+            tbody.innerHTML = '';
 
             if (vehiculos.length === 0) {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="3" style="text-align: center;">No se encontraron vehículos</td>`;
+                row.innerHTML = `<td colspan="4" style="text-align: center;">No se encontraron vehículos</td>`;
                 tbody.appendChild(row);
                 return;
             }
@@ -97,14 +101,26 @@
                     <td>${vehiculo.patente}</td>
                     <td>${vehiculo.marca}</td>
                     <td>${vehiculo.modelo}</td>
+                    <td>
+                        <button class="btn" onclick="registrarOrden('${vehiculo.patente}')">Registrar Orden</button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
 
-            document.getElementById('vehiculosTable').classList.remove('hidden'); // Mostrar la tabla
+            document.getElementById('vehiculosTable').classList.remove('hidden');
         }
 
-        // Cargar la lista de vehículos al cargar la página
+        function registrarVehiculo() {
+            // Redirige a la página de registro de vehículos con el DNI en la URL
+            window.location.href = `crearVehiculoProp.html?dni=${dni}`;
+        }
+
+        function registrarOrden(patente) {
+            // Redirige a la página de creación de órdenes con DNI y patente en la URL
+            window.location.href = `crearOrden4.html?dni=${dni}&patente=${patente}`;
+        }
+
         window.onload = fetchVehiculos;
     </script>
 

@@ -18,7 +18,6 @@
             <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
             <div class="nav-btn-container mt-2">
                 <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
-                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
                 <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
                 <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
             </div>
@@ -62,6 +61,15 @@
     </footer>
 
     <script>
+        // Rellenar el DNI del propietario desde la URL
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dni = urlParams.get('dni');
+            if (dni) {
+                document.getElementById('propietarioDni').value = dni; // Autocompletar el campo DNI
+            }
+        };
+
         async function handleSubmit(event) {
             event.preventDefault(); // Prevenir el envío por defecto del formulario
 
