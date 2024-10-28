@@ -1,4 +1,4 @@
-package com.example.taller.repository;
+package com.example.taller.empleados.infrastructure.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,4 @@
-package com.example.taller.model;
-
-import static jakarta.persistence.GenerationType.*;
+package com.example.taller.empleados.domain.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,17 +11,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
-@Entity
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder
-@Table(name = "empleados")
-@NoArgsConstructor
+@Entity
+@Table(name="empleados")
 public class Empleado {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
     private String nombre;
     private String apellido;
     private String telefono;
+
 }

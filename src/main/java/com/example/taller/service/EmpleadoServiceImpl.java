@@ -3,8 +3,8 @@ package com.example.taller.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.taller.empleados.infrastructure.repository.EmpleadoRepository;
 import com.example.taller.model.Empleado;
-import com.example.taller.repository.EmpleadoRepository;
 
 @Service
 public class EmpleadoServiceImpl implements EmpleadoService {
