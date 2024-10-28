@@ -21,7 +21,6 @@
             <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
             <div class="nav-btn-container mt-2">
                 <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
-                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
                 <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
                 <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
             </div>
@@ -36,7 +35,7 @@
                     <h4 class="card-title">Datos del Propietario</h4>
                     <div class="form-group mb-3">
                         <label for="dni">*DNI:</label>
-                        <input type="text" id="dni" name="dni" class="form-control" required onblur="fetchPropietario()">
+                        <input type="text" id="dni" name="dni" class="form-control" required onblur="fetchPropietario()" pattern="^[0-9]{8}[A-Za-z]$" title="El DNI debe tener 8 números seguidos de una letra.">
                     </div>
                     <div class="form-group mb-3">
                         <label for="nombre">*Nombre:</label>
@@ -52,7 +51,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="telefono">*Teléfono:</label>
-                        <input type="tel" id="telefono" name="telefono" class="form-control" required>
+                        <input type="tel" id="telefono" name="telefono" class="form-control" required pattern="^[0-9]{9}$" title="El teléfono debe tener 9 números.">
                     </div>
                 </div>
             </div>
@@ -62,7 +61,7 @@
                     <h4 class="card-title">Datos del Vehículo</h4>
                     <div class="form-group mb-3">
                         <label for="patente">*Patente:</label>
-                        <input type="text" id="patente" name="patente" class="form-control" required>
+                        <input type="text" id="patente" name="patente" class="form-control" required pattern="^[A-Za-z0-9]{6}$" title="La patente debe tener exactamente 6 caracteres.">
                     </div>
                     <div class="form-group mb-3">
                         <label for="marca">*Marca:</label>
