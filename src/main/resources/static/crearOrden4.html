@@ -155,19 +155,20 @@
             .catch(error => console.error('Error:', error));
         }
 
-        // Obtener DNI y patente de la URL y establecerlos en los campos correspondientes
-        function obtenerDniDeUrl() {
+        // Función para obtener parámetros de la URL
+        function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
-            const dni = urlParams.get('dni');
-            const patente = urlParams.get('patente'); // Obtener la patente
-
-            if (dni) {
-                document.getElementById('propietarioDni').value = dni;
-                cargarVehiculos(dni, patente); // Cargar vehículos y seleccionar patente si está disponible
-            }
+            return urlParams.get(name);
         }
 
-        window.onload = obtenerDniDeUrl; // Ejecutar al cargar la página
+        // Autorellena los campos usando los parámetros de la URL
+        window.onload = function() {
+            const dni = getUrlParameter('dni');
+            const patente = getUrlParameter('patente');
+
+            if (dni) document.getElementById('dni').value = dni;
+            if (patente) document.getElementById('patente').value = patente;
+        };
     </script>
 </body>
 

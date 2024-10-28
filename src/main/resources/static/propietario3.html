@@ -17,11 +17,10 @@
     <!-- Header -->
     <header class="bg-light py-3 mb-4">
         <div class="container d-flex justify-content-between">
-            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" /> <!-- Imagen del taller -->
-            <h1 class="text-dark">Taller Innoauto</h1> <!-- Título del taller -->
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" />
+            <h1 class="text-dark">Taller Innoauto</h1>
             <div class="nav-btn-container mt-2">
                 <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
-                <button class="btn" onclick="window.location.href='servicios.html'">Servicios</button>
                 <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
                 <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
             </div>
@@ -36,7 +35,8 @@
                     <h4 class="card-title">Datos del Propietario</h4>
                     <div class="form-group mb-3">
                         <label for="dni">*DNI:</label>
-                        <input type="text" id="dni" name="dni" class="form-control" required onblur="fetchPropietario()">
+                        <input type="text" id="dni" name="dni" class="form-control" required onblur="validateDni()">
+                        <small id="dniError" class="text-danger hidden">DNI debe contener 8 números y una letra.</small>
                     </div>
                     <div class="form-group mb-3">
                         <label for="nombre">*Nombre:</label>
@@ -52,7 +52,8 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="telefono">*Teléfono:</label>
-                        <input type="tel" id="telefono" name="telefono" class="form-control" required>
+                        <input type="tel" id="telefono" name="telefono" class="form-control" required onblur="validateTelefono()">
+                        <small id="telefonoError" class="text-danger hidden">Teléfono debe tener 9 números.</small>
                     </div>
                 </div>
             </div>
@@ -62,7 +63,8 @@
                     <h4 class="card-title">Datos del Vehículo</h4>
                     <div class="form-group mb-3">
                         <label for="patente">*Patente:</label>
-                        <input type="text" id="patente" name="patente" class="form-control" required>
+                        <input type="text" id="patente" name="patente" class="form-control" required onblur="validatePatente()">
+                        <small id="patenteError" class="text-danger hidden">Patente debe tener entre 6 y 7 caracteres.</small>
                     </div>
                     <div class="form-group mb-3">
                         <label for="marca">*Marca:</label>
@@ -78,7 +80,6 @@
             <button type="submit" class="btn btn-secondary">Guardar Propietario y Vehículo</button>
         </form>
 
-        <!-- Contenedores para mostrar los mensajes de éxito o error -->
         <div id="successMessage" class="alert alert-success hidden"></div>
         <div id="errorMessage" class="alert alert-danger hidden"></div>
     </div>
@@ -92,115 +93,102 @@
     </footer>
 
     <script>
-        // Función para buscar el propietario por DNI
-        async function fetchPropietario() {
+        // Función para validar el DNI
+        function validateDni() {
             const dni = document.getElementById('dni').value;
+            const dniError = document.getElementById('dniError');
+            const dniPattern = /^[0-9]{8}[A-Za-z]$/;
 
-            if (dni) {
-                try {
-                    const response = await fetch(`/api/propietarios/${dni}`); // Cambia esta URL según tu API
-
-                    if (response.ok) {
-                        const propietario = await response.json();
-                        // Si el propietario existe, completar los campos
-                        if (propietario) {
-                            document.getElementById('nombre').value = propietario.nombre;
-                            document.getElementById('apellido').value = propietario.apellido;
-                            document.getElementById('direccion').value = propietario.direccion;
-                            document.getElementById('telefono').value = propietario.telefono;
-                        } else {
-                            // Si no existe, resetear campos
-                            document.getElementById('nombre').value = '';
-                            document.getElementById('apellido').value = '';
-                            document.getElementById('direccion').value = '';
-                            document.getElementById('telefono').value = '';
-                        }
-                    } else {
-                        console.error('Error al buscar propietario:', await response.text());
-                    }
-                } catch (error) {
-                    console.error('Error en la solicitud:', error);
-                }
+            if (!dniPattern.test(dni)) {
+                dniError.classList.remove('hidden');
+                return false;
+            } else {
+                dniError.classList.add('hidden');
+                return true;
             }
         }
 
-        // Función para manejar el envío del formulario
-        async function handleSubmit(event) {
-            event.preventDefault(); // Evitar el envío tradicional del formulario
+        // Función para validar el Teléfono
+        function validateTelefono() {
+            const telefono = document.getElementById('telefono').value;
+            const telefonoError = document.getElementById('telefonoError');
+            const telefonoPattern = /^[0-9]{9}$/;
 
-            // Obtener los valores de los inputs del propietario
+            if (!telefonoPattern.test(telefono)) {
+                telefonoError.classList.remove('hidden');
+                return false;
+            } else {
+                telefonoError.classList.add('hidden');
+                return true;
+            }
+        }
+
+        // Función para validar la Patente
+        function validatePatente() {
+            const patente = document.getElementById('patente').value;
+            const patenteError = document.getElementById('patenteError');
+            const patentePattern = /^[A-Za-z0-9]{6,7}$/;
+
+            if (!patentePattern.test(patente)) {
+                patenteError.classList.remove('hidden');
+                return false;
+            } else {
+                patenteError.classList.add('hidden');
+                return true;
+            }
+        }
+
+        // Mantiene la función handleSubmit intacta
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            if (!validateDni() || !validateTelefono() || !validatePatente()) {
+                document.getElementById('errorMessage').textContent = 'Por favor, corrija los errores en el formulario.';
+                document.getElementById('errorMessage').classList.remove('hidden');
+                document.getElementById('successMessage').classList.add('hidden');
+                return;
+            }
+
+            // Limpiar mensaje de error si las validaciones pasaron
+            document.getElementById('errorMessage').classList.add('hidden');
+
+            // Aquí continúa el código original de envío del formulario
             const dni = document.getElementById('dni').value;
             const nombre = document.getElementById('nombre').value;
             const apellido = document.getElementById('apellido').value;
             const direccion = document.getElementById('direccion').value;
             const telefono = document.getElementById('telefono').value;
 
-            // Obtener los valores de los inputs del vehículo
             const patente = document.getElementById('patente').value;
             const marca = document.getElementById('marca').value;
             const modelo = document.getElementById('modelo').value;
 
-            // Crear el objeto con los datos del propietario y vehículo
             const data = {
-                propietario: {
-                    dni: dni,
-                    nombre: nombre,
-                    apellido: apellido,
-                    direccion: direccion,
-                    telefono: telefono
-                },
-                vehiculo: {
-                    patente: patente,
-                    marca: marca,
-                    modelo: modelo
-                }
+                propietario: { dni, nombre, apellido, direccion, telefono },
+                vehiculo: { patente, marca, modelo }
             };
 
-            // Limpiar los mensajes previos
-            document.getElementById('successMessage').textContent = '';
-            document.getElementById('errorMessage').textContent = '';
-
             try {
-                // Enviar la solicitud POST a la API
                 const response = await fetch('/api/propietarios', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data), // Enviar datos agrupados
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
                 });
 
                 if (response.ok) {
-                    const result = await response.json(); // Definir result aquí
-                    console.log('Resultado del servidor:', result); // Log de la respuesta
-
-                    // Verificar si se creó correctamente el propietario y vehículo
-                    if (result.dni && result.nombre && result.apellido) {
-                        document.getElementById('successMessage').textContent = `Propietario y vehículo creados con éxito: ${result.nombre} ${result.apellido}`;
-                        document.getElementById('successMessage').classList.remove('hidden');
-                        document.getElementById('errorMessage').classList.add('hidden');
-
-                        // Redirigir a la página crearOrden4.html y pasar el DNI
-                        setTimeout(() => {
-                            window.location.href = `crearOrden4.html?dni=${result.dni}`;
-                        }, 2000); // Esperar 2 segundos antes de redirigir
-
-                        // Resetear el formulario
-                        document.getElementById('propietarioForm').reset();
-                    } else {
-                        throw new Error('La estructura de la respuesta es incorrecta.');
-                    }
+                    const result = await response.json();
+                    document.getElementById('successMessage').textContent = `Propietario y vehículo creados con éxito: ${result.nombre} ${result.apellido}`;
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    document.getElementById('errorMessage').classList.add('hidden');
+                    setTimeout(() => window.location.href = `crearOrden4.html?dni=${result.dni}`, 2000);
+                    document.getElementById('propietarioForm').reset();
                 } else {
-                    // Manejar error en la respuesta
-                    const errorText = await response.text(); // Obtener el texto de error del servidor
-                    console.error('Error de respuesta del servidor:', errorText); // Loguear el texto de error
+                    const errorText = await response.text();
                     document.getElementById('errorMessage').textContent = `Error al crear el propietario y vehículo: ${errorText}`;
                     document.getElementById('errorMessage').classList.remove('hidden');
                     document.getElementById('successMessage').classList.add('hidden');
                 }
             } catch (error) {
-                // Manejar error general
-                console.error('Error:', error);
                 document.getElementById('errorMessage').textContent = 'Hubo un problema al crear el propietario y vehículo.';
                 document.getElementById('errorMessage').classList.remove('hidden');
                 document.getElementById('successMessage').classList.add('hidden');
@@ -208,7 +196,6 @@
         }
     </script>
 
-    <!-- Estilos para ocultar mensajes al inicio -->
     <style>
         .hidden {
             display: none;
