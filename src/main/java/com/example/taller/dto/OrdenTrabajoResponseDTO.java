@@ -2,6 +2,9 @@ package com.example.taller.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import com.example.taller.empleados.domain.EmpleadoResponseDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

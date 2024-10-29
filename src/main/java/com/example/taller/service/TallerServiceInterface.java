@@ -3,7 +3,7 @@ package com.example.taller.service;
 import java.util.List;
 
 import com.example.taller.dto.OrdenTrabajoDTO;
-import com.example.taller.model.Empleado;
+import com.example.taller.empleados.infrastructure.adapter.Empleado;
 import com.example.taller.model.OrdenTrabajo;
 import com.example.taller.model.Propietario;
 import com.example.taller.model.Repuesto;

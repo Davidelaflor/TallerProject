@@ -1,4 +1,4 @@
-package com.example.taller.model;
+package com.example.taller.empleados.infrastructure.adapter;
 
 import static jakarta.persistence.GenerationType.*;
 
