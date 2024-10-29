@@ -1,11 +1,13 @@
  package com.example.taller.empleados.application;
 
+import org.springframework.stereotype.Service;
+
 import com.example.taller.empleados.application.dto.EmpleadoDTO;
 import com.example.taller.empleados.domain.dto.EmpleadoResponseDTO;
 import com.example.taller.empleados.domain.model.Empleado;
 import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 
-
+@Service
 public class EmpleadoApplicationService {
 private final EmpleadoServicePort empleadoServicePort;
 

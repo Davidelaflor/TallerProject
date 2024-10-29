@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.taller.empleados.domain.model.Empleado;
-import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;icePort;
+import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 import com.example.taller.empleados.infrastructure.repository.EmpleadoRepository;
 
 @Service
