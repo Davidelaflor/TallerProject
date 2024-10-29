@@ -1,9 +1,9 @@
  package com.example.taller.empleados.application;
 
-import com.example.taller.empleados.domain.dto.EmpleadoDTO;
+import com.example.taller.empleados.application.dto.EmpleadoDTO;
 import com.example.taller.empleados.domain.dto.EmpleadoResponseDTO;
 import com.example.taller.empleados.domain.model.Empleado;
-import com.example.taller.empleados.domain.port.EmpleadoServicePort;
+import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 
 
 public class EmpleadoApplicationService {

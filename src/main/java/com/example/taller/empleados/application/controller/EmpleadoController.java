@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.taller.empleados.application.EmpleadoApplicationService;
-import com.example.taller.empleados.domain.dto.EmpleadoDTO;
+import com.example.taller.empleados.application.dto.EmpleadoDTO;
 import com.example.taller.empleados.domain.dto.EmpleadoResponseDTO;
 
 @RestController

@@ -1,4 +1,4 @@
-package com.example.taller.empleados.domain.port;
+package com.example.taller.empleados.infrastructure.port;
 
 import com.example.taller.empleados.domain.model.Empleado;
 
