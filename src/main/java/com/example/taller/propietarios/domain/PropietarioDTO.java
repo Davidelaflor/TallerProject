@@ -1,4 +1,8 @@
-package com.example.taller.empleados.domain;
+package com.example.taller.propietarios.domain;
+
+import java.util.List;
+
+import com.example.taller.vehiculos.domain.VehiculoDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +15,9 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmpleadoDTO {
-    private Long id;
+public class PropietarioDTO {
+  private String dni;
     private String nombre;
-    private String apellido;
     private String telefono;
-
+    private List<VehiculoDTO> vehiculos;
 }

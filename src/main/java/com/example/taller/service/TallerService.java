@@ -9,27 +9,29 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import com.example.taller.dto.OrdenTrabajoDTO;
-import com.example.taller.dto.OrdenTrabajoResponseDTO;
-import com.example.taller.dto.RepuestoUtilizadoDTO;
-import com.example.taller.dto.RepuestoUtilizadoResponseDTO;
-import com.example.taller.empleados.infrastructure.adapter.Empleado;
+
+import com.example.taller.RepuestoUtilizado.application.RepuestoUtilizadoRequestDTO;
+import com.example.taller.RepuestoUtilizado.domain.RepuestoUtilizadoDTO;
+import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoEntity;
+import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoRepository;
+import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 import com.example.taller.empleados.infrastructure.adapter.EmpleadoRepository;
-import com.example.taller.model.Estado;
-import com.example.taller.model.OrdenTrabajo;
-import com.example.taller.model.Propietario;
-import com.example.taller.model.Repuesto;
-import com.example.taller.model.RepuestoUtilizado;
-import com.example.taller.model.Vehiculo;
-import com.example.taller.repository.OrdenTrabajoRepository;
-import com.example.taller.repository.PropietarioRepository;
-import com.example.taller.repository.RepuestoRepository;
-import com.example.taller.repository.RepuestoUtilizadoRepository;
+import com.example.taller.ordenes.application.OrdenTrabajoRequestDTO;
+import com.example.taller.ordenes.domain.Estado;
+import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
+import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
+import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoRepository;
+import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
+import com.example.taller.repuestos.infrastructure.adapter.RepuestoEntity;
+import com.example.taller.repuestos.infrastructure.adapter.RepuestoRepository;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class TallerService implements TallerServiceInterface {
+public class TallerService implements OrdenTrabajoServicePort {
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
@@ -45,94 +47,35 @@ public class TallerService implements TallerServiceInterface {
     @Autowired
     private RepuestoUtilizadoRepository repuestoUtilizadoRepository;
 
-    // Métodos para manejar Empleados
-    @Override
-    public List<Empleado> listarEmpleados() {
-        return empleadoRepository.findAll();
-    }
+  
+
+   
+
+   
+
+   
+
+
+   
+
 
     @Override
-    public Empleado guardarEmpleado(Empleado empleado) {
-        return empleadoRepository.save(empleado);
-    }
-
-    @Override
-    public Empleado buscarEmpleadoPorId(Long id) {
-        return empleadoRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public void eliminarEmpleado(Long id) {
-        empleadoRepository.deleteById(id);
-    }
-
-    // Métodos para manejar Propietarios
-    @Override
-    public List<Propietario> listarPropietarios() {
-        return propietarioRepository.findAll();
-    }
-
-    @Override
-    public Propietario guardarPropietario(Propietario propietario) {
-        return propietarioRepository.save(propietario);
-    }
-
-    @Override
-    public Propietario buscarPropietarioPorDni(String dni) {
-        return propietarioRepository.findById(dni).orElse(null);
-    }
-
-    @Override
-    public void eliminarPropietario(String dni) {
-        propietarioRepository.deleteById(dni);
-    }
-
-    @Override
-    public List<Repuesto> listarRepuestos() {
-        return repuestoRepository.findAll();
-    }
-
-    @Override
-    public Repuesto guardarRepuesto(Repuesto repuesto) {
-        return repuestoRepository.save(repuesto);
-    }
-
-    @Override
-    public Repuesto buscarRepuestoPorCodigo(String codigo) {
-        return repuestoRepository.findById(codigo).orElse(null);
-    }
-
-    @Override
-    public void eliminarRepuesto(String codigo) {
-        repuestoRepository.deleteById(codigo);
-    }
-
-    @Override
-    public void actualizarCantidad(String codigo, int cantidad) {
-        Repuesto repuesto = buscarRepuestoPorCodigo(codigo);
-        if (repuesto != null) {
-            repuesto.setCantidad(repuesto.getCantidad() - cantidad);
-            repuestoRepository.save(repuesto);
-        }
-    }
-
-    @Override
-    public List<OrdenTrabajo> listarOrdenes() {
+    public List<OrdenTrabajoEntity> listarOrdenes() {
         return ordenTrabajoRepository.findAll();
     }
 
     @Override
-    public OrdenTrabajo crearOrdenTrabajo(OrdenTrabajoDTO dto) {
+    public OrdenTrabajoEntity crearOrdenTrabajo(OrdenTrabajoRequestDTO dto) {
         // Buscar empleado por ID
-        Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
+        EmpleadoEntity empleado = empleadoRepository.findById(dto.getEmpleadoId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         
         // Buscar propietario por DNI
-        Propietario propietario = propietarioRepository.findById(dto.getPropietarioDni())
+        PropietarioEntity propietario = propietarioRepository.findById(dto.getPropietarioDni())
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
     
         // Buscar el vehículo por patente dentro de los vehículos del propietario
-        Vehiculo vehiculoSeleccionado = propietario.getVehiculos().stream()
+        VehiculoEntity vehiculoSeleccionado = propietario.getVehiculos().stream()
                 .filter(vehiculo -> vehiculo.getPatente().equals(dto.getVehiculoPatente()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Vehículo no encontrado para el propietario"));
@@ -142,7 +85,7 @@ public class TallerService implements TallerServiceInterface {
            throw new RuntimeException("El vehículo ya tiene una orden de trabajo registrada.");
        }
         // Crear la entidad OrdenTrabajo directamente
-        OrdenTrabajo nuevaOrden = OrdenTrabajo.builder()
+        OrdenTrabajoEntity nuevaOrden = OrdenTrabajoEntity.builder()
                 .detalleFalla(dto.getDetalleFalla())
                 .horasTrabajadas(dto.getHorasTrabajadas())  // Tomar el valor desde el DTO
                 .estado(Estado.ACTIVO.toString())  // Puedes ajustar si el estado es dinámico
@@ -162,15 +105,15 @@ public class TallerService implements TallerServiceInterface {
     @Override
     public void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad) {
         // Obtener la orden de trabajo
-        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
+        OrdenTrabajoEntity ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
                 .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
 
         // Obtener el repuesto (suponiendo que ya tienes la entidad Repuesto)
-        Repuesto repuesto = repuestoRepository.findById(repuestoUtilizadoId)
+        RepuestoEntity repuesto = repuestoRepository.findById(repuestoUtilizadoId)
                 .orElseThrow(() -> new RuntimeException("Repuesto no encontrado"));
 
         // Crear un nuevo RepuestoUtilizado
-        RepuestoUtilizado repuestoUtilizado = new RepuestoUtilizado();
+        RepuestoUtilizadoEntity repuestoUtilizado = new RepuestoUtilizadoEntity();
         repuestoUtilizado.setRepuesto(repuesto);
         // Si hay un atributo de cantidad en RepuestoUtilizado, puedes establecerlo aquí
         repuestoUtilizado.setCantidad(cantidad); // o la cantidad que necesites
@@ -183,7 +126,7 @@ public class TallerService implements TallerServiceInterface {
 @Override
 public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
     // Obtener la orden de trabajo
-    OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
+    OrdenTrabajoEntity ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
             .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
 
     // Sumar horas al campo horasTrabajadas
@@ -194,12 +137,12 @@ public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
 }
 
     @Override
-    public OrdenTrabajo buscarOrdenTrabajoPorId(Long id) {
+    public OrdenTrabajoEntity buscarOrdenTrabajoPorId(Long id) {
         return ordenTrabajoRepository.findById(id).orElse(null);
     }
 
     @Override
-    public OrdenTrabajo obtenerOrdenTrabajo(Long id) {
+    public OrdenTrabajoEntity obtenerOrdenTrabajo(Long id) {
         return ordenTrabajoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Orden de trabajo no encontrada con id: " + id));
 
@@ -211,11 +154,11 @@ public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
     }
 
     @Override
-    public RepuestoUtilizado guardarRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado) {
+    public RepuestoUtilizadoEntity guardarRepuestoUtilizado(RepuestoUtilizadoEntity repuestoUtilizado) {
         return repuestoUtilizadoRepository.save(repuestoUtilizado);
     }
 
-    public double calcularCostoTotal(OrdenTrabajoDTO ordenTrabajoDTO) {
+    public double calcularCostoTotal(OrdenTrabajoRequestDTO ordenTrabajoDTO) {
         // Costo por hora fijo
         final double costoPorHora = 50.0;
 
@@ -229,9 +172,9 @@ public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
         return costoManoObra + costoRepuestos;
     }
 
-    private double calcularCostoRepuestos(List<RepuestoUtilizadoDTO> repuestosUtilizados) {
+    private double calcularCostoRepuestos(List<RepuestoUtilizadoRequestDTO> repuestosUtilizados) {
         double total = 0;
-        for (RepuestoUtilizadoDTO repuestoUtilizado : repuestosUtilizados) {
+        for (RepuestoUtilizadoRequestDTO repuestoUtilizado : repuestosUtilizados) {
             // Suponiendo que el precio se multiplica por la cantidad utilizada
             total += repuestoUtilizado.getRepuesto().getPrecio() * repuestoUtilizado.getCantidadUtilizada();
         }

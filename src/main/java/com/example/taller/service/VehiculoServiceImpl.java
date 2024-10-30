@@ -10,17 +10,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
 
-import com.example.taller.dto.CrearVehiculoParaPropietarioDTO;
-import com.example.taller.dto.NuevoPropietarioDTO;
-import com.example.taller.dto.VehiculoDTO;
-import com.example.taller.exception.VehiculoYaRegistradoException;
-import com.example.taller.model.Propietario;
-import com.example.taller.model.Vehiculo;
-import com.example.taller.repository.VehiculoRepository;
-import com.example.taller.repository.PropietarioRepository; // Cambia esto según tu estructura de paquetes
+import com.example.taller.generics.exception.VehiculoYaRegistradoException;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
+import com.example.taller.vehiculos.application.CrearVehiculoParaPropietarioRequestDTO;
+import com.example.taller.vehiculos.application.NuevoPropietarioRequestDTO;
+import com.example.taller.vehiculos.application.VehiculoRequestDTO;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoRepository;
+import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
 
 @Service
-public class VehiculoServiceImpl implements VehiculoService {
+public class VehiculoServiceImpl implements VehiculoServicePort {
       @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -30,8 +31,8 @@ public class VehiculoServiceImpl implements VehiculoService {
     private PropietarioRepository propietarioRepository;
 
      @Override
-    public List<Vehiculo> obtenerVehiculosPorDni(String dni) {
-        List<Vehiculo> vehiculos = vehiculoRepository.findByPropietarioDni(dni);
+    public List<VehiculoEntity> obtenerVehiculosPorDni(String dni) {
+        List<VehiculoEntity> vehiculos = vehiculoRepository.findByPropietarioDni(dni);
     
         if (vehiculos.isEmpty()) {
             throw new RuntimeException("No se encontraron vehículos para el propietario con DNI: " + dni);
@@ -41,17 +42,17 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
-    public Vehiculo crearVehiculo(Vehiculo vehiculo) {
+    public VehiculoEntity crearVehiculo(VehiculoEntity vehiculo) {
         return vehiculoRepository.save(vehiculo);
     }
 
     @Override
-    public Vehiculo obtenerVehiculoPorPatente(String patente) {
+    public VehiculoEntity obtenerVehiculoPorPatente(String patente) {
         return vehiculoRepository.findById(patente).orElse(null);
     }
 
     @Override
-    public List<Vehiculo> obtenerTodosLosVehiculos() {
+    public List<VehiculoEntity> obtenerTodosLosVehiculos() {
         return vehiculoRepository.findAll();
     }
 
@@ -61,20 +62,20 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Vehiculo agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioDTO vehiculoDTO) {
+    public VehiculoEntity agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioRequestDTO vehiculoDTO) {
         // Buscar al propietario en la base de datos por DNI
-        Propietario propietario = propietarioRepository.findById(dni)
+        PropietarioEntity propietario = propietarioRepository.findById(dni)
                 .orElseThrow(() -> new RuntimeException("Propietario con DNI " + dni + " no encontrado"));
     
         // Buscar si el vehículo ya existe en la base de datos
-        Optional<Vehiculo> vehiculoEnBD = vehiculoRepository.findById(vehiculoDTO.getPatente());
+        Optional<VehiculoEntity> vehiculoEnBD = vehiculoRepository.findById(vehiculoDTO.getPatente());
     
         // Declarar la variable nuevoVehiculo
-        Vehiculo nuevoVehiculo;
+        VehiculoEntity nuevoVehiculo;
     
         if (vehiculoEnBD.isPresent()) {
             // Si el vehículo ya existe, verificar si está asociado a un propietario
-            Vehiculo vehiculoExistente = vehiculoEnBD.get();
+            VehiculoEntity vehiculoExistente = vehiculoEnBD.get();
     
             // Si el vehículo ya tiene un propietario diferente, lanzar error
             if (vehiculoExistente.getPropietario() != null && !vehiculoExistente.getPropietario().equals(propietario)) {
@@ -97,7 +98,7 @@ public class VehiculoServiceImpl implements VehiculoService {
             nuevoVehiculo = vehiculoExistente;
         } else {
             // Si el vehículo no existe, creamos uno nuevo
-            nuevoVehiculo = Vehiculo.builder()
+            nuevoVehiculo = VehiculoEntity.builder()
                     .patente(vehiculoDTO.getPatente())
                     .marca(vehiculoDTO.getMarca())
                     .modelo(vehiculoDTO.getModelo())
@@ -118,9 +119,9 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
-    public Propietario crearPropietario(NuevoPropietarioDTO propietarioDTO) {
+    public PropietarioEntity crearPropietario(NuevoPropietarioRequestDTO propietarioDTO) {
         // Convertir NuevoPropietarioDTO a Propietario
-        Propietario propietario = new Propietario();
+        PropietarioEntity propietario = new PropietarioEntity();
         propietario.setDni(propietarioDTO.getDni());
         propietario.setNombre(propietarioDTO.getNombre());
         propietario.setApellido(propietarioDTO.getApellido());

@@ -3,21 +3,22 @@ package com.example.taller.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.taller.model.RepuestoUtilizado;
-import com.example.taller.repository.RepuestoUtilizadoRepository;
+import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoEntity;
+import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoRepository;
+import com.example.taller.RepuestoUtilizado.infrastructure.port.RepuestoUtilizadoServicePort;
 
 @Service
-public class RepuestoUtilizadoServiceImpl implements RepuestoUtilizadoService {
+public class RepuestoUtilizadoServiceImpl implements RepuestoUtilizadoServicePort {
   @Autowired
     private RepuestoUtilizadoRepository repuestoUtilizadoRepository;
 
     @Override
-    public RepuestoUtilizado crearRepuestoUtilizado(RepuestoUtilizado repuestoUtilizado) {
+    public RepuestoUtilizadoEntity crearRepuestoUtilizado(RepuestoUtilizadoEntity repuestoUtilizado) {
         return repuestoUtilizadoRepository.save(repuestoUtilizado);
     }
 
     @Override
-    public RepuestoUtilizado obtenerRepuestoUtilizadoPorId(String id) {
+    public RepuestoUtilizadoEntity obtenerRepuestoUtilizadoPorId(String id) {
         return repuestoUtilizadoRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Repuesto Utilizado no encontrado"));
     }

@@ -19,7 +19,7 @@ import lombok.Setter;
 @Builder
 @Table(name = "empleados")
 @NoArgsConstructor
-public class Empleado {
+public class EmpleadoEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;

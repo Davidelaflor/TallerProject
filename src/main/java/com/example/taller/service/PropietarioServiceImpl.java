@@ -5,27 +5,28 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.taller.dto.PropietarioDTO;
-import com.example.taller.dto.VehiculoDTO;
-import com.example.taller.model.Propietario;
-import com.example.taller.model.Vehiculo;
-import com.example.taller.repository.PropietarioRepository;
-import com.example.taller.repository.VehiculoRepository;
+import com.example.taller.propietarios.application.PropietarioRequestDTO;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
+import com.example.taller.propietarios.infrastructure.port.PropietarioServicePort;
+import com.example.taller.vehiculos.application.VehiculoRequestDTO;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoRepository;
 
 @Service
-public class PropietarioServiceImpl implements PropietarioService {
+public class PropietarioServiceImpl implements PropietarioServicePort {
     @Autowired
     private PropietarioRepository propietarioRepository;
     @Autowired
     private VehiculoRepository vehiculoRepository;
 
     @Override
-    public List<Propietario> listarPropietarios() {
+    public List<PropietarioEntity> listarPropietarios() {
         return propietarioRepository.findAll();
     }
 
     @Override
-    public Propietario crearPropietarioConVehiculo(PropietarioDTO propietarioDTO, VehiculoDTO vehiculoDTO) {
+    public PropietarioEntity crearPropietarioConVehiculo(PropietarioRequestDTO propietarioDTO, VehiculoRequestDTO vehiculoDTO) {
           // Verificar si el propietario ya existe
           if (propietarioRepository.existsByDni(propietarioDTO.getDni())) {
             throw new IllegalArgumentException("El propietario con DNI " + propietarioDTO.getDni() + " ya está registrado.");
@@ -36,8 +37,8 @@ public class PropietarioServiceImpl implements PropietarioService {
             throw new IllegalArgumentException("El vehículo con patente " + vehiculoDTO.getPatente() + " ya está registrado.");
         }
         
-        Propietario entity = generatePropietarioEntity(propietarioDTO);
-        Vehiculo vehiculoEntity = generateVehiculoEntity(vehiculoDTO);
+        PropietarioEntity entity = generatePropietarioEntity(propietarioDTO);
+        VehiculoEntity vehiculoEntity = generateVehiculoEntity(vehiculoDTO);
         
         entity.addVehiculo(vehiculoEntity); 
 
@@ -45,16 +46,16 @@ public class PropietarioServiceImpl implements PropietarioService {
         //return entity;
     }
 
-    private Vehiculo generateVehiculoEntity(VehiculoDTO dto) {
-        return Vehiculo.builder()
+    private VehiculoEntity generateVehiculoEntity(VehiculoRequestDTO dto) {
+        return VehiculoEntity.builder()
                 .patente(dto.getPatente())
                 .marca(dto.getMarca())
                 .modelo(dto.getModelo())
                 .build();
     }
 
-    private Propietario generatePropietarioEntity(PropietarioDTO dto) {
-        return Propietario.builder()
+    private PropietarioEntity generatePropietarioEntity(PropietarioRequestDTO dto) {
+        return PropietarioEntity.builder()
                 .dni(dto.getDni())
                 .nombre(dto.getNombre())
                 .apellido(dto.getApellido())
@@ -64,7 +65,7 @@ public class PropietarioServiceImpl implements PropietarioService {
     }
 
     @Override
-    public Propietario obtenerPropietarioPorDni(String dni) {
+    public PropietarioEntity obtenerPropietarioPorDni(String dni) {
         return propietarioRepository.findById(dni)
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
     }

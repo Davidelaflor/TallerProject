@@ -1,11 +1,11 @@
 package com.example.taller.empleados.infrastructure.port;
 
 import com.example.taller.empleados.application.EmpleadoRequestDTO;
-import com.example.taller.empleados.domain.EmpleadoResponseDTO;
-import com.example.taller.empleados.infrastructure.adapter.Empleado;
+import com.example.taller.empleados.domain.EmpleadoDTO;
+import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 
 public interface EmpleadoServicePort {
-  EmpleadoResponseDTO crearEmpleado(EmpleadoRequestDTO empleadoDTO);
-  Empleado obtenerEmpleadoPorId(Long id);
+  EmpleadoDTO crearEmpleado(EmpleadoRequestDTO empleadoDTO);
+  EmpleadoEntity obtenerEmpleadoPorId(Long id);
   void eliminarEmpleado(Long id);
 }

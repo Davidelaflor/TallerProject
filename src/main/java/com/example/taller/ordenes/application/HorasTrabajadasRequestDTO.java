@@ -1,4 +1,4 @@
-package com.example.taller.empleados.domain;
+package com.example.taller.ordenes.application;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +11,6 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmpleadoDTO {
-    private Long id;
-    private String nombre;
-    private String apellido;
-    private String telefono;
-
+public class HorasTrabajadasRequestDTO {
+    private int horasTrabajadas;
 }

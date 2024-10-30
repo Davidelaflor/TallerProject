@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.taller.empleados.domain.EmpleadoResponseDTO;
-import com.example.taller.empleados.infrastructure.adapter.Empleado;
+import com.example.taller.empleados.domain.EmpleadoDTO;
+import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 
 @RestController
@@ -21,14 +21,14 @@ public class EmpleadoController {
     private EmpleadoServicePort empleadoService;
 
     @PostMapping
-    public ResponseEntity<EmpleadoResponseDTO> crearEmpleado(@RequestBody EmpleadoRequestDTO empleadoDTO) {
-        EmpleadoResponseDTO nuevoEmpleado = empleadoService.crearEmpleado(empleadoDTO);
+    public ResponseEntity<EmpleadoDTO> crearEmpleado(@RequestBody EmpleadoRequestDTO empleadoDTO) {
+        EmpleadoDTO nuevoEmpleado = empleadoService.crearEmpleado(empleadoDTO);
         return ResponseEntity.ok(nuevoEmpleado);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Empleado> obtenerEmpleadoPorId(@PathVariable Long id) {
-        Empleado empleado = empleadoService.obtenerEmpleadoPorId(id);
+    public ResponseEntity<EmpleadoEntity> obtenerEmpleadoPorId(@PathVariable Long id) {
+        EmpleadoEntity empleado = empleadoService.obtenerEmpleadoPorId(id);
         return ResponseEntity.ok(empleado);
     }
 

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.taller.empleados.application.EmpleadoRequestDTO;
-import com.example.taller.empleados.domain.EmpleadoResponseDTO;
+import com.example.taller.empleados.domain.EmpleadoDTO;
 import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 
 @Service
@@ -14,9 +14,9 @@ public class EmpleadoService implements EmpleadoServicePort {
     private EmpleadoRepository empleadoRepository;
 
     @Override
-    public EmpleadoResponseDTO crearEmpleado(EmpleadoRequestDTO empleadoDTO) {
+    public EmpleadoDTO crearEmpleado(EmpleadoRequestDTO empleadoDTO) {
         // Crear una nueva instancia de Empleado sin asignar un ID
-        Empleado empleadoEntity = new Empleado();
+        EmpleadoEntity empleadoEntity = new EmpleadoEntity();
 
         // Configurar los valores de la entidad usando el DTO
         empleadoEntity.setNombre(empleadoDTO.getNombre());
@@ -27,7 +27,7 @@ public class EmpleadoService implements EmpleadoServicePort {
         empleadoEntity = empleadoRepository.save(empleadoEntity);
 
         // Crear y devolver el DTO de respuesta, incluyendo el ID generado
-        return new EmpleadoResponseDTO(
+        return new EmpleadoDTO(
                 empleadoEntity.getId(), // Aquí obtienes el ID generado
                 empleadoEntity.getNombre(),
                 empleadoEntity.getApellido(),
@@ -35,7 +35,7 @@ public class EmpleadoService implements EmpleadoServicePort {
     }
 
     @Override
-    public Empleado obtenerEmpleadoPorId(Long id) {
+    public EmpleadoEntity obtenerEmpleadoPorId(Long id) {
         return empleadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
     }

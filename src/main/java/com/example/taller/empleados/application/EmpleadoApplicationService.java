@@ -3,8 +3,8 @@ package com.example.taller.empleados.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.taller.empleados.domain.EmpleadoResponseDTO;
-import com.example.taller.empleados.infrastructure.adapter.Empleado;
+import com.example.taller.empleados.domain.EmpleadoDTO;
+import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 
 @Service
@@ -15,13 +15,13 @@ public class EmpleadoApplicationService {
     @Autowired
     private EmpleadoValidationsService validationService;
 
-    public EmpleadoResponseDTO crearEmpleado(EmpleadoRequestDTO empleadoDTO) {
+    public EmpleadoDTO crearEmpleado(EmpleadoRequestDTO empleadoDTO) {
         // Lógica de validación
         validationService.validarEmpleado(empleadoDTO);
         return empleadoServicePort.crearEmpleado(empleadoDTO);
     }
 
-    public Empleado obtenerEmpleadoPorId(Long id) {
+    public EmpleadoEntity obtenerEmpleadoPorId(Long id) {
         return empleadoServicePort.obtenerEmpleadoPorId(id);
     }
 
