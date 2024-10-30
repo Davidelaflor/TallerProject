@@ -17,7 +17,7 @@ public class OrdenTrabajoMapper {
     public OrdenTrabajoDTO toDTO(OrdenTrabajoEntity ordenTrabajo) {
         // Mapeo de repuestos utilizados a DTO
         List<RepuestoUtilizadoDTO> repuestosUtilizados = ordenTrabajo
-                .getRepuestoUtilizado()
+                .getRepuestosUtilizados()
                 .stream()
                 .map(repuestoUtilizado -> new RepuestoUtilizadoDTO(
                         repuestoUtilizado.getRepuesto()
@@ -64,5 +64,12 @@ public class OrdenTrabajoMapper {
                 empleadoDTO, // Mapeo del empleado
                 repuestosUtilizados,
                 propietarioDTO);
+    }
+    public OrdenTrabajoEntity toEntity(OrdenTrabajoRequestDTO requestDTO) {
+        OrdenTrabajoEntity ordenTrabajo = new OrdenTrabajoEntity();
+        ordenTrabajo.setDetalleFalla(requestDTO.getDetalleFalla());
+        ordenTrabajo.setHorasTrabajadas(requestDTO.getHorasTrabajadas());
+        // Completa aquí con el resto de las propiedades que necesites
+        return ordenTrabajo;
     }
 }

@@ -52,16 +52,16 @@ public class OrdenTrabajoEntity {
     @JoinColumn(name = "propietario_dni")
     private PropietarioEntity propietario;
     @OneToMany(mappedBy = "ordenTrabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<RepuestoUtilizadoEntity> repuestoUtilizado = new ArrayList<>();
+    private List<RepuestoUtilizadoEntity> repuestosUtilizados = new ArrayList<>();
     
      // Métodos para agregar y eliminar repuestos utilizados
      public void addRepuestoUtilizado(RepuestoUtilizadoEntity repuestoUtilizado) {
-        this.repuestoUtilizado.add(repuestoUtilizado); // Añade el repuesto a la lista
+        this.repuestosUtilizados.add(repuestoUtilizado); // Añade el repuesto a la lista
         repuestoUtilizado.setOrdenTrabajo(this); // Configura la relación bidireccional
     }
 
     public void removeRepuestoUtilizado(RepuestoUtilizadoEntity repuestoUtilizado) {
-        this.repuestoUtilizado.remove(repuestoUtilizado); // Elimina el repuesto de la lista
+        this.repuestosUtilizados.remove(repuestoUtilizado); // Elimina el repuesto de la lista
         repuestoUtilizado.setOrdenTrabajo(null); // Limpia la relación bidireccional
     }
     @ManyToOne

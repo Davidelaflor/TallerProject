@@ -2,7 +2,7 @@ package com.example.taller.ordenes.infrastructure.adapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.taller.ordenes.application.OrdenTrabajoMapper; // Importa el mapper
+import java.util.List;
 
 import com.example.taller.ordenes.application.OrdenTrabajoRequestDTO;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
@@ -29,9 +29,18 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
         // Guardar la orden en el repositorio
         OrdenTrabajoEntity savedEntity = ordenTrabajoRepository.save(ordenEntity);
 
-        // Convertir la entidad guardada a DTO
-        return new OrdenTrabajoDTO(savedEntity.getId(), savedEntity.getDetalleFalla(), 
-                                   savedEntity.getHorasTrabajadas(), savedEntity.getEstado());
+           // Convertir la entidad guardada a DTO y retornarla
+    return new OrdenTrabajoDTO(
+        savedEntity.getId(),
+        savedEntity.getDetalleFalla(),
+        savedEntity.getHorasTrabajadas(),
+        savedEntity.getEstado(),
+        savedEntity.getFechaIngreso(), // Suponiendo que este método existe
+        null, // Reemplaza con la lógica para obtener empleado
+        null, // Reemplaza con la lógica para obtener repuestos
+        null  // Reemplaza con la lógica para obtener propietario
+    );
+
     }
 
     @Override
@@ -48,10 +57,18 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
     @Override
     public OrdenTrabajoDTO buscarOrdenTrabajoPorId(Long id) {
         return ordenTrabajoRepository.findById(id)
-                .map(entity -> new OrdenTrabajoDTO(entity.getId(), entity.getDetalleFalla(),
-                        entity.getHorasTrabajadas(), entity.getEstado()))
-                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
-    }
+            .map(entity -> new OrdenTrabajoDTO(
+                entity.getId(),
+                entity.getDetalleFalla(),
+                entity.getHorasTrabajadas(),
+                entity.getEstado(),
+                entity.getFechaIngreso(),  // Agregar esto
+                null,                       // Asignar null o un valor adecuado para empleado
+                null,                       // Asignar null o un valor adecuado para repuestos
+                null                        // Asignar null o un valor adecuado para propietario
+            ))
+            .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+}
 
     @Override
     public void eliminarOrdenTrabajo(Long id) {
@@ -59,6 +76,8 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
     }
     @Override
     public double calcularCostoTotal(Long ordenTrabajoId) {
+        OrdenTrabajoEntity orden = ordenTrabajoRepository.findById(ordenTrabajoId)
+        .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
         // Calcular el costo de la mano de obra
         final double costoPorHora = 50.0;
         double costoManoObra = orden.getHorasTrabajadas() * costoPorHora;
@@ -70,4 +89,24 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
 
         return costoManoObra + costoRepuestos;
     }
+    @Override
+    public OrdenTrabajoEntity obtenerOrdenTrabajo(Long id) {
+        // Busca la orden por ID
+        return ordenTrabajoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+    }
+    @Override
+    public List<OrdenTrabajoEntity> listarOrdenes() {
+        // Retorna todas las ordenes de trabajo desde el repositorio
+        return ordenTrabajoRepository.findAll();
+    }
+    @Override
+public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
+    OrdenTrabajoEntity ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
+            .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+
+    // Asumiendo que tienes un método setHorasTrabajadas en la entidad OrdenTrabajoEntity
+    ordenTrabajo.setHorasTrabajadas(ordenTrabajo.getHorasTrabajadas() + horas);
+    ordenTrabajoRepository.save(ordenTrabajo);
+}
 }
