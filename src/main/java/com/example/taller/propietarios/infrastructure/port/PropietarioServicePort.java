@@ -3,17 +3,16 @@ package com.example.taller.propietarios.infrastructure.port;
 import java.util.List;
 
 import com.example.taller.propietarios.application.PropietarioRequestDTO;
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
-import com.example.taller.vehiculos.application.NuevoPropietarioRequestDTO;
+import com.example.taller.propietarios.domain.PropietarioDTO;
 import com.example.taller.vehiculos.application.VehiculoRequestDTO;
 
 public interface PropietarioServicePort {
-    PropietarioEntity crearPropietarioConVehiculo(PropietarioRequestDTO propietario, VehiculoRequestDTO vehiculo);
+    PropietarioDTO crearPropietarioConVehiculo(PropietarioRequestDTO propietarioDTO, VehiculoRequestDTO vehiculoDTO);
 
-    PropietarioEntity obtenerPropietarioPorDni(String dni);
+    PropietarioDTO obtenerPropietarioPorDni(String dni);
 
 
-    List<PropietarioEntity> listarPropietarios();
+    List<PropietarioDTO> listarPropietarios();
 
     void eliminarPropietario(String dni);
 }

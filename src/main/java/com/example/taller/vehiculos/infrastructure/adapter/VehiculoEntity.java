@@ -40,4 +40,9 @@ public class VehiculoEntity {
     @ManyToOne
     @JoinColumn(name = "propietario_dni", nullable = false) // Clave foránea
     private PropietarioEntity propietario; // Relación inversa
+    public VehiculoEntity(String patente, String marca, String modelo) {
+        this.patente = patente;
+        this.marca = marca;
+        this.modelo = modelo;
+    }
 }

@@ -12,12 +12,8 @@ public class EmpleadoApplicationService {
  @Autowired
     private EmpleadoServicePort empleadoServicePort;
 
-    @Autowired
-    private EmpleadoValidationsService validationService;
-
     public EmpleadoDTO crearEmpleado(EmpleadoRequestDTO empleadoDTO) {
         // Lógica de validación
-        validationService.validarEmpleado(empleadoDTO);
         return empleadoServicePort.crearEmpleado(empleadoDTO);
     }
 

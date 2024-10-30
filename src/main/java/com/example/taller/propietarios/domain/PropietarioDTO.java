@@ -20,4 +20,6 @@ public class PropietarioDTO {
     private String nombre;
     private String telefono;
     private List<VehiculoDTO> vehiculos;
+    
 }
+

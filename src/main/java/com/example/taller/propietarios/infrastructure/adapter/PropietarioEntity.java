@@ -56,5 +56,12 @@ public class PropietarioEntity {
         this.vehiculos.add(vehiculo);
         vehiculo.setPropietario(this); // Establece la relación bidireccional
     }
+    public PropietarioEntity(String dni, String nombre, String apellido, String direccion, String telefono) {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.direccion = direccion;
+        this.telefono = telefono;
+    }
     
 }

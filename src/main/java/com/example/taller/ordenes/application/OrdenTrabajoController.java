@@ -37,6 +37,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 public class OrdenTrabajoController {
         @Autowired
+        private OrdenTrabajoApplicationService ordenTrabajoApplicationService;
+        @Autowired
         private OrdenTrabajoServicePort ordenTrabajoService;
         @Autowired
         private OrdenTrabajoMapper ordenTrabajoMapper;

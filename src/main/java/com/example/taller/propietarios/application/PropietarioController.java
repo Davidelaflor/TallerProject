@@ -33,13 +33,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 public class PropietarioController {
     @Autowired
-    private PropietarioServicePort propietarioService;
-
+    private PropietarioApplicationService propietarioApplicationService;
     @GetMapping
     @Operation(summary = "Listar propietarios", description = "Obtiene una lista de todos los propietarios registrados en el sistema")
 
-    public List<PropietarioEntity> listarPropietarios() {
-        return propietarioService.listarPropietarios();
+    public List<PropietarioDTO> listarPropietarios() {
+        return propietarioApplicationService.listarPropietarios();
     }
 
     @PostMapping
@@ -53,9 +52,9 @@ public class PropietarioController {
     @RequestBody PropietarioVehiculoRequestDTO dto
     ) {
         try {
-            PropietarioEntity nuevoPropietario = propietarioService.crearPropietarioConVehiculo(dto.getPropietario(),
+            PropietarioDTO nuevoPropietario = propietarioApplicationService.crearPropietarioConVehiculo(dto.getPropietario(),
                     dto.getVehiculo());
-            return ResponseEntity.ok(nuevoPropietario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPropietario);
         } catch (IllegalArgumentException e) {
             // Enviar un error 400 si ya existe el propietario o el vehículo
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -68,15 +67,15 @@ public class PropietarioController {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PropietarioEntity.class))),
             @ApiResponse(responseCode = "404", description = "Propietario no encontrado"),
     })
-    public ResponseEntity<PropietarioEntity> obtenerPropietarioPorDni(
+    public ResponseEntity<PropietarioDTO> obtenerPropietarioPorDni(
             @Parameter(description = "DNI del propietario que se quiere buscar", required = true) @PathVariable String dni) {
-        PropietarioEntity propietario = propietarioService.obtenerPropietarioPorDni(dni);
+        PropietarioDTO propietario = propietarioApplicationService.obtenerPropietarioPorDni(dni);
         return ResponseEntity.ok(propietario);
     }
 
     @DeleteMapping("/{dni}")
     public ResponseEntity<Void> eliminarPropietario(@PathVariable String dni) {
-        propietarioService.eliminarPropietario(dni);
+        propietarioApplicationService.eliminarPropietario(dni);
         return ResponseEntity.noContent().build();
     }
 }
