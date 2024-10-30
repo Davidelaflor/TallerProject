@@ -2,16 +2,23 @@ package com.example.taller.ordenes.infrastructure.adapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.taller.ordenes.application.OrdenTrabajoMapper; // Importa el mapper
 
 import com.example.taller.ordenes.application.OrdenTrabajoRequestDTO;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 @Service
 public class OrdenTrabajoService implements OrdenTrabajoServicePort {
 @Autowired
     private OrdenTrabajoRepository ordenTrabajoRepository;
 
+      @Override
+    public boolean existeOrdenTrabajoPorVehiculo(VehiculoEntity vehiculo) {
+        // Implementa la lógica para verificar si hay una orden de trabajo para el vehículo
+        return ordenTrabajoRepository.existsByVehiculo(vehiculo);
+    }
     @Override
     public OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO dto) {
         OrdenTrabajoEntity ordenEntity = new OrdenTrabajoEntity();
@@ -52,9 +59,6 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
     }
     @Override
     public double calcularCostoTotal(Long ordenTrabajoId) {
-        OrdenTrabajoEntity orden = ordenTrabajoRepository.findById(ordenTrabajoId)
-                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
-
         // Calcular el costo de la mano de obra
         final double costoPorHora = 50.0;
         double costoManoObra = orden.getHorasTrabajadas() * costoPorHora;

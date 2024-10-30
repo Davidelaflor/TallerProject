@@ -2,7 +2,6 @@ package com.example.taller.ordenes.application;
 
 import java.util.List;
 
-import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,24 +9,19 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.taller.RepuestoUtilizado.application.RepuestoUtilizadoRequestDTO;
 import com.example.taller.RepuestoUtilizado.domain.RepuestoUtilizadoDTO;
-import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoEntity;
 import com.example.taller.empleados.domain.EmpleadoDTO;
-import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
-import com.example.taller.propietarios.application.PropietarioVehiculoRequestDTO;
 import com.example.taller.propietarios.domain.PropietarioDTO;
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
 import com.example.taller.vehiculos.domain.VehiculoDTO;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
+import com.example.taller.ordenes.application.OrdenTrabajoMapper; // Asegúrate de que esto esté presente
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,69 +38,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class OrdenTrabajoController {
         @Autowired
         private OrdenTrabajoServicePort tallerService;
-
+        @Autowired
+        private OrdenTrabajoMapper ordenTrabajoMapper;
         @GetMapping
         @Operation(summary = "Listar ordenes de trabajo", description = "Obtiene una lista de todas las ordenes de trabajo registradas en el sistema")
 
         public ResponseEntity<List<OrdenTrabajoDTO>> listarOrdenes() {
                 List<OrdenTrabajoEntity> ordenesTrabajo = tallerService.listarOrdenes();
-
-                // Mapeo de la lista de órdenes de trabajo a una lista de
-                // OrdenTrabajoResponseDTO
                 List<OrdenTrabajoDTO> ordenesTrabajoDTO = ordenesTrabajo.stream()
-                                .map(ordenTrabajo -> {
-
-                                        // Mapeo de repuestos utilizados a DTO
-                                        List<RepuestoUtilizadoDTO> repuestosUtilizados = ordenTrabajo
-                                                        .getRepuestoUtilizado()
-                                                        .stream()
-                                                        .map(repuestoUtilizado -> new RepuestoUtilizadoDTO(
-                                                                        repuestoUtilizado.getRepuesto()
-                                                                                        .getCodigoInventario(),
-                                                                        repuestoUtilizado.getRepuesto().getNombre(),
-                                                                        repuestoUtilizado.getRepuesto().getPrecio(),
-                                                                        repuestoUtilizado.getCantidad()))
-                                                        .toList();
-
-                                        // Mapeo del vehículo **asociado** a la orden de trabajo
-                                        VehiculoEntity vehiculo = ordenTrabajo.getVehiculo();
-                                        VehiculoDTO vehiculoDTO = null;
-                                        if (vehiculo != null) {
-                                                vehiculoDTO = new VehiculoDTO(
-                                                                vehiculo.getPatente(),
-                                                                vehiculo.getMarca(),
-                                                                vehiculo.getModelo());
-                                        }
-
-                                        // Mapeo del propietario a DTO (incluyendo solo el vehículo específico)
-                                        PropietarioEntity propietario = ordenTrabajo.getPropietario();
-                                        List<VehiculoDTO> vehiculosDTO = vehiculo != null ? List.of(vehiculoDTO)
-                                                        : List.of(); // Solo el vehículo de la orden
-                                        PropietarioDTO propietarioDTO = new PropietarioDTO(
-                                                        propietario.getDni(),
-                                                        propietario.getNombre(),
-                                                        propietario.getTelefono(),
-                                                        vehiculosDTO); // Incluye solo el vehículo asociado a la orden
-
-                                        // Mapeo del empleado a DTO (con apellido y teléfono)
-                                        EmpleadoEntity empleado = ordenTrabajo.getEmpleado();
-                                        EmpleadoDTO empleadoDTO = new EmpleadoDTO(
-                                                        empleado.getId(),
-                                                        empleado.getNombre(),
-                                                        empleado.getApellido(),
-                                                        empleado.getTelefono());
-                                        // Crear DTO de respuesta de la orden de trabajo
-                                        return new OrdenTrabajoDTO(
-                                                        ordenTrabajo.getId(),
-                                                        ordenTrabajo.getDetalleFalla(),
-                                                        ordenTrabajo.getHorasTrabajadas(),
-                                                        ordenTrabajo.getEstado(),
-                                                        ordenTrabajo.getFechaIngreso(), // Mapeo de la fecha de ingreso
-                                                        empleadoDTO, // Mapeo del empleado
-                                                        repuestosUtilizados,
-                                                        propietarioDTO);
-
-                                }).toList();
+                                .map(ordenTrabajoMapper::toDTO)
+                                .toList();
 
                 return ResponseEntity.ok(ordenesTrabajoDTO);
         }
@@ -117,7 +58,8 @@ public class OrdenTrabajoController {
                         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrdenTrabajoDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Orden de trabajo no encontrada", content = @Content)
         })
-        public ResponseEntity<OrdenTrabajoDTO> obtenerOrden( @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long id) {
+        public ResponseEntity<OrdenTrabajoDTO> obtenerOrden(
+                        @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long id) {
                 OrdenTrabajoEntity ordenTrabajo = tallerService.obtenerOrdenTrabajo(id);
                 if (ordenTrabajo == null) {
                         return ResponseEntity.notFound().build();
@@ -175,7 +117,7 @@ public class OrdenTrabajoController {
                         @ApiResponse(responseCode = "500", description = "Vehiculo no encontrado para el propietario, propietario no encontrado, el vehiculo ya tiene una orden de trabajo registrada, empleado no encontrado", content = @Content)
         })
         public ResponseEntity<OrdenTrabajoEntity> crearOrdenTrabajo(@RequestBody OrdenTrabajoRequestDTO ordenTrabajo) {
-                OrdenTrabajoEntity nuevaOrden = tallerService.crearOrdenTrabajo(ordenTrabajo);
+                OrdenTrabajoEntity nuevaOrden = ordenTrabajoService.crearOrdenTrabajo(ordenTrabajo);
                 return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOrden);
         }
 
@@ -203,12 +145,12 @@ public class OrdenTrabajoController {
         @PostMapping("/{ordenTrabajoId}/horas")
         @Operation(summary = "Añadir horas", description = "Añadir horas trabajadas a una orden de trabajo")
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "OK", content = @Content),
-                @ApiResponse(responseCode = "500", description = "Orden de trabajo no encontrada", content = @Content)
-})
+                        @ApiResponse(responseCode = "200", description = "OK", content = @Content),
+                        @ApiResponse(responseCode = "500", description = "Orden de trabajo no encontrada", content = @Content)
+        })
         public ResponseEntity<Void> agregarHorasAOrden(
-                @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long ordenTrabajoId,
-                @Parameter(description = "Numero de horas que se quieren añadir", required = true) @RequestBody HorasTrabajadasRequestDTO horasTrabajadasDTO) {
+                        @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long ordenTrabajoId,
+                        @Parameter(description = "Numero de horas que se quieren añadir", required = true) @RequestBody HorasTrabajadasRequestDTO horasTrabajadasDTO) {
                 int horas = horasTrabajadasDTO.getHorasTrabajadas();
                 tallerService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
                 return ResponseEntity.ok().build();

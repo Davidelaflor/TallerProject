@@ -3,7 +3,9 @@ package com.example.taller.ordenes.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.taller.RepuestoUtilizado.domain.RepuestoUtilizadoDTO;
 import com.example.taller.empleados.domain.EmpleadoDTO;
+import com.example.taller.propietarios.domain.PropietarioDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

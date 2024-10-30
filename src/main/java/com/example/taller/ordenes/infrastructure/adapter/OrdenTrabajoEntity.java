@@ -4,7 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoEntity;
 import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
