@@ -11,35 +11,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
+import com.example.taller.repuestos.domain.RepuestoDTO;
 import com.example.taller.repuestos.infrastructure.adapter.RepuestoEntity;
-import com.example.taller.repuestos.infrastructure.port.RepuestoServicePort;
 
 @RestController
 @RequestMapping("/api/repuestos")
 public class RepuestoController {
 @Autowired
-    private RepuestoServicePort repuestoService;
+    private RepuestoApplicationService repuestoApplicationService;
 
 @GetMapping
-    public List<RepuestoEntity> listarReouestos() {
-        return repuestoService.listarRepuestos();
+    public List<RepuestoDTO> listarReouestos() {
+        return repuestoApplicationService.listarRepuestos();
     }
     @PostMapping
-    public ResponseEntity<RepuestoEntity> crearRepuesto(@RequestBody RepuestoEntity repuesto) {
-        RepuestoEntity nuevoRepuesto = repuestoService.crearRepuesto(repuesto);
+    public ResponseEntity<RepuestoDTO> crearRepuesto(@RequestBody RepuestoDTO repuesto) {
+        RepuestoDTO nuevoRepuesto = repuestoApplicationService.crearRepuesto(repuesto);
         return ResponseEntity.ok(nuevoRepuesto);
     }
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<RepuestoEntity> obtenerRepuestoPorCodigo(@PathVariable Long codigo) {
-        RepuestoEntity repuesto = repuestoService.obtenerRepuestoPorCodigo(codigo);
+    public ResponseEntity<RepuestoDTO> obtenerRepuestoPorCodigo(@PathVariable Long codigo) {
+        RepuestoDTO repuesto = repuestoApplicationService.obtenerRepuestoPorCodigo(codigo);
         return ResponseEntity.ok(repuesto);
     }
 
     @DeleteMapping("/{codigo}")
     public ResponseEntity<Void> eliminarRepuesto(@PathVariable Long codigo) {
-        repuestoService.eliminarRepuesto(codigo);
+        repuestoApplicationService.eliminarRepuesto(codigo);
         return ResponseEntity.noContent().build();
     }
 }

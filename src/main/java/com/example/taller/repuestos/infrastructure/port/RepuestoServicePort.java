@@ -3,17 +3,14 @@ package com.example.taller.repuestos.infrastructure.port;
 
 import java.util.List;
 
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
-import com.example.taller.repuestos.infrastructure.adapter.RepuestoEntity;
+import com.example.taller.repuestos.domain.RepuestoDTO;
 
 public interface RepuestoServicePort {
-    RepuestoEntity crearRepuesto(RepuestoEntity repuesto);
+    RepuestoDTO crearRepuesto(RepuestoDTO repuestoDTO);
 
-    RepuestoEntity obtenerRepuestoPorCodigo(Long codigo);
+    RepuestoDTO obtenerRepuestoPorCodigo(String codigo);
 
-    List<RepuestoEntity> listarRepuestos();
+    List<RepuestoDTO> listarRepuestos();
 
-    RepuestoEntity buscarRepuestoPorCodigo(String codigoInventario);
-
-    void eliminarRepuesto(Long codigo);
+    void eliminarRepuesto(String codigo);
 }
