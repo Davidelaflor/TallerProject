@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.taller.propietarios.application.PropietarioMapper;
 import com.example.taller.propietarios.application.PropietarioRequestDTO;
 import com.example.taller.propietarios.domain.PropietarioDTO;
 import com.example.taller.propietarios.infrastructure.port.PropietarioServicePort;
@@ -43,7 +44,7 @@ public class PropietarioService implements PropietarioServicePort{
     public PropietarioDTO obtenerPropietarioPorDni(String dni) {
         PropietarioEntity entity = propietarioRepository.findById(dni)
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
-        return convertToDTO(entity);
+        return PropietarioMapper.convertToDTO(entity); // Usando la clase de utilidad
     }
     @Override
     public void eliminarPropietario(String dni) {
@@ -60,5 +61,21 @@ public class PropietarioService implements PropietarioServicePort{
 
     private PropietarioDTO convertToDTO(PropietarioEntity entity) {
         return new PropietarioDTO(entity.getDni(), entity.getNombre(), entity.getTelefono(), null);
+    }
+    @Override
+    public PropietarioDTO guardarPropietario(PropietarioDTO propietarioDTO) {
+        PropietarioEntity entity = convertToEntity(propietarioDTO); // Convierte a Entity
+        PropietarioEntity savedEntity = propietarioRepository.save(entity);
+        return PropietarioMapper.convertToDTO(savedEntity); // Usando la clase de utilidad
+    }
+    private PropietarioEntity convertToEntity(PropietarioDTO dto) {
+        if (dto == null) {
+            return null; // Manejo de nulos
+        }
+        PropietarioEntity entity = new PropietarioEntity();
+        entity.setDni(dto.getDni());
+        entity.setNombre(dto.getNombre());
+        // Rellena otros campos...
+        return entity;
     }
 }

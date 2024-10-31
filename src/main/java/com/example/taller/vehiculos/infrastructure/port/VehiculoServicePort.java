@@ -1,27 +1,24 @@
 package com.example.taller.vehiculos.infrastructure.port;
 
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
-import com.example.taller.vehiculos.application.CrearVehiculoParaPropietarioRequestDTO;
-import com.example.taller.vehiculos.application.NuevoPropietarioRequestDTO;
-import com.example.taller.vehiculos.application.VehiculoRequestDTO;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
-
 import java.util.List;
+import java.util.Optional;
+
+import com.example.taller.vehiculos.application.CrearVehiculoParaPropietarioRequestDTO;
+import com.example.taller.vehiculos.application.VehiculoRequestDTO;
+import com.example.taller.vehiculos.domain.VehiculoDTO;
+import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 public interface VehiculoServicePort {
 
-    List<VehiculoEntity> obtenerVehiculosPorDni(String dni);
+    List<VehiculoDTO> obtenerVehiculosPorDni(String dni);
 
-    VehiculoEntity crearVehiculo(VehiculoEntity vehiculo);
+    VehiculoDTO crearVehiculo(VehiculoRequestDTO vehiculoDTO);
 
-    VehiculoEntity obtenerVehiculoPorPatente(String patente);
+    Optional<VehiculoDTO> obtenerVehiculoPorPatente(String patente);
 
-    List<VehiculoEntity> obtenerTodosLosVehiculos();
+    List<VehiculoDTO> obtenerTodosLosVehiculos();
 
-    VehiculoEntity agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioRequestDTO vehiculoDTO);
-
-    PropietarioEntity crearPropietario(NuevoPropietarioRequestDTO propietarioDTO); // Cambiar a usar el nuevo DTO
-
-
+    VehiculoDTO agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioRequestDTO vehiculoDTO);
+  
     void eliminarVehiculo(String patente);
 }

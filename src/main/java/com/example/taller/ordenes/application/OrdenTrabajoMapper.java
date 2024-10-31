@@ -34,7 +34,8 @@ public class OrdenTrabajoMapper {
             vehiculoDTO = new VehiculoDTO(
                     vehiculo.getPatente(),
                     vehiculo.getMarca(),
-                    vehiculo.getModelo());
+                    vehiculo.getModelo(),
+                    null);
         }
 
         // Mapeo del propietario a DTO (incluyendo solo el vehículo específico)

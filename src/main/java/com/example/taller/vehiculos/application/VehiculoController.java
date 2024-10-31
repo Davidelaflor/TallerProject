@@ -1,6 +1,7 @@
 package com.example.taller.vehiculos.application;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.taller.propietarios.application.PropietarioVehiculoRequestDTO;
+import com.example.taller.vehiculos.domain.VehiculoDTO;
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
-import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,11 +32,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Vehiculos", description = "Controlador para la gestión de vehiculos.")
 public class VehiculoController {
     @Autowired
-    private VehiculoServicePort vehiculoService;
+    private VehiculoApplicationService vehiculoApplicationService;
 
     @PostMapping
-    public ResponseEntity<VehiculoEntity> crearVehiculo(@RequestBody VehiculoEntity vehiculo) {
-        VehiculoEntity nuevoVehiculo = vehiculoService.crearVehiculo(vehiculo);
+    public ResponseEntity<VehiculoDTO> crearVehiculo(@RequestBody VehiculoRequestDTO vehiculoDTO) {
+        VehiculoDTO nuevoVehiculo = vehiculoApplicationService.crearVehiculo(vehiculoDTO);
         return ResponseEntity.ok(nuevoVehiculo);
     }
 
@@ -46,13 +46,13 @@ public class VehiculoController {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content (mediaType = "application/json", schema = @Schema(implementation = VehiculoRequestDTO.class))),
             @ApiResponse(responseCode = "400", description = "No se encontraron vehiculos para el propietario con ese dni", content = @Content)
     })
-    public ResponseEntity<List<VehiculoEntity>> obtenerVehiculosPorDni(@Parameter(description = "Dni del propietario", required = true) @RequestParam String dni) {
+    public ResponseEntity<List<VehiculoDTO>> obtenerVehiculosPorDni(@Parameter(description = "Dni del propietario", required = true) @RequestParam String dni) {
         if (dni != null) {
-            List<VehiculoEntity> vehiculos = vehiculoService.obtenerVehiculosPorDni(dni);
+            List<VehiculoDTO> vehiculos = vehiculoApplicationService.obtenerVehiculosPorDni(dni);
             return ResponseEntity.ok(vehiculos);
         } else {
             // Si no se proporciona un DNI, devuelve todos los vehículos
-            List<VehiculoEntity> vehiculos = vehiculoService.obtenerTodosLosVehiculos();
+            List<VehiculoDTO> vehiculos = vehiculoApplicationService.obtenerTodosLosVehiculos();
             return ResponseEntity.ok(vehiculos);
         }
     }
@@ -63,9 +63,13 @@ public class VehiculoController {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content (mediaType = "application/json", schema = @Schema(implementation = VehiculoRequestDTO.class))),
             @ApiResponse(responseCode = "500", description = "Vehiculo no encontrado", content = @Content)
     })
-    public ResponseEntity<VehiculoEntity> obtenerVehiculoPorPatente(@Parameter(description = "Patente del vehiculo", required = true) @PathVariable String patente) {
-        VehiculoEntity vehiculo = vehiculoService.obtenerVehiculoPorPatente(patente);
-        return ResponseEntity.ok(vehiculo);
+    public ResponseEntity<VehiculoDTO> obtenerVehiculoPorPatente(@PathVariable String patente) {
+        Optional<VehiculoDTO> vehiculoOpt = vehiculoApplicationService.obtenerVehiculoPorPatente(patente);
+        if (vehiculoOpt.isPresent()) {
+            return ResponseEntity.ok(vehiculoOpt.get());
+        } else {
+            return ResponseEntity.notFound().build(); // 404 si no se encuentra
+        }
     }
 
     /*
@@ -78,7 +82,7 @@ public class VehiculoController {
 
     @DeleteMapping("/{patente}")
     public ResponseEntity<Void> eliminarVehiculo(@PathVariable String patente) {
-        vehiculoService.eliminarVehiculo(patente);
+        vehiculoApplicationService.eliminarVehiculo(patente);
         return ResponseEntity.noContent().build();
     }
 
@@ -90,10 +94,10 @@ public class VehiculoController {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content (mediaType = "application/json", schema = @Schema(implementation = VehiculoRequestDTO.class))),
             @ApiResponse(responseCode = "500", description = "Propietario no encontrado. Vehiculo ya registrado para este propietario. Vehiculo ya registrado para otro propietario", content = @Content)
     })
-    public ResponseEntity<VehiculoEntity> agregarVehiculoAPropietario(@Parameter(description = "Dni del propietario", required = true) @PathVariable String dni,
+    public ResponseEntity<VehiculoDTO> agregarVehiculoAPropietario(@Parameter(description = "Dni del propietario", required = true) @PathVariable String dni,
     @Parameter(description = "Datos del vehiculo que se va a registrar", required = true) @RequestBody CrearVehiculoParaPropietarioRequestDTO vehiculoDTO) {
         try {
-            VehiculoEntity nuevoVehiculo = vehiculoService.agregarVehiculoAPropietario(dni, vehiculoDTO);
+            VehiculoDTO nuevoVehiculo = vehiculoApplicationService.agregarVehiculoAPropietario(dni, vehiculoDTO);
             return ResponseEntity.ok(nuevoVehiculo);
         } catch (RuntimeException e) {
             logger.error("Error al agregar vehículo al propietario con DNI {}: {}", dni, e.getMessage());
