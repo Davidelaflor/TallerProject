@@ -12,7 +12,7 @@ public class RepuestoUtilizadoService implements RepuestoUtilizadoServicePort {
     public RepuestoUtilizadoEntity crearRepuestoUtilizado(RepuestoUtilizadoEntity repuestoUtilizado) {
         // Se pueden incluir validaciones o lógica adicional aquí
         return repuestoUtilizadoRepository.save(repuestoUtilizado);
-    }
+    }  
 
     @Override
     public RepuestoUtilizadoEntity obtenerRepuestoUtilizadoPorId(String id) {
