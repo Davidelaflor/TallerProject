@@ -1,16 +1,22 @@
 package com.example.taller.ordenes.infrastructure.adapter;
 
+import java.util.List;
+import java.util.ArrayList;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 import com.example.taller.empleados.domain.EmpleadoDTO;
 import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 import com.example.taller.empleados.infrastructure.adapter.EmpleadoRepository;
 import com.example.taller.ordenes.application.OrdenTrabajoRequestDTO;
-import com.example.taller.ordenes.domain.Estado;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
+import com.example.taller.propietarios.domain.PropietarioDTO;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
+import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
+import com.example.taller.vehiculos.domain.VehiculoDTO;
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoRepository;
 
@@ -25,6 +31,9 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
      @Autowired
     private EmpleadoRepository empleadoRepository;
     
+      @Autowired
+    private PropietarioRepository propietarioRepository;
+
     @Override
     public boolean existeOrdenTrabajoPorVehiculo(VehiculoEntity vehiculo) {
         // Implementa la lógica para verificar si hay una orden de trabajo para el
@@ -38,7 +47,9 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
         .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
          EmpleadoEntity empleado = empleadoRepository.findById(dto.getEmpleadoId())
             .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
-
+ PropietarioEntity propietario = propietarioRepository.findByDni(dto.getPropietarioDni())
+        .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        
         OrdenTrabajoEntity ordenEntity = new OrdenTrabajoEntity();
         ordenEntity.setDetalleFalla(dto.getDetalleFalla());
         ordenEntity.setHorasTrabajadas(dto.getHorasTrabajadas());
@@ -46,10 +57,15 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
         ordenEntity.setEstado("ACTIVO");
         ordenEntity.setVehiculo(vehiculo);
         ordenEntity.setEmpleado(empleado);
+        ordenEntity.setPropietario(propietario);
+
         // Guardar la orden en el repositorio
         OrdenTrabajoEntity savedEntity = ordenTrabajoRepository.save(ordenEntity);
 
             EmpleadoDTO empleadoDTO = new EmpleadoDTO(empleado.getId(), empleado.getNombre(), empleado.getApellido(), empleado.getTelefono()); // Ejemplo de conversión
+            List<VehiculoDTO> vehiculosDTO = new ArrayList<>();
+
+    PropietarioDTO propietarioDTO = new PropietarioDTO(propietario.getDni(), propietario.getNombre(), propietario.getTelefono(), vehiculosDTO);
 
         // Convertir la entidad guardada a DTO y retornarla
         return new OrdenTrabajoDTO(
@@ -60,7 +76,7 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
                 savedEntity.getFechaIngreso(), // Suponiendo que este método existe
                 empleadoDTO, // Reemplaza con la lógica para obtener empleado
                 null, // Reemplaza con la lógica para obtener repuestos
-                null // Reemplaza con la lógica para obtener propietario
+                propietarioDTO // Reemplaza con la lógica para obtener propietario
         );
 
     }
