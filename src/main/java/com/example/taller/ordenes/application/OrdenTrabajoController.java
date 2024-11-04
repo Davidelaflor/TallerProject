@@ -42,6 +42,7 @@ public class OrdenTrabajoController {
         private OrdenTrabajoServicePort ordenTrabajoService;
         @Autowired
         private OrdenTrabajoMapper ordenTrabajoMapper;
+
         @GetMapping
         @Operation(summary = "Listar ordenes de trabajo", description = "Obtiene una lista de todas las ordenes de trabajo registradas en el sistema")
 
@@ -62,14 +63,8 @@ public class OrdenTrabajoController {
         })
         public ResponseEntity<OrdenTrabajoDTO> obtenerOrden(
                         @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long id) {
-                OrdenTrabajoEntity ordenTrabajo = ordenTrabajoService.obtenerOrdenTrabajo(id);
-                if (ordenTrabajo == null) {
-                        return ResponseEntity.notFound().build();
-                }
-                OrdenTrabajoDTO responseDTO = ordenTrabajoMapper.toDTO(ordenTrabajo);
-                return ResponseEntity.ok(responseDTO);
-                // return ordenTrabajo != null ? ResponseEntity.ok(ordenTrabajo) :
-                // ResponseEntity.notFound().build();
+                OrdenTrabajoDTO ordenTrabajoDTO = ordenTrabajoApplicationService.obtenerOrdenTrabajo(id);
+                return ResponseEntity.ok(ordenTrabajoDTO); // Devuelve un 200 OK con el DTO
         }
 
         @PostMapping
@@ -78,7 +73,8 @@ public class OrdenTrabajoController {
                         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrdenTrabajoDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Vehiculo no encontrado para el propietario, propietario no encontrado, el vehiculo ya tiene una orden de trabajo registrada, empleado no encontrado", content = @Content)
         })
-        public ResponseEntity<OrdenTrabajoDTO> crearOrdenTrabajo(@RequestBody OrdenTrabajoRequestDTO ordenTrabajoRequestDTO) {
+        public ResponseEntity<OrdenTrabajoDTO> crearOrdenTrabajo(
+                        @RequestBody OrdenTrabajoRequestDTO ordenTrabajoRequestDTO) {
                 OrdenTrabajoDTO ordenCreada = ordenTrabajoService.crearOrdenTrabajo(ordenTrabajoRequestDTO);
                 return ResponseEntity.status(HttpStatus.CREATED).body(ordenCreada);
         }

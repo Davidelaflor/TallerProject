@@ -9,7 +9,7 @@ import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 public interface OrdenTrabajoServicePort {
-    List<OrdenTrabajoEntity> listarOrdenes();
+    List<OrdenTrabajoDTO> listarOrdenes();
     OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO ordenTrabajoRequestDTO);
     OrdenTrabajoDTO obtenerOrdenTrabajo(Long id);
     OrdenTrabajoDTO buscarOrdenTrabajoPorId(Long id);
