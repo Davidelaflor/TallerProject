@@ -65,6 +65,6 @@ public class OrdenTrabajoEntity {
         repuestoUtilizado.setOrdenTrabajo(null); // Limpia la relación bidireccional
     }
     @ManyToOne
-    @JoinColumn(name = "vehiculo_patente")
+    @JoinColumn(name = "vehiculo_patente", nullable = false)
     private VehiculoEntity vehiculo;
 }

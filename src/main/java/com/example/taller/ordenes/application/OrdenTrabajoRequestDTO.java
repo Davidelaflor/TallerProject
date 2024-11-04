@@ -25,10 +25,7 @@ public class OrdenTrabajoRequestDTO {
     private LocalDate fechaIngreso;
     private String propietarioDni;  
     private String detalleFalla;
-    private Estado estado; // Activo/Finalizado
-    private List<RepuestoUtilizadoRequestDTO> repuestosUtilizados;
     private int horasTrabajadas;
-    private PropietarioRequestDTO propietario;
     private Long empleadoId;
     private String vehiculoPatente;
 }
