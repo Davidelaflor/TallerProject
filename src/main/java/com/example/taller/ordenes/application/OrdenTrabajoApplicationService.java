@@ -76,4 +76,7 @@ public class OrdenTrabajoApplicationService {
     public OrdenTrabajoDTO buscarOrdenTrabajoPorId(Long id) {
         return ordenTrabajoServicePort.buscarOrdenTrabajoPorId(id);
     }
+    public OrdenTrabajoDTO obtenerOrdenTrabajo(Long id) {
+        return ordenTrabajoServicePort.obtenerOrdenTrabajo(id);
+    }
 }
