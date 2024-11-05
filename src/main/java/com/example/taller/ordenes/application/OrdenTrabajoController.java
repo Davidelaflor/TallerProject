@@ -38,10 +38,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class OrdenTrabajoController {
         @Autowired
         private OrdenTrabajoApplicationService ordenTrabajoApplicationService;
-        @Autowired
-        private OrdenTrabajoServicePort ordenTrabajoService;
-        @Autowired
-        private OrdenTrabajoMapper ordenTrabajoMapper;
 
         @GetMapping
         @Operation(summary = "Listar ordenes de trabajo", description = "Obtiene una lista de todas las ordenes de trabajo registradas en el sistema")

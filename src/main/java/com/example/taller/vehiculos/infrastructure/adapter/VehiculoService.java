@@ -99,4 +99,12 @@ public class VehiculoService implements VehiculoServicePort {
 
         return convertToDTO(nuevoVehiculo);
     }
+    @Override
+    public Optional<VehiculoEntity> findByPatente(String patente) {
+        return vehiculoRepository.findById(patente);
+    }
+    @Override
+    public boolean existsByPatenteAndPropietarioDni(String patente, String dni) {
+        return vehiculoRepository.existsByPatenteAndPropietarioDni(patente, dni);
+    }
 }

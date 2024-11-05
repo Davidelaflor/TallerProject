@@ -1,11 +1,13 @@
 package com.example.taller.propietarios.infrastructure.adapter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
 import com.example.taller.propietarios.application.PropietarioMapper;
 import com.example.taller.propietarios.application.PropietarioRequestDTO;
 import com.example.taller.propietarios.domain.PropietarioDTO;
@@ -77,5 +79,13 @@ public class PropietarioService implements PropietarioServicePort{
         entity.setNombre(dto.getNombre());
         // Rellena otros campos...
         return entity;
+    }
+        @Override
+    public Optional<PropietarioEntity> findByDni(String dni) {
+        return propietarioRepository.findByDni(dni);
+    }
+    @Override
+    public boolean existsByDni(String dni) {
+        return propietarioRepository.existsByDni(dni);
     }
 }

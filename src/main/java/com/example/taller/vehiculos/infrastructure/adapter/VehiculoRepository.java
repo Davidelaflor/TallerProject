@@ -11,5 +11,6 @@ public interface VehiculoRepository extends JpaRepository<VehiculoEntity, String
     List<VehiculoEntity> findByPropietarioDni(String dni);
     boolean existsByPatente(String patente); // Verificar si el vehículo ya existe por patente
     Optional<VehiculoEntity> findByPatente(String patente);
+    boolean existsByPatenteAndPropietarioDni(String patente, String dni);
 
 }

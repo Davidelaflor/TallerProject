@@ -16,7 +16,7 @@ public interface OrdenTrabajoServicePort {
     void eliminarOrdenTrabajo(Long id);
     void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);
     double calcularCostoTotal(Long ordenTrabajoId);
-    boolean existeOrdenTrabajoPorVehiculo(VehiculoEntity vehiculo);
+    boolean existeOrdenTrabajoPorVehiculo(String patente);
     void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas);  // Método agregado
     OrdenTrabajoEntity save(OrdenTrabajoEntity ordenTrabajo);
     Optional<OrdenTrabajoEntity> findById(Long id);
