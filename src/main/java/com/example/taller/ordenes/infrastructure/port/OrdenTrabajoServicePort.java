@@ -12,7 +12,6 @@ public interface OrdenTrabajoServicePort {
     List<OrdenTrabajoDTO> listarOrdenes();
     OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO ordenTrabajoRequestDTO);
     OrdenTrabajoDTO obtenerOrdenTrabajo(Long id);
-    OrdenTrabajoDTO buscarOrdenTrabajoPorId(Long id);
     void eliminarOrdenTrabajo(Long id);
     void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);
     double calcularCostoTotal(Long ordenTrabajoId);
@@ -20,5 +19,6 @@ public interface OrdenTrabajoServicePort {
     void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas);  // Método agregado
     OrdenTrabajoEntity save(OrdenTrabajoEntity ordenTrabajo);
     Optional<OrdenTrabajoEntity> findById(Long id);
+    boolean existeOrdenTrabajoPorId(Long id);
 
 }

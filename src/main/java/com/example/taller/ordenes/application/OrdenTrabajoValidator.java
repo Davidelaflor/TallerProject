@@ -66,6 +66,13 @@ public class OrdenTrabajoValidator {
         if (vehiculoRegistrado) {
             throw new RuntimeException("El vehículo ya tiene una orden de trabajo registrada.");
         }
+        
+       
+    }
+    public void validarOrdenTrabajoExistente(Long id) {
+        if (!ordenTrabajoServicePort.existeOrdenTrabajoPorId(id)) {
+            throw new RuntimeException("Orden de trabajo no encontrada");
+        }
     }
     public void validarOrdenTrabajo(OrdenTrabajoRequestDTO dto) {
         validarEmpleadoExistente(dto.getEmpleadoId());

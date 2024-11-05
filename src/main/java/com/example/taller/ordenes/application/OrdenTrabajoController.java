@@ -19,9 +19,9 @@ import com.example.taller.empleados.domain.EmpleadoDTO;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
+import com.example.taller.ordenes.utilities.OrdenTrabajoMapper;
 import com.example.taller.propietarios.domain.PropietarioDTO;
 import com.example.taller.vehiculos.domain.VehiculoDTO;
-import com.example.taller.ordenes.application.OrdenTrabajoMapper; // Asegúrate de que esto esté presente
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,13 +41,8 @@ public class OrdenTrabajoController {
 
         @GetMapping
         @Operation(summary = "Listar ordenes de trabajo", description = "Obtiene una lista de todas las ordenes de trabajo registradas en el sistema")
-
         public ResponseEntity<List<OrdenTrabajoDTO>> listarOrdenes() {
-                List<OrdenTrabajoEntity> ordenesTrabajo = ordenTrabajoService.listarOrdenes();
-                List<OrdenTrabajoDTO> ordenesTrabajoDTO = ordenesTrabajo.stream()
-                                .map(ordenTrabajoMapper::toDTO)
-                                .toList();
-
+                List<OrdenTrabajoDTO> ordenesTrabajoDTO = ordenTrabajoApplicationService.listarOrdenes();
                 return ResponseEntity.ok(ordenesTrabajoDTO);
         }
 
@@ -60,8 +55,11 @@ public class OrdenTrabajoController {
         public ResponseEntity<OrdenTrabajoDTO> obtenerOrden(
                         @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long id) {
                 OrdenTrabajoDTO ordenTrabajoDTO = ordenTrabajoApplicationService.obtenerOrdenTrabajo(id);
-                return ResponseEntity.ok(ordenTrabajoDTO); // Devuelve un 200 OK con el DTO
-        }
+                if (ordenTrabajoDTO != null) {
+                        return ResponseEntity.ok(ordenTrabajoDTO); // Retorna 200 OK si existe
+                    } else {
+                        return ResponseEntity.notFound().build(); // Retorna 404 Not Found si no
+                    }        }
 
         @PostMapping
         @Operation(summary = "Crear ordenes de trabajo", description = "Crea una nueva orden de trabajo")
@@ -71,13 +69,13 @@ public class OrdenTrabajoController {
         })
         public ResponseEntity<OrdenTrabajoDTO> crearOrdenTrabajo(
                         @RequestBody OrdenTrabajoRequestDTO ordenTrabajoRequestDTO) {
-                OrdenTrabajoDTO ordenCreada = ordenTrabajoService.crearOrdenTrabajo(ordenTrabajoRequestDTO);
+                OrdenTrabajoDTO ordenCreada = ordenTrabajoApplicationService.crearOrdenTrabajo(ordenTrabajoRequestDTO);
                 return ResponseEntity.status(HttpStatus.CREATED).body(ordenCreada);
         }
 
         @DeleteMapping("/{id}")
         public ResponseEntity<Void> eliminarOrdenTrabajo(@PathVariable Long id) {
-                ordenTrabajoService.eliminarOrdenTrabajo(id);
+                ordenTrabajoApplicationService.eliminarOrdenTrabajo(id);
                 return ResponseEntity.noContent().build();
         }
 
@@ -92,7 +90,7 @@ public class OrdenTrabajoController {
                         @Parameter(description = "Codigo del repuesto en el inventario", required = true) @PathVariable String repuestoUtilizadoId,
                         @Parameter(description = "Datos del repuesto que se va a añadir", required = true) @RequestBody RepuestoUtilizadoRequestDTO repuestoUtilizadoDTO) {
                 int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
-                ordenTrabajoService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
+                ordenTrabajoApplicationService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
                 return ResponseEntity.ok().build();
         }
 
@@ -106,7 +104,7 @@ public class OrdenTrabajoController {
                         @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long ordenTrabajoId,
                         @Parameter(description = "Numero de horas que se quieren añadir", required = true) @RequestBody HorasTrabajadasRequestDTO horasTrabajadasDTO) {
                 int horas = horasTrabajadasDTO.getHorasTrabajadas();
-                ordenTrabajoService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
+                ordenTrabajoApplicationService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
                 return ResponseEntity.ok().build();
         }
 
@@ -115,7 +113,7 @@ public class OrdenTrabajoController {
 
         public double calcularCosto(@RequestBody Long ordenTrabajoDTO) {
                 // Calcular el costo total utilizando el servicio
-                return ordenTrabajoService.calcularCostoTotal(ordenTrabajoDTO);
+                return ordenTrabajoApplicationService.calcularCostoTotal(ordenTrabajoDTO);
         }
 
 }

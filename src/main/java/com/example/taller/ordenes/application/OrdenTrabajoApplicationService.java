@@ -1,13 +1,12 @@
 package com.example.taller.ordenes.application;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 @Service
 public class OrdenTrabajoApplicationService {
@@ -38,11 +37,11 @@ public class OrdenTrabajoApplicationService {
         servicePort.eliminarOrdenTrabajo(id);
     }
 
-    public OrdenTrabajoDTO buscarOrdenTrabajoPorId(Long id) {
-        return servicePort.buscarOrdenTrabajoPorId(id);
-    }
-
     public OrdenTrabajoDTO obtenerOrdenTrabajo(Long id) {
+        validator.validarOrdenTrabajoExistente(id);
         return servicePort.obtenerOrdenTrabajo(id);
+    }
+    public List<OrdenTrabajoDTO> listarOrdenes() {
+        return servicePort.listarOrdenes();
     }
 }

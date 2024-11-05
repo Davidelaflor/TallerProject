@@ -1,55 +1,46 @@
 package com.example.taller.ordenes.infrastructure.adapter;
 
-import java.util.List;
-import java.util.ArrayList;
+import static com.example.taller.ordenes.utilities.OrdenTrabajoMapper.*;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.taller.empleados.domain.EmpleadoDTO;
 import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
 import com.example.taller.empleados.infrastructure.adapter.EmpleadoRepository;
 import com.example.taller.ordenes.application.OrdenTrabajoRequestDTO;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
-import com.example.taller.propietarios.domain.PropietarioDTO;
+import com.example.taller.ordenes.utilities.OrdenTrabajoMapper;
 import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
-import com.example.taller.vehiculos.domain.VehiculoDTO;
+import com.example.taller.propietarios.infrastructure.port.PropietarioServicePort;
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoRepository;
+import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
 
 @Service
 public class OrdenTrabajoService implements OrdenTrabajoServicePort {
     @Autowired
     private OrdenTrabajoRepository ordenTrabajoRepository;
 
-     @Autowired
-    private VehiculoRepository vehiculoRepository; 
-    
-     @Autowired
-    private EmpleadoRepository empleadoRepository;
-    
-      @Autowired
-    private PropietarioRepository propietarioRepository;
+    @Autowired
+    private VehiculoServicePort vehiculoServicePort;
 
-    @Override
-    public boolean existeOrdenTrabajoPorVehiculo(VehiculoEntity vehiculo) {
-        // Implementa la lógica para verificar si hay una orden de trabajo para el
-        // vehículo
-        return ordenTrabajoRepository.existsByVehiculo(vehiculo);
-    }
+    @Autowired
+    private EmpleadoRepository empleadoServicePort;
+
+    @Autowired
+    private PropietarioServicePort propietarioServicePort;
 
     @Override
     public OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO dto) {
-        VehiculoEntity vehiculo = vehiculoRepository.findByPatente(dto.getVehiculoPatente())
-        .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
-         EmpleadoEntity empleado = empleadoRepository.findById(dto.getEmpleadoId())
-            .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
- PropietarioEntity propietario = propietarioRepository.findByDni(dto.getPropietarioDni())
-        .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
-        
+
+        VehiculoEntity vehiculo = vehiculoServicePort.findByPatente(dto.getVehiculoPatente()).get();
+        EmpleadoEntity empleado = empleadoServicePort.findById(dto.getEmpleadoId()).get();
+        PropietarioEntity propietario = propietarioServicePort.findByDni(dto.getPropietarioDni()).get();
+
         OrdenTrabajoEntity ordenEntity = new OrdenTrabajoEntity();
         ordenEntity.setDetalleFalla(dto.getDetalleFalla());
         ordenEntity.setHorasTrabajadas(dto.getHorasTrabajadas());
@@ -59,25 +50,9 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
         ordenEntity.setEmpleado(empleado);
         ordenEntity.setPropietario(propietario);
 
-        // Guardar la orden en el repositorio
         OrdenTrabajoEntity savedEntity = ordenTrabajoRepository.save(ordenEntity);
 
-            EmpleadoDTO empleadoDTO = new EmpleadoDTO(empleado.getId(), empleado.getNombre(), empleado.getApellido(), empleado.getTelefono()); // Ejemplo de conversión
-            List<VehiculoDTO> vehiculosDTO = new ArrayList<>();
-
-    PropietarioDTO propietarioDTO = new PropietarioDTO(propietario.getDni(), propietario.getNombre(), propietario.getTelefono(), vehiculosDTO);
-
-        // Convertir la entidad guardada a DTO y retornarla
-        return new OrdenTrabajoDTO(
-                savedEntity.getId(),
-                savedEntity.getDetalleFalla(),
-                savedEntity.getHorasTrabajadas(),
-                savedEntity.getEstado(),
-                savedEntity.getFechaIngreso(), // Suponiendo que este método existe
-                empleadoDTO, // Reemplaza con la lógica para obtener empleado
-                null, // Reemplaza con la lógica para obtener repuestos
-                propietarioDTO // Reemplaza con la lógica para obtener propietario
-        );
+        return toDTO(savedEntity);
 
     }
 
@@ -90,22 +65,6 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
         // Lógica para agregar el repuesto a la orden de trabajo
         // (incluye manipulación de la entidad y persistencia)
         ordenTrabajoRepository.save(ordenTrabajo);
-    }
-
-    @Override
-    public OrdenTrabajoDTO buscarOrdenTrabajoPorId(Long id) {
-        return ordenTrabajoRepository.findById(id)
-                .map(entity -> new OrdenTrabajoDTO(
-                        entity.getId(),
-                        entity.getDetalleFalla(),
-                        entity.getHorasTrabajadas(),
-                        entity.getEstado(),
-                        entity.getFechaIngreso(), // Agregar esto
-                        null, // Asignar null o un valor adecuado para empleado
-                        null, // Asignar null o un valor adecuado para repuestos
-                        null // Asignar null o un valor adecuado para propietario
-                ))
-                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
     }
 
     @Override
@@ -129,17 +88,17 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
         return costoManoObra + costoRepuestos;
     }
 
-    @Override
-    public OrdenTrabajoEntity obtenerOrdenTrabajo(Long id) {
-        // Busca la orden por ID
-        return ordenTrabajoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+    public OrdenTrabajoDTO obtenerOrdenTrabajo(Long id) {
+        OrdenTrabajoEntity ordenTrabajoEntity = ordenTrabajoRepository.findById(id).orElse(null);
+        return toDTO(ordenTrabajoEntity); // Conversión a DTO
     }
 
     @Override
-    public List<OrdenTrabajoEntity> listarOrdenes() {
-        // Retorna todas las ordenes de trabajo desde el repositorio
-        return ordenTrabajoRepository.findAll();
+    public List<OrdenTrabajoDTO> listarOrdenes() {
+        List<OrdenTrabajoEntity> ordenesTrabajo = ordenTrabajoRepository.findAll();
+       return ordenesTrabajo.stream()
+            .map(OrdenTrabajoMapper::toDTO) // no puedo usar el truco de omitir OrdeTrabajoMapper porque uso map y stream
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -151,5 +110,25 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
         // OrdenTrabajoEntity
         ordenTrabajo.setHorasTrabajadas(ordenTrabajo.getHorasTrabajadas() + horas);
         ordenTrabajoRepository.save(ordenTrabajo);
+    }
+
+    @Override
+    public Optional<OrdenTrabajoEntity> findById(Long id) {
+        return ordenTrabajoRepository.findById(id);
+    }
+
+    @Override
+    public OrdenTrabajoEntity save(OrdenTrabajoEntity ordenTrabajo) {
+        return ordenTrabajoRepository.save(ordenTrabajo);
+    }
+
+    @Override
+    public boolean existeOrdenTrabajoPorId(Long id) {
+        return ordenTrabajoRepository.existsById(id);
+    }
+
+    @Override
+    public boolean existeOrdenTrabajoPorVehiculo(String patente) {
+        return ordenTrabajoRepository.existsByVehiculo_Patente(patente);
     }
 }

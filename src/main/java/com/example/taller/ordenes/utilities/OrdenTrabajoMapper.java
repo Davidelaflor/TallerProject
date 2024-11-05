@@ -1,10 +1,11 @@
-package com.example.taller.ordenes.application;
+package com.example.taller.ordenes.utilities;
 
 import org.springframework.stereotype.Component;
 import java.util.List;
 import com.example.taller.RepuestoUtilizado.domain.RepuestoUtilizadoDTO;
 import com.example.taller.empleados.domain.EmpleadoDTO;
 import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
+import com.example.taller.ordenes.application.OrdenTrabajoRequestDTO;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
 import com.example.taller.propietarios.domain.PropietarioDTO;
@@ -12,9 +13,12 @@ import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
 import com.example.taller.vehiculos.domain.VehiculoDTO;
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
-@Component
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrdenTrabajoMapper {
-    public OrdenTrabajoDTO toDTO(OrdenTrabajoEntity ordenTrabajo) {
+    public static OrdenTrabajoDTO toDTO(OrdenTrabajoEntity ordenTrabajo) {
         // Mapeo de repuestos utilizados a DTO
         List<RepuestoUtilizadoDTO> repuestosUtilizados = ordenTrabajo
                 .getRepuestosUtilizados()
@@ -66,7 +70,7 @@ public class OrdenTrabajoMapper {
                 repuestosUtilizados,
                 propietarioDTO);
     }
-    public OrdenTrabajoEntity toEntity(OrdenTrabajoRequestDTO requestDTO) {
+    public static OrdenTrabajoEntity toEntity(OrdenTrabajoRequestDTO requestDTO) {
         OrdenTrabajoEntity ordenTrabajo = new OrdenTrabajoEntity();
         ordenTrabajo.setDetalleFalla(requestDTO.getDetalleFalla());
         ordenTrabajo.setHorasTrabajadas(requestDTO.getHorasTrabajadas());
