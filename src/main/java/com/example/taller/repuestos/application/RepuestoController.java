@@ -24,21 +24,4 @@ public class RepuestoController {
     public List<RepuestoDTO> listarReouestos() {
         return repuestoApplicationService.listarRepuestos();
     }
-    @PostMapping
-    public ResponseEntity<RepuestoDTO> crearRepuesto(@RequestBody RepuestoDTO repuesto) {
-        RepuestoDTO nuevoRepuesto = repuestoApplicationService.crearRepuesto(repuesto);
-        return ResponseEntity.ok(nuevoRepuesto);
-    }
-
-    @GetMapping("/{codigo}")
-    public ResponseEntity<RepuestoDTO> obtenerRepuestoPorCodigo(@PathVariable Long codigo) {
-        RepuestoDTO repuesto = repuestoApplicationService.obtenerRepuestoPorCodigo(codigo);
-        return ResponseEntity.ok(repuesto);
-    }
-
-    @DeleteMapping("/{codigo}")
-    public ResponseEntity<Void> eliminarRepuesto(@PathVariable Long codigo) {
-        repuestoApplicationService.eliminarRepuesto(codigo);
-        return ResponseEntity.noContent().build();
-    }
 }

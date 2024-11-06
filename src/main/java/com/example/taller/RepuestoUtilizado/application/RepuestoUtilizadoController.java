@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoEntity;
 import com.example.taller.RepuestoUtilizado.infrastructure.port.RepuestoUtilizadoServicePort;
+import com.example.taller.ordenes.application.OrdenTrabajoApplicationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,8 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RequestMapping("/api/repuestos-utilizados")
 public class RepuestoUtilizadoController {
 @Autowired
-    private RepuestoUtilizadoServicePort repuestoUtilizadoService;
-
+    private RepuestoUtilizadoApplicationService repuestoUtilizadoApplicationService;
 
       @PostMapping("/{ordenTrabajoId}/repuestos/{repuestoUtilizadoId}")
         @Operation(summary = "Añadir repuestos", description = "Añadir repuestos a una orden de trabajo")
@@ -37,26 +37,8 @@ public class RepuestoUtilizadoController {
                         @Parameter(description = "Codigo del repuesto en el inventario", required = true) @PathVariable String repuestoUtilizadoId,
                         @Parameter(description = "Datos del repuesto que se va a añadir", required = true) @RequestBody RepuestoUtilizadoRequestDTO repuestoUtilizadoDTO) {
                 int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
-                ordenTrabajoApplicationService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId,
+                repuestoUtilizadoApplicationService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId,
                                 cantidad);
                 return ResponseEntity.ok().build();
         }
-        
-    @PostMapping
-    public ResponseEntity<RepuestoUtilizadoEntity> crearRepuestoUtilizado(@RequestBody RepuestoUtilizadoEntity repuestoUtilizado) {
-        RepuestoUtilizadoEntity nuevoRepuestoUtilizado = repuestoUtilizadoService.crearRepuestoUtilizado(repuestoUtilizado);
-        return ResponseEntity.ok(nuevoRepuestoUtilizado);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<RepuestoUtilizadoEntity> obtenerRepuestoUtilizadoPorId(@PathVariable String id) {
-        RepuestoUtilizadoEntity repuestoUtilizado = repuestoUtilizadoService.obtenerRepuestoUtilizadoPorId(id);
-        return ResponseEntity.ok(repuestoUtilizado);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarRepuestoUtilizado(@PathVariable String id) {
-        repuestoUtilizadoService.eliminarRepuestoUtilizado(id);
-        return ResponseEntity.noContent().build();
-    }
 }

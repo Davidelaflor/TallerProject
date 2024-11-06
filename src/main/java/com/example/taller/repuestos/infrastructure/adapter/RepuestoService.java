@@ -1,6 +1,7 @@
 package com.example.taller.repuestos.infrastructure.adapter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,38 +34,9 @@ public class RepuestoService implements RepuestoServicePort {
                 entity.getCantidad());
     }
 
-    @Override
-    public RepuestoDTO crearRepuesto(RepuestoDTO repuestoDTO) {
-        // Convierte el DTO a Entity
-        RepuestoEntity repuestoEntity = convertToEntity(repuestoDTO);
-
-        // Guarda el Entity en el repositorio
-        RepuestoEntity savedEntity = repuestoRepository.save(repuestoEntity);
-
-        // Convierte el resultado a DTO y lo devuelve
-        return convertToDTO(savedEntity);
-    }
-
-    // Método de conversión de RepuestoDTO a RepuestoEntity
-    private RepuestoEntity convertToEntity(RepuestoDTO dto) {
-        return new RepuestoEntity(
-                dto.getCodigoInventario(),
-                dto.getNombre(),
-                dto.getPrecio(),
-                dto.getCantidad());
-
-    }
 
     @Override
-    public RepuestoDTO obtenerRepuestoPorCodigo(String codigo) {
-        return repuestoRepository.findById(codigo)
-                .map(this::convertToDTO) // Convierte a DTO usando el método creado
-                .orElse(null); // Retorna null si no se encuentra
+    public Optional<RepuestoEntity> findById(String repuestoUtilizadoId) {
+        return repuestoRepository.findById(repuestoUtilizadoId);  // Utiliza el repositorio de Spring Data para encontrar el repuesto
     }
-
-    @Override
-    public void eliminarRepuesto(String codigo) {
-        repuestoRepository.deleteById(codigo);
-    }
-
 }

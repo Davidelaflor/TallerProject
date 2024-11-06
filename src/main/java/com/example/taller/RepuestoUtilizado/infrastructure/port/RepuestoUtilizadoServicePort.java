@@ -1,14 +1,12 @@
 package com.example.taller.RepuestoUtilizado.infrastructure.port;
 
-import com.example.taller.RepuestoUtilizado.infrastructure.adapter.RepuestoUtilizadoEntity;
+import java.util.Optional;
+
+import com.example.taller.repuestos.infrastructure.adapter.RepuestoEntity;
 
 public interface RepuestoUtilizadoServicePort {
-    RepuestoUtilizadoEntity crearRepuestoUtilizado(RepuestoUtilizadoEntity repuestoUtilizado);
-
-    RepuestoUtilizadoEntity obtenerRepuestoUtilizadoPorId(String id);
-
-    void eliminarRepuestoUtilizado(String id);
-
     void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);
+
+    Optional<RepuestoEntity> findById(String repuestoUtilizadoId);
 
 }
