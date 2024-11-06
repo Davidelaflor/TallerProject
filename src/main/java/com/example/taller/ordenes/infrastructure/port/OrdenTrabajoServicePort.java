@@ -13,7 +13,6 @@ public interface OrdenTrabajoServicePort {
     OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO ordenTrabajoRequestDTO);
     OrdenTrabajoDTO obtenerOrdenTrabajo(Long id);
     void eliminarOrdenTrabajo(Long id);
-    void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);
     double calcularCostoTotal(Long ordenTrabajoId);
     boolean existeOrdenTrabajoPorVehiculo(String patente);
     OrdenTrabajoDTO agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas);  // Método agregado

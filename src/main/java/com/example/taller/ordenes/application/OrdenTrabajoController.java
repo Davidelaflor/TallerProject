@@ -80,22 +80,6 @@ public class OrdenTrabajoController {
                 return ResponseEntity.noContent().build();
         }
 
-        @PostMapping("/{ordenTrabajoId}/repuestos/{repuestoUtilizadoId}")
-        @Operation(summary = "Añadir repuestos", description = "Añadir repuestos a una orden de trabajo")
-        @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "OK", content = @Content),
-                        @ApiResponse(responseCode = "500", description = "Repuesto no encontrado, orden de trabajo no encontrada", content = @Content)
-        })
-        public ResponseEntity<Void> agregarRepuestoAOrden(
-                        @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long ordenTrabajoId,
-                        @Parameter(description = "Codigo del repuesto en el inventario", required = true) @PathVariable String repuestoUtilizadoId,
-                        @Parameter(description = "Datos del repuesto que se va a añadir", required = true) @RequestBody RepuestoUtilizadoRequestDTO repuestoUtilizadoDTO) {
-                int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
-                ordenTrabajoApplicationService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId,
-                                cantidad);
-                return ResponseEntity.ok().build();
-        }
-
         @PostMapping("/{ordenTrabajoId}/horas")
         @Operation(summary = "Añadir horas", description = "Añadir horas trabajadas a una orden de trabajo")
         @ApiResponses(value = {

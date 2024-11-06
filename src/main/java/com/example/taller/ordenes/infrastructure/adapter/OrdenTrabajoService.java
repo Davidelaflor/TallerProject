@@ -56,16 +56,7 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
 
     }
 
-    @Override
-    public void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad) {
-        // Obtener y actualizar la orden de trabajo para agregar repuesto
-        OrdenTrabajoEntity ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
-                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
 
-        // Lógica para agregar el repuesto a la orden de trabajo
-        // (incluye manipulación de la entidad y persistencia)
-        ordenTrabajoRepository.save(ordenTrabajo);
-    }
 
     @Override
     public void eliminarOrdenTrabajo(Long id) {

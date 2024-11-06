@@ -22,11 +22,6 @@ public class OrdenTrabajoApplicationService {
         return servicePort.crearOrdenTrabajo(dto);
     }
 
-    public void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad) {
-        // Si tienes validaciones, asegúrate de que estén implementadas correctamente
-        servicePort.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
-    }
-
     public double calcularCostoTotal(Long ordenTrabajoId) {
         // Invoca el método del puerto para obtener el costo de la orden desde la capa
         // de infraestructura

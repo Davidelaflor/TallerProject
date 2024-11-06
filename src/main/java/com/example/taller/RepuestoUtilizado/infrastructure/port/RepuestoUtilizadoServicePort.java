@@ -8,4 +8,7 @@ public interface RepuestoUtilizadoServicePort {
     RepuestoUtilizadoEntity obtenerRepuestoUtilizadoPorId(String id);
 
     void eliminarRepuestoUtilizado(String id);
+
+    void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, String repuestoUtilizadoId, int cantidad);
+
 }
