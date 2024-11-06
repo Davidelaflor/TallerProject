@@ -17,8 +17,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class PropietarioDTO {
   private String dni;
-    private String nombre;
-    private String telefono;
-    private List<VehiculoDTO> vehiculos;
+  private String nombre;
+  private String apellido;
+  private String direccion;
+  private String telefono;
+  private List<VehiculoDTO> vehiculos;
 }
-

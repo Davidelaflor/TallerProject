@@ -49,6 +49,8 @@ public class OrdenTrabajoMapper {
         PropietarioDTO propietarioDTO = new PropietarioDTO(
                 propietario.getDni(),
                 propietario.getNombre(),
+                propietario.getApellido(),
+                propietario.getDireccion(),
                 propietario.getTelefono(),
                 vehiculosDTO); // Incluye solo el vehículo asociado a la orden
 

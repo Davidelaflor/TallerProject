@@ -10,14 +10,23 @@ import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 public interface OrdenTrabajoServicePort {
     List<OrdenTrabajoDTO> listarOrdenes();
+
     OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO ordenTrabajoRequestDTO);
+
     OrdenTrabajoDTO obtenerOrdenTrabajo(Long id);
+
     void eliminarOrdenTrabajo(Long id);
+
     double calcularCostoTotal(Long ordenTrabajoId);
+
     boolean existeOrdenTrabajoPorVehiculo(String patente);
-    OrdenTrabajoDTO agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas);  // Método agregado
+
+    OrdenTrabajoDTO agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas); // Método agregado
+
     OrdenTrabajoEntity save(OrdenTrabajoEntity ordenTrabajo);
+
     Optional<OrdenTrabajoEntity> findById(Long id);
+
     boolean existeOrdenTrabajoPorId(Long id);
 
 }

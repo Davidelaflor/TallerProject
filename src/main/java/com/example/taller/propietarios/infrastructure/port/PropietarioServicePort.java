@@ -13,7 +13,7 @@ public interface PropietarioServicePort {
 
     PropietarioDTO obtenerPropietarioPorDni(String dni);
 
-    PropietarioDTO guardarPropietario(PropietarioDTO propietarioDTO); // Cambia a DTO
+    PropietarioDTO guardarPropietario(PropietarioDTO propietarioDTO); 
 
     List<PropietarioDTO> listarPropietarios();
 
