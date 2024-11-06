@@ -3,7 +3,6 @@ package com.example.taller.vehiculos.infrastructure.port;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
 import com.example.taller.vehiculos.application.CrearVehiculoParaPropietarioRequestDTO;
 import com.example.taller.vehiculos.application.VehiculoRequestDTO;
 import com.example.taller.vehiculos.domain.VehiculoDTO;
