@@ -102,14 +102,17 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
     }
 
     @Override
-    public void agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
-        OrdenTrabajoEntity ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
-                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+    public OrdenTrabajoDTO agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
+        Optional<OrdenTrabajoEntity> ordenTrabajoOpt = ordenTrabajoRepository.findById(ordenTrabajoId);
 
-        // Asumiendo que tienes un método setHorasTrabajadas en la entidad
-        // OrdenTrabajoEntity
-        ordenTrabajo.setHorasTrabajadas(ordenTrabajo.getHorasTrabajadas() + horas);
-        ordenTrabajoRepository.save(ordenTrabajo);
+        if (ordenTrabajoOpt.isPresent()) {
+            OrdenTrabajoEntity ordenTrabajo = ordenTrabajoOpt.get();
+            ordenTrabajo.setHorasTrabajadas(ordenTrabajo.getHorasTrabajadas() + horas);
+            OrdenTrabajoEntity savedOrden = ordenTrabajoRepository.save(ordenTrabajo);
+            
+            return toDTO(savedOrden); // Convierte la entidad actualizada a DTO
+        }
+        return null;
     }
 
     @Override

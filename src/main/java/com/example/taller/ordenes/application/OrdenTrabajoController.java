@@ -57,9 +57,10 @@ public class OrdenTrabajoController {
                 OrdenTrabajoDTO ordenTrabajoDTO = ordenTrabajoApplicationService.obtenerOrdenTrabajo(id);
                 if (ordenTrabajoDTO != null) {
                         return ResponseEntity.ok(ordenTrabajoDTO); // Retorna 200 OK si existe
-                    } else {
+                } else {
                         return ResponseEntity.notFound().build(); // Retorna 404 Not Found si no
-                    }        }
+                }
+        }
 
         @PostMapping
         @Operation(summary = "Crear ordenes de trabajo", description = "Crea una nueva orden de trabajo")
@@ -90,7 +91,8 @@ public class OrdenTrabajoController {
                         @Parameter(description = "Codigo del repuesto en el inventario", required = true) @PathVariable String repuestoUtilizadoId,
                         @Parameter(description = "Datos del repuesto que se va a añadir", required = true) @RequestBody RepuestoUtilizadoRequestDTO repuestoUtilizadoDTO) {
                 int cantidad = repuestoUtilizadoDTO.getCantidadUtilizada();
-                ordenTrabajoApplicationService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId, cantidad);
+                ordenTrabajoApplicationService.agregarRepuestoAOrdenTrabajo(ordenTrabajoId, repuestoUtilizadoId,
+                                cantidad);
                 return ResponseEntity.ok().build();
         }
 
@@ -100,12 +102,16 @@ public class OrdenTrabajoController {
                         @ApiResponse(responseCode = "200", description = "OK", content = @Content),
                         @ApiResponse(responseCode = "500", description = "Orden de trabajo no encontrada", content = @Content)
         })
-        public ResponseEntity<Void> agregarHorasAOrden(
+        public ResponseEntity<OrdenTrabajoDTO> agregarHorasAOrden(
                         @Parameter(description = "Id de la orden de trabajo", required = true) @PathVariable Long ordenTrabajoId,
                         @Parameter(description = "Numero de horas que se quieren añadir", required = true) @RequestBody HorasTrabajadasRequestDTO horasTrabajadasDTO) {
                 int horas = horasTrabajadasDTO.getHorasTrabajadas();
-                ordenTrabajoApplicationService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
-                return ResponseEntity.ok().build();
+                try {
+                        OrdenTrabajoDTO ordenActualizada = ordenTrabajoApplicationService.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
+                        return ResponseEntity.ok(ordenActualizada);
+                } catch (RuntimeException e) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                }
         }
 
         @PostMapping("/calcular-costo")

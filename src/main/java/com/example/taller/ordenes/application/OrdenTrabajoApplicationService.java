@@ -41,7 +41,13 @@ public class OrdenTrabajoApplicationService {
         validator.validarOrdenTrabajoExistente(id);
         return servicePort.obtenerOrdenTrabajo(id);
     }
+
     public List<OrdenTrabajoDTO> listarOrdenes() {
         return servicePort.listarOrdenes();
+    }
+
+    public OrdenTrabajoDTO agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
+        validator.validarOrdenTrabajoExistente(ordenTrabajoId); 
+        return servicePort.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);
     }
 }
