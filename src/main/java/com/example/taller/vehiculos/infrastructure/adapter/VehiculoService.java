@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
 import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
+import com.example.taller.propietarios.infrastructure.port.PropietarioServicePort;
 import com.example.taller.vehiculos.application.CrearVehiculoParaPropietarioRequestDTO;
 import com.example.taller.vehiculos.application.VehiculoRequestDTO;
 import com.example.taller.vehiculos.domain.VehiculoDTO;
 import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
+import com.example.taller.vehiculos.utilities.VehiculoMapper;
 
 @Service
 public class VehiculoService implements VehiculoServicePort {
@@ -20,7 +22,7 @@ public class VehiculoService implements VehiculoServicePort {
     private VehiculoRepository vehiculoRepository;
 
     @Autowired
-    private PropietarioRepository propietarioRepository;
+    private PropietarioServicePort propietarioServicePort;
 
     @Override
     public List<VehiculoDTO> obtenerVehiculosPorDni(String dni) {
@@ -53,23 +55,23 @@ public class VehiculoService implements VehiculoServicePort {
     @Override
     public Optional<VehiculoDTO> obtenerVehiculoPorPatente(String patente) {
         Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(patente);
-    
+
         if (vehiculoEntityOptional.isPresent()) {
             return Optional.of(convertToDTO(vehiculoEntityOptional.get())); // Convertir a DTO
         }
-        return Optional.empty();    }
+        return Optional.empty();
+    }
 
     @Override
     public List<VehiculoDTO> obtenerTodosLosVehiculos() {
-     // Obtener la lista de VehiculoEntity desde el repositorio
-     List<VehiculoEntity> vehiculosEntities = vehiculoRepository.findAll();
+        // Obtener la lista de VehiculoEntity desde el repositorio
+        List<VehiculoEntity> vehiculosEntities = vehiculoRepository.findAll();
 
-     // Convertir la lista de VehiculoEntity a VehiculoDTO
-     return vehiculosEntities.stream()
-             .map(this::convertToDTO) // Convierte cada VehiculoEntity a VehiculoDTO
-             .collect(Collectors.toList()); // Recoge el resultado en una lista
- }
- 
+        // Convertir la lista de VehiculoEntity a VehiculoDTO
+        return vehiculosEntities.stream()
+                .map(this::convertToDTO) // Convierte cada VehiculoEntity a VehiculoDTO
+                .collect(Collectors.toList()); // Recoge el resultado en una lista
+    }
 
     @Override
     public void eliminarVehiculo(String patente) {
@@ -77,32 +79,26 @@ public class VehiculoService implements VehiculoServicePort {
     }
 
     @Override
-    public VehiculoDTO agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioRequestDTO vehiculoDTO) {
+    public VehiculoDTO agregarVehiculoAPropietario(String dni, VehiculoRequestDTO vehiculoDTO) {
         // Encontrar al propietario en la base de datos
-        PropietarioEntity propietario = propietarioRepository.findById(dni)
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado con DNI: " + dni));
+        PropietarioEntity propietario = propietarioServicePort.findById(dni).get();
 
-        // Crear un nuevo VehiculoEntity a partir del DTO
-        VehiculoEntity nuevoVehiculo = VehiculoEntity.builder()
-                .patente(vehiculoDTO.getPatente())
-                .marca(vehiculoDTO.getMarca())
-                .modelo(vehiculoDTO.getModelo())
-                .propietario(propietario)
-                .build();
+        VehiculoEntity nuevoVehiculo = VehiculoMapper.toEntity(vehiculoDTO, propietario);
 
-        // Asociar el nuevo vehículo al propietario
         propietario.addVehiculo(nuevoVehiculo);
 
-        // Guardar el vehículo y actualizar el propietario
         vehiculoRepository.save(nuevoVehiculo);
-        propietarioRepository.save(propietario);
 
-        return convertToDTO(nuevoVehiculo);
+        propietarioServicePort.save(propietario);
+
+        return VehiculoMapper.toDTO(nuevoVehiculo);
     }
+
     @Override
     public Optional<VehiculoEntity> findByPatente(String patente) {
         return vehiculoRepository.findById(patente);
     }
+
     @Override
     public boolean existsByPatenteAndPropietarioDni(String patente, String dni) {
         return vehiculoRepository.existsByPatenteAndPropietarioDni(patente, dni);

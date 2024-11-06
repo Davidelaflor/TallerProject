@@ -18,7 +18,7 @@ public interface VehiculoServicePort {
 
     List<VehiculoDTO> obtenerTodosLosVehiculos();
 
-    VehiculoDTO agregarVehiculoAPropietario(String dni, CrearVehiculoParaPropietarioRequestDTO vehiculoDTO);
+    VehiculoDTO agregarVehiculoAPropietario(String dni, VehiculoRequestDTO vehiculoDTO);
 
     void eliminarVehiculo(String patente);
 

@@ -13,13 +13,18 @@ public interface PropietarioServicePort {
 
     PropietarioDTO obtenerPropietarioPorDni(String dni);
 
-    PropietarioDTO guardarPropietario(PropietarioDTO propietarioDTO); 
+    PropietarioDTO guardarPropietario(PropietarioDTO propietarioDTO);
 
     List<PropietarioDTO> listarPropietarios();
 
     void eliminarPropietario(String dni);
 
     Optional<PropietarioEntity> findByDni(String dni);
+
     boolean existsByDni(String dni);
+
+    PropietarioEntity save(PropietarioEntity propietario);
+
+    Optional<PropietarioEntity> findById(String dni);
 
 }

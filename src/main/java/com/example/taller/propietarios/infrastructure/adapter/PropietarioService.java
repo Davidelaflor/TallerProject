@@ -69,4 +69,12 @@ public class PropietarioService implements PropietarioServicePort{
     public boolean existsByDni(String dni) {
         return propietarioRepository.existsByDni(dni);
     }
+    @Override
+    public PropietarioEntity save(PropietarioEntity propietario) {
+        return propietarioRepository.save(propietario);
+    }
+    @Override
+    public Optional<PropietarioEntity> findById(String dni) {
+        return propietarioRepository.findById(dni);
+    }
 }

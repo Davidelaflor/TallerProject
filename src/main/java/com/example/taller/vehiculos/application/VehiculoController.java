@@ -34,6 +34,7 @@ public class VehiculoController {
     @Autowired
     private VehiculoApplicationService vehiculoApplicationService;
 
+
     @PostMapping
     public ResponseEntity<VehiculoDTO> crearVehiculo(@RequestBody VehiculoRequestDTO vehiculoDTO) {
         VehiculoDTO nuevoVehiculo = vehiculoApplicationService.crearVehiculo(vehiculoDTO);
@@ -95,7 +96,7 @@ public class VehiculoController {
             @ApiResponse(responseCode = "500", description = "Propietario no encontrado. Vehiculo ya registrado para este propietario. Vehiculo ya registrado para otro propietario", content = @Content)
     })
     public ResponseEntity<VehiculoDTO> agregarVehiculoAPropietario(@Parameter(description = "Dni del propietario", required = true) @PathVariable String dni,
-    @Parameter(description = "Datos del vehiculo que se va a registrar", required = true) @RequestBody CrearVehiculoParaPropietarioRequestDTO vehiculoDTO) {
+    @Parameter(description = "Datos del vehiculo que se va a registrar", required = true) @RequestBody VehiculoRequestDTO vehiculoDTO) {
         try {
             VehiculoDTO nuevoVehiculo = vehiculoApplicationService.agregarVehiculoAPropietario(dni, vehiculoDTO);
             return ResponseEntity.ok(nuevoVehiculo);
