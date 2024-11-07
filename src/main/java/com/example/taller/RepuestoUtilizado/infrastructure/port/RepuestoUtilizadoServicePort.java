@@ -6,6 +6,6 @@ import com.example.taller.RepuestoUtilizado.application.RepuestoUtilizadoRequest
 import com.example.taller.repuestos.infrastructure.adapter.RepuestoEntity;
 
 public interface RepuestoUtilizadoServicePort {
-    void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, RepuestoUtilizadoRequestDTO repuestoUtilizadoDTO) {
+    void agregarRepuestoAOrdenTrabajo(Long ordenTrabajoId, RepuestoUtilizadoRequestDTO repuestoUtilizadoDTO); 
 
 }
