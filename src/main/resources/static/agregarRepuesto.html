@@ -71,7 +71,7 @@
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-secondary">Agregar</button>
+                <button type="submit" class="btn btn-secondary">Añadir a orden</button>
             </div>
         </form>
 
@@ -105,8 +105,8 @@
             repuestoContainer.className = 'form-group border rounded p-3 mt-3 repuesto-container';
             repuestoContainer.innerHTML = `
                 <div class="form-group">
-                    <label for="repuestoUtilizadoId">ID del Repuesto Utilizado</label>
-                    <input type="text" class="form-control repuestoUtilizadoId" placeholder="Ingrese el ID del repuesto utilizado" required>
+                    <label for="codigoInventario">Código de Inventario</label>
+                    <input type="text" class="form-control codigoInventario" placeholder="Ingrese el código de inventario" required>
                 </div>
                 <div class="form-group">
                     <label for="cantidad">Cantidad Utilizada</label>
@@ -129,18 +129,21 @@
             const ordenTrabajoId = document.getElementById('ordenTrabajoId').value;
             const repuestosUtilizados = Array.from(document.querySelectorAll('.repuesto-container')).map(container => {
                 return {
-                    repuestoUtilizadoId: container.querySelector('.repuestoUtilizadoId').value,
+                    codigoInventario: container.querySelector('.codigoInventario').value,
                     cantidadUtilizada: container.querySelector('.cantidad').value
                 };
             });
 
             Promise.all(repuestosUtilizados.map(repuesto => {
-                return fetch(`api/repuestos-utilizados/${ordenTrabajoId}/repuestos/${repuestoUtilizadoId}`, {
+                return fetch(`http://localhost:8080/api/repuestos-utilizados/${ordenTrabajoId}/repuestos`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ cantidadUtilizada: repuesto.cantidadUtilizada }),
+                    body: JSON.stringify({
+                        codigoInventario: repuesto.codigoInventario,
+                        cantidadUtilizada: repuesto.cantidadUtilizada
+                    }),
                 });
             }))
                 .then(responses => {
