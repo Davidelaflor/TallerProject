@@ -146,4 +146,9 @@ public OrdenTrabajoDTO finalizarOrdenTrabajo(Long id){
     public boolean existeOrdenTrabajoPorVehiculo(String patente) {
         return ordenTrabajoRepository.existsByVehiculo_Patente(patente);
     }
+    @Override
+    public Optional<OrdenTrabajoEntity> findByVehiculoPatente(String patente) {
+        // Usamos el repositorio para encontrar la orden de trabajo por la patente del vehículo
+        return ordenTrabajoRepository.findByVehiculoPatente(patente);
+    }
 }

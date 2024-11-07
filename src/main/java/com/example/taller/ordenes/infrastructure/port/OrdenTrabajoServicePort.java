@@ -34,4 +34,7 @@ public interface OrdenTrabajoServicePort {
 
     boolean existeOrdenTrabajoPorId(Long id);
 
+    Optional<OrdenTrabajoEntity> findByVehiculoPatente(String patente);
+
+
 }

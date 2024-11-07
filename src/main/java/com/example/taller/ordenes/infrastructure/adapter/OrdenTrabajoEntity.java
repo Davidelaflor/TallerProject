@@ -43,6 +43,10 @@ public class OrdenTrabajoEntity {
     private String detalleFalla;
     private int horasTrabajadas;
     private String estado;
+    public boolean isFinalizada() {
+        return "FINALIZADA".equals(estado);
+    }
+
     @Column(name = "fecha_ingreso")
     private LocalDate fechaIngreso;
     @ManyToOne

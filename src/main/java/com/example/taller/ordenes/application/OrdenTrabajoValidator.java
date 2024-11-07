@@ -1,17 +1,14 @@
 package com.example.taller.ordenes.application;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.taller.empleados.infrastructure.adapter.EmpleadoEntity;
-import com.example.taller.empleados.infrastructure.adapter.EmpleadoRepository;
 import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
+import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
 import com.example.taller.propietarios.infrastructure.port.PropietarioServicePort;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoRepository;
 import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
 
 @Component
@@ -61,13 +58,23 @@ public class OrdenTrabajoValidator {
     }
     }
 
-    public void validarVehiculoNoRegistrado(String patente) {
-        boolean vehiculoRegistrado = ordenTrabajoServicePort.existeOrdenTrabajoPorVehiculo(patente);
-        if (vehiculoRegistrado) {
-            throw new RuntimeException("El vehículo ya tiene una orden de trabajo registrada.");
+   public void validarVehiculoNoRegistrado(String patente) {
+        // Buscar si ya existe una orden de trabajo para el vehículo
+        Optional<OrdenTrabajoEntity> ordenExistente = ordenTrabajoServicePort.findByVehiculoPatente(patente);
+
+        if (ordenExistente.isPresent()) {
+            // Si ya existe una orden de trabajo
+            OrdenTrabajoEntity orden = ordenExistente.get();
+
+            // Si la orden está activa, no permitir la creación de una nueva
+            if ("ACTIVO".equals(orden.getEstado())) {
+                throw new RuntimeException("El vehículo ya tiene una orden de trabajo activa.");
+            }
+            // Si la orden está finalizada, permitir la creación de una nueva
+            if ("FINALIZADO".equals(orden.getEstado())) {
+                // No se lanza excepción, permitiendo la creación de la nueva orden
+            }
         }
-        
-       
     }
     public void validarOrdenTrabajoExistente(Long id) {
         if (!ordenTrabajoServicePort.existeOrdenTrabajoPorId(id)) {
