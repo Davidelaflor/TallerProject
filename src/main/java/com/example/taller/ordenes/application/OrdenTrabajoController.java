@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,6 +80,18 @@ public class OrdenTrabajoController {
                 ordenTrabajoApplicationService.eliminarOrdenTrabajo(id);
                 return ResponseEntity.noContent().build();
         }
+
+  @PatchMapping("/{id}/finalizar")
+    public ResponseEntity<OrdenTrabajoDTO> finalizarOrden(
+            @Parameter(description = "ID de la orden de trabajo a finalizar", required = true)
+            @PathVariable Long id) {
+        try {
+            OrdenTrabajoDTO ordenFinalizada = ordenTrabajoApplicationService.finalizarOrdenTrabajo(id);
+            return ResponseEntity.ok(ordenFinalizada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
         @PostMapping("/{ordenTrabajoId}/horas")
         @Operation(summary = "Añadir horas", description = "Añadir horas trabajadas a una orden de trabajo")

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.port.OrdenTrabajoServicePort;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class OrdenTrabajoApplicationService {
 
@@ -20,6 +22,11 @@ public class OrdenTrabajoApplicationService {
     public OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO dto) {
         validator.validarOrdenTrabajo(dto);
         return servicePort.crearOrdenTrabajo(dto);
+    }
+
+      public OrdenTrabajoDTO finalizarOrdenTrabajo(Long id) {
+        validator.validarOrdenTrabajoExistente(id);
+        return servicePort.finalizarOrdenTrabajo(id);
     }
 
     public double calcularCostoTotal(Long ordenTrabajoId) {

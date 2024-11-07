@@ -17,6 +17,8 @@ public interface OrdenTrabajoServicePort {
 
     void eliminarOrdenTrabajo(Long id);
 
+    OrdenTrabajoDTO finalizarOrdenTrabajo(Long id);
+
     double calcularCostoTotal(Long ordenTrabajoId);
 
     boolean existeOrdenTrabajoPorVehiculo(String patente);

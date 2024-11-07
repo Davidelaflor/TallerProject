@@ -20,6 +20,8 @@ import com.example.taller.propietarios.infrastructure.port.PropietarioServicePor
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class OrdenTrabajoService implements OrdenTrabajoServicePort {
     @Autowired
@@ -56,7 +58,18 @@ public class OrdenTrabajoService implements OrdenTrabajoServicePort {
 
     }
 
+@Override
+public OrdenTrabajoDTO finalizarOrdenTrabajo(Long id){
+    Optional<OrdenTrabajoEntity> ordenOptional = ordenTrabajoRepository.findById(id);
+        
+    OrdenTrabajoEntity orden = ordenOptional.get(); // Obtener la entidad del Optional
+    
+    orden.setEstado("finalizado");
+    OrdenTrabajoEntity savedOrden = ordenTrabajoRepository.save(orden);
 
+    return toDTO(savedOrden);
+    }
+ 
 
     @Override
     public void eliminarOrdenTrabajo(Long id) {
