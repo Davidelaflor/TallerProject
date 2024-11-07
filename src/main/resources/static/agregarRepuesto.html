@@ -135,7 +135,7 @@
             });
 
             Promise.all(repuestosUtilizados.map(repuesto => {
-                return fetch(`api/ordenes/${ordenTrabajoId}/repuestos/${repuesto.repuestoUtilizadoId}`, {
+                return fetch(`api/repuestos-utilizados/${ordenTrabajoId}/repuestos/${repuestoUtilizadoId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

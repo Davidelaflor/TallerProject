@@ -34,9 +34,8 @@ public class RepuestoService implements RepuestoServicePort {
                 entity.getCantidad());
     }
 
-
     @Override
-    public Optional<RepuestoEntity> findById(String repuestoUtilizadoId) {
-        return repuestoRepository.findById(repuestoUtilizadoId);  // Utiliza el repositorio de Spring Data para encontrar el repuesto
+    public Optional<RepuestoEntity> findByCodigoInventario(String codigoInventario) {
+        return repuestoRepository.findByCodigoInventario(codigoInventario);
     }
 }

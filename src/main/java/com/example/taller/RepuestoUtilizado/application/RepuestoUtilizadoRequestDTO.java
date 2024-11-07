@@ -14,7 +14,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RepuestoUtilizadoRequestDTO {
-    private Long id;
-    private RepuestoRequestDTO repuesto;
+    private String codigoInventario;
     private int cantidadUtilizada;
 }

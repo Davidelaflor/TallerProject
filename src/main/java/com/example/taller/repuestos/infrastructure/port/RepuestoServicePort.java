@@ -10,6 +10,6 @@ public interface RepuestoServicePort {
 
     List<RepuestoDTO> listarRepuestos();
 
-    Optional<RepuestoEntity> findById(String repuestoUtilizadoId);
+    Optional<RepuestoEntity> findByCodigoInventario(String codigoInventario);
 
 }

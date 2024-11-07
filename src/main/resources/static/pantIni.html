@@ -102,12 +102,8 @@
 
                 const row = document.createElement('tr');
 
-                // Agregar un evento de clic a la fila para redirigir a los detalles de la orden, excepto en la columna de acciones
-                row.onclick = (event) => {
-                    if (event.target.tagName !== 'BUTTON') {
-                        window.location.href = `ordenTrabajoDetallado.html?id=${orden.id}`;
-                    }
-                };
+              
+               
 
                 row.innerHTML = `
                     <td>${orden.id}</td>
