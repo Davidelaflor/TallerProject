@@ -34,8 +34,6 @@
             <input type="text" id="dniFilter" class="form-control w-50" placeholder="Buscar por DNI" oninput="filterPropietarios()">
         </div>
 
-      
-
         <div class="table-responsive mb-4" style="max-height: 400px; overflow-y: auto;">
             <table id="propietariosTable" class="table table-striped table-bordered">
                 <thead class="thead-light">
@@ -45,6 +43,7 @@
                         <th>Apellido</th>
                         <th>Dirección</th>
                         <th>Teléfono</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="propietariosBody">
@@ -52,10 +51,11 @@
                 </tbody>
             </table>
         </div>
-  <!-- Botón para registrar propietario -->
-  <div class="text mb-4">
-    <button class="btn btn-secondary" onclick="window.location.href='propietario3.html'">Registrar Propietario</button>
-</div>
+
+        <!-- Botón para registrar propietario -->
+        <div class="text mb-4">
+            <button class="btn btn-secondary" onclick="window.location.href='propietario3.html'">Registrar Propietario</button>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -96,9 +96,16 @@
                     <td>${propietario.apellido}</td>
                     <td>${propietario.direccion}</td>
                     <td>${propietario.telefono}</td>
+                    <td>
+                        <button class="btn" onclick="verHistorial('${propietario.dni}')">Historial</button>
+                    </td>
                 `;
-                row.onclick = () => {
-                    window.location.href = `vehiculos.html?dni=${propietario.dni}`;
+                // Evento de clic en la fila
+                row.onclick = (event) => {
+                    // Verificar si el clic no fue en el botón de Historial
+                    if (!event.target.classList.contains('btn')) {
+                        window.location.href = `vehiculos.html?dni=${propietario.dni}`;
+                    }
                 };
                 tbody.appendChild(row);
             });
@@ -110,6 +117,12 @@
                 propietario.dni.toLowerCase().includes(filterValue)
             );
             populateTable(filteredPropietarios);
+        }
+
+        // Redirigir al historial en otra página
+        function verHistorial(dni) {
+            // Redirige a la página de historial con el DNI en la URL
+            window.location.href = `historial.html?dni=${dni}`;
         }
 
         // Cargar la lista de propietarios al cargar la página

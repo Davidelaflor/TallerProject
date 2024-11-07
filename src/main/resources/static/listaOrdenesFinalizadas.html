@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="bootstrap.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Órdenes Finalizadas</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+    <link href="css/responsive.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="bg-light py-3 mb-4">
+        <div class="container d-flex justify-content-between">
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" />
+            <h1 class="text-dark">Taller Innoauto</h1>
+            <div class="nav-btn-container mt-2">
+                <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
+                <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
+                <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <h2 class="text-center text-dark mt-3">Órdenes Finalizadas del Propietario</h2>
+        <div id="errorMessage" class="error-message text-danger text-center hidden"></div>
+
+        <div class="search-container mb-4 text-center">
+            <input type="text" id="dniFilter" class="form-control w-50" placeholder="Buscar por DNI" oninput="fetchOrdenesFinalizadas()">
+        </div>
+
+        <div class="table-responsive mb-4" style="max-height: 400px; overflow-y: auto;">
+            <table id="ordenesTable" class="table table-striped table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Patente</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Detalle de la Falla</th>
+                        <th>Fecha de Finalización</th>
+                    </tr>
+                </thead>
+                <tbody id="ordenesBody">
+                    <!-- Aquí se llenarán los datos de las órdenes finalizadas -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="text-muted mb-0">© 2024 Taller Innoauto. Todos los derechos reservados.</p>
+            <p class="text-muted">Contacto: info@innoauto.com | Teléfono: (123) 456-7890</p>
+        </div>
+    </footer>
+
+    <script>
+        let ordenesData = [];
+
+        async function fetchOrdenesFinalizadas() {
+            const dni = document.getElementById('dniFilter').value;
+
+            if (dni.length === 0) {
+                document.getElementById('ordenesTable').classList.add('d-none');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/ordenes/finalizadas/${dni}`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener las órdenes finalizadas');
+                }
+                ordenesData = await response.json();
+                if (ordenesData.length === 0) {
+                    document.getElementById('ordenesTable').classList.add('d-none');
+                    alert('No se encontraron órdenes finalizadas para el DNI proporcionado.');
+                } else {
+                    populateOrdenesTable(ordenesData);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'Hubo un problema al obtener las órdenes finalizadas.';
+                document.getElementById('errorMessage').classList.remove('hidden');
+            }
+        }
+
+        function populateOrdenesTable(ordenes) {
+            const tbody = document.getElementById('ordenesBody');
+            tbody.innerHTML = '';
+
+            ordenes.forEach(orden => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${orden.id}</td>
+                    <td>${orden.propietario.vehiculos[0].patente}</td>
+                    <td>${orden.propietario.vehiculos[0].marca}</td>
+                    <td>${orden.propietario.vehiculos[0].modelo}</td>
+                    <td>${orden.fechaIngreso}</td>
+                    <td>${orden.detalleFalla}</td>
+                    <td>${orden.fechaFinalizacion}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('ordenesTable').classList.remove('d-none');
+        }
+    </script>
+</body>
+
+</html>

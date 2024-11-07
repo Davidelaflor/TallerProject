@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="bootstrap.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Órdenes Finalizadas</title>
+    <!-- slider stylesheet -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+    <!-- font awesome style -->
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+    <!-- responsive style -->
+    <link href="css/responsive.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="bg-light py-3 mb-4">
+        <div class="container d-flex justify-content-between">
+            <img src="images/logo2.jpg" alt="Logo del Taller" class="me-3" style="height: 70px;" />
+            <h1 class="text-dark">Taller Innoauto</h1>
+            <div class="nav-btn-container mt-2">
+                <button class="btn" onclick="window.location.href='pantIni.html'">Inicio</button>
+                <button class="btn" onclick="window.location.href='listarPropietarios.html'">Propietarios</button>
+                <button class="btn" onclick="window.location.href='listarRepuestos.html'">Inventario</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <h2 id="pageTitle" class="text-center text-dark mt-3">Historial de Órdenes Finalizadas</h2>
+        <div id="loadingMessage" class="loading-message text-center text-muted">Cargando historial de órdenes...</div>
+
+        <div class="table-responsive mb-4" style="max-height: 400px; overflow-y: auto;">
+            <table id="ordenesTable" class="table table-striped table-bordered d-none">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Patente</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Detalle de la Falla</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="ordenesBody">
+                    <!-- Aquí se insertarán dinámicamente las órdenes finalizadas -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección de filtros (si es necesario, puedes quitar esta parte si no la necesitas) -->
+        <div class="filter-container text mb-4">
+            <button class="btn btn-secondary" onclick="toggleFilterFields()">Mostrar/Ocultar Filtros</button>
+            <div class="filter-fields d-none" id="filterFields">
+                <input id="patenteInput" type="text" class="form-control mb-2" placeholder="Ingrese Patente" oninput="filterOrdenes()" />
+                <input id="marcaInput" type="text" class="form-control mb-2" placeholder="Ingrese Marca" oninput="filterOrdenes()" />
+                <input id="modeloInput" type="text" class="form-control mb-2" placeholder="Ingrese Modelo" oninput="filterOrdenes()" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="text-muted mb-0">© 2024 Taller Innoauto. Todos los derechos reservados.</p>
+            <p class="text-muted">Contacto: info@innoauto.com | Teléfono: (123) 456-7890</p>
+        </div>
+    </footer>
+
+    <script>
+        let ordenesData = [];
+        let dniPropietario = '';  // Variable para almacenar el DNI del propietario
+
+        async function fetchHistorial() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dni = urlParams.get('dni');  // Obtener el dni de los parámetros de la URL
+            dniPropietario = dni;  // Guardar el DNI del propietario
+
+            // Cambiar dinámicamente el título de la página
+            const pageTitle = document.getElementById('pageTitle');
+            pageTitle.textContent = `Historial de Órdenes Finalizadas - Propietario DNI: ${dni}`;
+
+            try {
+                const response = await fetch(`/api/ordenes/finalizadas/${dni}`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener el historial de órdenes');
+                }
+
+                ordenesData = await response.json();
+                displayHistorial(ordenesData);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingMessage').textContent = 'Error al cargar el historial';
+            }
+        }
+
+        function displayHistorial(ordenes) {
+            const ordenesBody = document.getElementById('ordenesBody');
+            ordenesBody.innerHTML = '';  // Limpiar la tabla antes de insertar nuevos datos
+
+            ordenes.forEach(orden => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${orden.id}</td>
+                    <td>${orden.propietario.vehiculos[0].patente}</td>
+                    <td>${orden.propietario.vehiculos[0].marca}</td>
+                    <td>${orden.propietario.vehiculos[0].modelo}</td>
+                    <td>${orden.fechaIngreso}</td>
+                    <td>${orden.detalleFalla}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="verDetalles(${orden.id})">Ver Detalles</button>
+                    </td>
+                `;
+
+                ordenesBody.appendChild(row);
+            });
+
+            // Ocultar el mensaje de carga y mostrar la tabla
+            document.getElementById('loadingMessage').classList.add('d-none');
+            document.getElementById('ordenesTable').classList.remove('d-none');
+        }
+
+        function verDetalles(id) {
+            // Redirigir al detalle de la orden
+            window.location.href = `OrdenTrabajoDetalladoFinalizado.html?id=${id}`;
+        }
+
+        function toggleFilterFields() {
+            const filterFields = document.getElementById('filterFields');
+            filterFields.classList.toggle('d-none');
+        }
+
+        function filterOrdenes() {
+            const patenteValue = document.getElementById('patenteInput').value.toLowerCase();
+            const marcaValue = document.getElementById('marcaInput').value.toLowerCase();
+            const modeloValue = document.getElementById('modeloInput').value.toLowerCase();
+
+            const filteredOrdenes = ordenesData.filter(orden => {
+                return (
+                    orden.patente.toLowerCase().includes(patenteValue) &&
+                    orden.marca.toLowerCase().includes(marcaValue) &&
+                    orden.modelo.toLowerCase().includes(modeloValue)
+                );
+            });
+
+            displayHistorial(filteredOrdenes);
+        }
+
+        // Llamar a la función al cargar la página
+        window.onload = function () {
+            fetchHistorial();
+        };
+    </script>
+
+</body>
+
+</html>

@@ -37,13 +37,6 @@
     <div class="container mt-5">
         <h2 class="text-center text-dark">Detalle de Orden de Trabajo</h2>
         <div id="ordenDetails" class="mt-4"></div>
-
-        <button class="btn btn-secondary" onclick="calcularCostoTotal()">Calcular Costo Total</button>
-        <div id="totalCost" class="total-cost text-center"></div>
-
-        <!-- Nuevo botón para finalizar la orden -->
-        <button class="btn btn-danger mt-3" onclick="finalizarOrden()">Finalizar Orden</button>
-
         <div class="mt-4">
             <button class="btn btn-secondary" onclick="generarFactura()">Imprimir Factura</button>
         </div>
@@ -102,42 +95,6 @@
                 <h3 class="mt-4">Propietario</h3>
                 <div class="list-group-item">${orden.propietario.nombre} - ${orden.propietario.telefono}</div>
             `;
-        }
-
-        function calcularCostoTotal() {
-            const costoPorHora = 50;
-            const horasTrabajadas = ordenData.horasTrabajadas;
-            const repuestos = ordenData.repuestosUtilizados;
-
-            let costoRepuestos = 0;
-            repuestos.forEach(repuesto => {
-                costoRepuestos += repuesto.precio * repuesto.cantidad;
-            });
-
-            const costoTotal = (horasTrabajadas * costoPorHora) + costoRepuestos;
-
-            document.getElementById('totalCost').innerText = `Costo Total: €${costoTotal.toFixed(2)}`;
-        }
-
-        async function finalizarOrden() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-
-            try {
-                const response = await fetch(`/api/ordenes/${id}/finalizar`, {
-                    method: 'PATCH',
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error al finalizar la orden');
-                }
-
-                const updatedOrden = await response.json();
-                alert('La orden ha sido finalizada.');
-                fetchOrdenDetails(); // Actualiza la vista con el estado actualizado
-            } catch (error) {
-                alert('Error al finalizar la orden: ' + error.message);
-            }
         }
 
         function generarFactura() {

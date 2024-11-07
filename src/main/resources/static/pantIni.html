@@ -38,8 +38,6 @@
         <h2 class="text-center text-dark mt-3">Listado de Órdenes de Trabajo</h2>
         <div id="loadingMessage" class="loading-message text-center text-muted">Cargando órdenes de trabajo...</div>
 
-    
-
         <div class="table-responsive mb-4" style="max-height: 400px; overflow-y: auto;">
             <table id="ordenesTable" class="table table-striped table-bordered d-none">
                 <thead class="thead-light">
@@ -121,7 +119,7 @@
                     <td>
                         <button class="add-repuesto-btn btn btn-outline-warning btn-sm" onclick="window.location.href='agregarRepuesto.html?ordenTrabajoId=${orden.id}'">Agregar Repuesto</button>
                         <button class="add-horas-btn btn btn-outline-danger btn-sm" onclick="sumarHoras(${orden.id})">Sumar Horas</button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="deleteOrden(${orden.id})">Eliminar</button>
+                        <button class="btn btn-outline-success btn-sm" onclick="window.location.href='ordenTrabajoDetallado.html?id=${orden.id}'">Ver Detalles</button>
                     </td>
                 `;
 
@@ -177,6 +175,22 @@
                 } catch (error) {
                     alert(error);
                 }
+            }
+        }
+
+        async function finalizarOrden(ordenId) {
+            try {
+                const response = await fetch(`/api/ordenes/${ordenId}/finalizar`, {
+                    method: 'PATCH',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al finalizar la orden');
+                }
+
+                fetchOrdenes(); // Actualizar la lista después de finalizar la orden
+            } catch (error) {
+                alert(error);
             }
         }
 
