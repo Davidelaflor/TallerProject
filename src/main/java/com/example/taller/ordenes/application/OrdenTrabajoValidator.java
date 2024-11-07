@@ -1,6 +1,6 @@
 package com.example.taller.ordenes.application;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,19 +60,16 @@ public class OrdenTrabajoValidator {
 
    public void validarVehiculoNoRegistrado(String patente) {
         // Buscar si ya existe una orden de trabajo para el vehículo
-        Optional<OrdenTrabajoEntity> ordenExistente = ordenTrabajoServicePort.findByVehiculoPatente(patente);
+        List<OrdenTrabajoEntity> ordenesExistentes = ordenTrabajoServicePort.findByVehiculoPatente(patente);
 
-        if (ordenExistente.isPresent()) {
-            // Si ya existe una orden de trabajo
-            OrdenTrabajoEntity orden = ordenExistente.get();
-
-            // Si la orden está activa, no permitir la creación de una nueva
-            if ("ACTIVO".equals(orden.getEstado())) {
+        if (!ordenesExistentes.isEmpty()) {
+            // Verifica si alguna orden está activa
+            boolean ordenActiva = ordenesExistentes.stream()
+                .anyMatch(orden -> "ACTIVO".equals(orden.getEstado()));
+    
+            // Si hay una orden activa, no permitimos crear una nueva
+            if (ordenActiva) {
                 throw new RuntimeException("El vehículo ya tiene una orden de trabajo activa.");
-            }
-            // Si la orden está finalizada, permitir la creación de una nueva
-            if ("FINALIZADO".equals(orden.getEstado())) {
-                // No se lanza excepción, permitiendo la creación de la nueva orden
             }
         }
     }

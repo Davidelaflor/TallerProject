@@ -20,8 +20,6 @@ import com.example.taller.propietarios.infrastructure.port.PropietarioServicePor
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Service
 public class OrdenTrabajoService implements OrdenTrabajoServicePort {
     @Autowired
@@ -147,7 +145,7 @@ public OrdenTrabajoDTO finalizarOrdenTrabajo(Long id){
         return ordenTrabajoRepository.existsByVehiculo_Patente(patente);
     }
     @Override
-    public Optional<OrdenTrabajoEntity> findByVehiculoPatente(String patente) {
+    public List<OrdenTrabajoEntity> findByVehiculoPatente(String patente) {
         // Usamos el repositorio para encontrar la orden de trabajo por la patente del vehículo
         return ordenTrabajoRepository.findByVehiculoPatente(patente);
     }

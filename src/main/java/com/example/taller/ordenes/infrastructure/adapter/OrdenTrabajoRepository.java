@@ -11,6 +11,6 @@ public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajoEntity
     boolean existsByVehiculo_Patente(String patente); 
     List<OrdenTrabajoEntity> findByPropietarioDniAndEstado(String dni, String estado);
     List<OrdenTrabajoEntity> findByEstado(String estado); 
-    Optional<OrdenTrabajoEntity> findByVehiculoPatente(String patente);
+    List<OrdenTrabajoEntity> findByVehiculoPatente(String patente);
 
 }

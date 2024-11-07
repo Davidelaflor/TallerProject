@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.example.taller.ordenes.application.OrdenTrabajoRequestDTO;
 import com.example.taller.ordenes.domain.OrdenTrabajoDTO;
 import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 
 public interface OrdenTrabajoServicePort {
     List<OrdenTrabajoDTO> listarOrdenes();
@@ -34,7 +33,7 @@ public interface OrdenTrabajoServicePort {
 
     boolean existeOrdenTrabajoPorId(Long id);
 
-    Optional<OrdenTrabajoEntity> findByVehiculoPatente(String patente);
+    List<OrdenTrabajoEntity> findByVehiculoPatente(String patente);
 
 
 }
