@@ -11,6 +11,9 @@ import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
 public interface OrdenTrabajoServicePort {
     List<OrdenTrabajoDTO> listarOrdenes();
 
+    List<OrdenTrabajoDTO> findByPropietarioDniAndEstado(String dni, String estado);
+
+
     OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoRequestDTO ordenTrabajoRequestDTO);
 
     OrdenTrabajoDTO obtenerOrdenTrabajo(Long id);

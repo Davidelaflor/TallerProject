@@ -99,10 +99,18 @@ public OrdenTrabajoDTO finalizarOrdenTrabajo(Long id){
 
     @Override
     public List<OrdenTrabajoDTO> listarOrdenes() {
-        List<OrdenTrabajoEntity> ordenesTrabajo = ordenTrabajoRepository.findAll();
-       return ordenesTrabajo.stream()
+        List<OrdenTrabajoEntity> ordenesTrabajo = ordenTrabajoRepository.findByEstado("ACTIVO");
+        return ordenesTrabajo.stream()
             .map(OrdenTrabajoMapper::toDTO) // no puedo usar el truco de omitir OrdeTrabajoMapper porque uso map y stream
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrdenTrabajoDTO> findByPropietarioDniAndEstado(String dni, String estado) {
+        List<OrdenTrabajo> ordenesFinalizadas = ordenTrabajoRepository.findByPropietarioDniAndEstado(dni, estado);
+        return ordenesFinalizadas.stream()
+                .map(OrdenTrabajoMapper::toDTO)  
+                .collect(Collectors.toList());
     }
 
     @Override

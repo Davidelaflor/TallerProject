@@ -47,6 +47,16 @@ public class OrdenTrabajoController {
                 return ResponseEntity.ok(ordenesTrabajoDTO);
         }
 
+        @GetMapping("/finalizadas/{dni}")       
+        public ResponseEntity<List<OrdenTrabajoDTO>> obtenerOrdenesFinalizadas(@PathVariable String dni) {
+            try {
+                List<OrdenTrabajoDTO> ordenesFinalizadas = ordenTrabajoApplicationService.obtenerOrdenesFinalizadasPorPropietario(dni);
+                return ResponseEntity.ok(ordenesFinalizadas); // Devuelve las órdenes finalizadas
+            } catch (RuntimeException e) {
+                return ResponseEntity.notFound().build(); // Si no se encuentran las órdenes
+            }
+        }
+
         @GetMapping("/{id}")
         @Operation(summary = "Obtener orden de trabajo concreta", description = "Obtener una orden de trabajo a traves de su id")
         @ApiResponses(value = {
@@ -82,9 +92,7 @@ public class OrdenTrabajoController {
         }
 
   @PatchMapping("/{id}/finalizar")
-    public ResponseEntity<OrdenTrabajoDTO> finalizarOrden(
-            @Parameter(description = "ID de la orden de trabajo a finalizar", required = true)
-            @PathVariable Long id) {
+    public ResponseEntity<OrdenTrabajoDTO> finalizarOrden(@PathVariable Long id) {
         try {
             OrdenTrabajoDTO ordenFinalizada = ordenTrabajoApplicationService.finalizarOrdenTrabajo(id);
             return ResponseEntity.ok(ordenFinalizada);

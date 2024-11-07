@@ -48,6 +48,10 @@ public class OrdenTrabajoApplicationService {
         return servicePort.listarOrdenes();
     }
 
+    public List<OrdenTrabajoDTO> obtenerOrdenesFinalizadasPorPropietario(String dni) {
+        return servicePort.findByPropietarioDniAndEstado(dni, "FINALIZADO");
+    }
+
     public OrdenTrabajoDTO agregarHorasAOrdenTrabajo(Long ordenTrabajoId, int horas) {
         validator.validarOrdenTrabajoExistente(ordenTrabajoId); 
         return servicePort.agregarHorasAOrdenTrabajo(ordenTrabajoId, horas);

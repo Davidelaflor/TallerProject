@@ -1,12 +1,13 @@
 package com.example.taller.ordenes.infrastructure.adapter;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
-
 @Repository
 public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajoEntity, Long> { 
-    boolean existsByVehiculo_Patente(String patente); // Este método verifica si el vehículo ya está en una orden de trabajo
-
+    boolean existsByVehiculo_Patente(String patente); 
+    List<OrdenTrabajoEntity> findByPropietarioDniAndEstado(String dni, String estado);
+    List<OrdenTrabajoEntity> findByEstado(String estado); 
 }
