@@ -36,7 +36,10 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="patente">*Patente:</label>
-                        <input type="text" id="patente" name="patente" class="form-control" required pattern="^[A-Za-z0-9]{6}$" title="La patente debe tener exactamente 6 caracteres.">                    </div>
+                        <input type="text" id="patente" name="patente" class="form-control" required oninput="validatePatente()">
+                        <!-- Contenedor de mensaje de error -->
+                        <div id="patenteError" class="text-danger"></div>
+                    </div>
                     <div class="form-group mb-3">
                         <label for="marca">*Marca:</label>
                         <input type="text" class="form-control" id="marca" required autocomplete="off">
@@ -68,6 +71,21 @@
                 document.getElementById('propietarioDni').value = dni; // Autocompletar el campo DNI
             }
         };
+
+        // Validación en tiempo real para la patente (mínimo 6 caracteres)
+        function validatePatente() {
+            const patente = document.getElementById("patente");
+            const patenteError = document.getElementById("patenteError");
+            const patenteValue = patente.value.trim();
+            
+            // Si la patente tiene menos de 6 caracteres, mostrar el mensaje de error
+            if (patenteValue.length < 6) {
+                patenteError.textContent = "La patente debe tener al menos 6 caracteres.";
+            } else {
+                // Si es válida, limpiar el mensaje de error
+                patenteError.textContent = "";
+            }
+        }
 
         async function handleSubmit(event) {
             event.preventDefault(); // Prevenir el envío por defecto del formulario
