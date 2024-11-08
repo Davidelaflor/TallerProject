@@ -3,7 +3,9 @@ package com.example.taller.ordenes.application;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.taller.empleados.infrastructure.port.EmpleadoServicePort;
 import com.example.taller.ordenes.infrastructure.adapter.OrdenTrabajoEntity;
@@ -69,7 +71,7 @@ public class OrdenTrabajoValidator {
     
             // Si hay una orden activa, no permitimos crear una nueva
             if (ordenActiva) {
-                throw new RuntimeException("El vehículo ya tiene una orden de trabajo activa.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El vehículo ya tiene una orden de trabajo activa.");
             }
         }
     }
