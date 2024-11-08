@@ -35,23 +35,28 @@
                     <h4 class="card-title">Datos del Propietario</h4>
                     <div class="form-group mb-3">
                         <label for="dni">*DNI:</label>
-                        <input type="text" id="dni" name="dni" class="form-control" required onblur="fetchPropietario()" pattern="^[0-9]{8}[A-Za-z]$" title="El DNI debe tener 8 números seguidos de una letra.">
+                        <input type="text" id="dni" name="dni" class="form-control" required pattern="^[0-9]{8}[A-Za-z]$" title="El DNI debe tener 8 números seguidos de una letra.">
+                        <div id="dniError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="nombre">*Nombre:</label>
                         <input type="text" id="nombre" name="nombre" class="form-control" required>
+                        <div id="nombreError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="apellido">*Apellido:</label>
                         <input type="text" id="apellido" name="apellido" class="form-control" required>
+                        <div id="apellidoError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="direccion">Dirección:</label>
                         <input type="text" id="direccion" name="direccion" class="form-control">
+                        <div id="direccionError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="telefono">*Teléfono:</label>
                         <input type="tel" id="telefono" name="telefono" class="form-control" required pattern="^[0-9]{9}$" title="El teléfono debe tener 9 números.">
+                        <div id="telefonoError" class="text-danger"></div>
                     </div>
                 </div>
             </div>
@@ -62,14 +67,17 @@
                     <div class="form-group mb-3">
                         <label for="patente">*Patente:</label>
                         <input type="text" id="patente" name="patente" class="form-control" required pattern="^[A-Za-z0-9]{6}$" title="La patente debe tener exactamente 6 caracteres.">
+                        <div id="patenteError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="marca">*Marca:</label>
                         <input type="text" id="marca" name="marca" class="form-control" required>
+                        <div id="marcaError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="modelo">*Modelo:</label>
                         <input type="text" id="modelo" name="modelo" class="form-control" required>
+                        <div id="modeloError" class="text-danger"></div>
                     </div>
                 </div>
             </div>
@@ -182,37 +190,55 @@
                         // Redirigir a la página crearOrden4.html y pasar el DNI
                         setTimeout(() => {
                             window.location.href = `crearOrden4.html?dni=${result.dni}`;
-                        }, 2000); // Esperar 2 segundos antes de redirigir
+                        }, 2000); // Redirige después de 2 segundos
 
-                        // Resetear el formulario
-                        document.getElementById('propietarioForm').reset();
                     } else {
-                        throw new Error('La estructura de la respuesta es incorrecta.');
+                        document.getElementById('errorMessage').textContent = 'Error al crear propietario o vehículo.';
+                        document.getElementById('errorMessage').classList.remove('hidden');
                     }
                 } else {
-                    // Manejar error en la respuesta
-                    const errorText = await response.text(); // Obtener el texto de error del servidor
-                    console.error('Error de respuesta del servidor:', errorText); // Loguear el texto de error
-                    document.getElementById('errorMessage').textContent = `Error al crear el propietario y vehículo: ${errorText}`;
+                    console.error('Error en el servidor:', await response.text());
+                    document.getElementById('errorMessage').textContent = 'Error en la creación del propietario o vehículo.';
                     document.getElementById('errorMessage').classList.remove('hidden');
-                    document.getElementById('successMessage').classList.add('hidden');
                 }
             } catch (error) {
-                // Manejar error general
-                console.error('Error:', error);
-                document.getElementById('errorMessage').textContent = 'Hubo un problema al crear el propietario y vehículo.';
+                console.error('Error en la solicitud:', error);
+                document.getElementById('errorMessage').textContent = 'Error en la solicitud.';
                 document.getElementById('errorMessage').classList.remove('hidden');
-                document.getElementById('successMessage').classList.add('hidden');
             }
         }
-    </script>
 
-    <!-- Estilos para ocultar mensajes al inicio -->
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
+        // Validación en tiempo real
+        document.addEventListener('DOMContentLoaded', () => {
+            const fields = [
+                { id: 'dni', pattern: /^[0-9]{8}[A-Za-z]$/, errorMessage: 'El DNI debe tener 8 números seguidos de una letra.' },
+                { id: 'telefono', pattern: /^[0-9]{9}$/, errorMessage: 'El teléfono debe tener 9 números.' },
+                { id: 'patente', pattern: /^[A-Za-z0-9]{6}$/, errorMessage: 'La patente debe tener exactamente 6 caracteres.' }
+            ];
+
+            fields.forEach(({ id, pattern, errorMessage }) => {
+                const input = document.getElementById(id);
+                const errorDiv = document.getElementById(`${id}Error`);
+
+                input.addEventListener('input', () => {
+                    if (!pattern.test(input.value)) {
+                        errorDiv.textContent = errorMessage;
+                        input.classList.add('is-invalid');
+                    } else {
+                        errorDiv.textContent = '';
+                        input.classList.remove('is-invalid');
+                    }
+                });
+
+                input.addEventListener('blur', () => {
+                    if (input.value !== '' && !pattern.test(input.value)) {
+                        errorDiv.textContent = errorMessage;
+                        input.classList.add('is-invalid');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
