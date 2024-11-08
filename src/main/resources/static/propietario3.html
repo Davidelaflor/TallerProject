@@ -35,56 +35,56 @@
                     <h4 class="card-title">Datos del Propietario</h4>
                     <div class="form-group mb-3">
                         <label for="dni">*DNI:</label>
-                        <input type="text" id="dni" name="dni" class="form-control" required pattern="^[0-9]{8}[A-Za-z]$" title="El DNI debe tener 8 números seguidos de una letra.">
+                        <input type="text" id="dni" name="dni" class="form-control" required pattern="^[0-9]{8}[A-Za-z]$" title="El DNI debe tener 8 números seguidos de una letra." oninput="validateDNI()">
                         <div id="dniError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="nombre">*Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" class="form-control" required>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required oninput="validateNombre()">
                         <div id="nombreError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="apellido">*Apellido:</label>
-                        <input type="text" id="apellido" name="apellido" class="form-control" required>
+                        <input type="text" id="apellido" name="apellido" class="form-control" required oninput="validateApellido()">
                         <div id="apellidoError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="direccion">Dirección:</label>
-                        <input type="text" id="direccion" name="direccion" class="form-control">
+                        <input type="text" id="direccion" name="direccion" class="form-control" oninput="validateDireccion()">
                         <div id="direccionError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="telefono">*Teléfono:</label>
-                        <input type="tel" id="telefono" name="telefono" class="form-control" required pattern="^[0-9]{9}$" title="El teléfono debe tener 9 números.">
+                        <input type="tel" id="telefono" name="telefono" class="form-control" required pattern="^[0-9]{9}$" title="El teléfono debe tener 9 números." oninput="validateTelefono()">
                         <div id="telefonoError" class="text-danger"></div>
                     </div>
                 </div>
             </div>
-
+        
             <div class="card mb-4">
                 <div class="card-body">
                     <h4 class="card-title">Datos del Vehículo</h4>
                     <div class="form-group mb-3">
                         <label for="patente">*Patente:</label>
-                        <input type="text" id="patente" name="patente" class="form-control" required pattern="^[A-Za-z0-9]{6}$" title="La patente debe tener exactamente 6 caracteres.">
+                        <input type="text" id="patente" name="patente" class="form-control" required pattern="^[A-Za-z0-9]{6}$" title="La patente debe tener exactamente 6 caracteres." oninput="validatePatente()">
                         <div id="patenteError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="marca">*Marca:</label>
-                        <input type="text" id="marca" name="marca" class="form-control" required>
+                        <input type="text" id="marca" name="marca" class="form-control" required oninput="validateMarca()">
                         <div id="marcaError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
                         <label for="modelo">*Modelo:</label>
-                        <input type="text" id="modelo" name="modelo" class="form-control" required>
+                        <input type="text" id="modelo" name="modelo" class="form-control" required oninput="validateModelo()">
                         <div id="modeloError" class="text-danger"></div>
                     </div>
                 </div>
             </div>
-
+        
             <button type="submit" class="btn btn-secondary">Guardar Propietario y Vehículo</button>
         </form>
-
+        
         <!-- Contenedores para mostrar los mensajes de éxito o error -->
         <div id="successMessage" class="alert alert-success hidden"></div>
         <div id="errorMessage" class="alert alert-danger hidden"></div>
@@ -99,35 +99,88 @@
     </footer>
 
     <script>
-        // Función para buscar el propietario por DNI
-        async function fetchPropietario() {
-            const dni = document.getElementById('dni').value;
+        // Funciones de validación en tiempo real
 
-            if (dni) {
-                try {
-                    const response = await fetch(`/api/propietarios/${dni}`); // Cambia esta URL según tu API
+        function validateDNI() {
+            const dni = document.getElementById('dni');
+            const dniError = document.getElementById('dniError');
+            const pattern = /^[0-9]{8}[A-Za-z]$/;
+            if (!dni.value.match(pattern)) {
+                dniError.textContent = "El DNI debe tener 8 números seguidos de una letra.";
+            } else {
+                dniError.textContent = "";
+            }
+        }
 
-                    if (response.ok) {
-                        const propietario = await response.json();
-                        // Si el propietario existe, completar los campos
-                        if (propietario) {
-                            document.getElementById('nombre').value = propietario.nombre;
-                            document.getElementById('apellido').value = propietario.apellido;
-                            document.getElementById('direccion').value = propietario.direccion;
-                            document.getElementById('telefono').value = propietario.telefono;
-                        } else {
-                            // Si no existe, resetear campos
-                            document.getElementById('nombre').value = '';
-                            document.getElementById('apellido').value = '';
-                            document.getElementById('direccion').value = '';
-                            document.getElementById('telefono').value = '';
-                        }
-                    } else {
-                        console.error('Error al buscar propietario:', await response.text());
-                    }
-                } catch (error) {
-                    console.error('Error en la solicitud:', error);
-                }
+        function validateNombre() {
+            const nombre = document.getElementById('nombre');
+            const nombreError = document.getElementById('nombreError');
+            if (nombre.value.trim() === "") {
+                nombreError.textContent = "El nombre es obligatorio.";
+            } else {
+                nombreError.textContent = "";
+            }
+        }
+
+        function validateApellido() {
+            const apellido = document.getElementById('apellido');
+            const apellidoError = document.getElementById('apellidoError');
+            if (apellido.value.trim() === "") {
+                apellidoError.textContent = "El apellido es obligatorio.";
+            } else {
+                apellidoError.textContent = "";
+            }
+        }
+
+        function validateDireccion() {
+            const direccion = document.getElementById('direccion');
+            const direccionError = document.getElementById('direccionError');
+            if (direccion.value.trim() === "") {
+                direccionError.textContent = "La dirección es opcional.";
+            } else {
+                direccionError.textContent = "";
+            }
+        }
+
+        function validateTelefono() {
+            const telefono = document.getElementById('telefono');
+            const telefonoError = document.getElementById('telefonoError');
+            const pattern = /^[0-9]{9}$/;
+            if (!telefono.value.match(pattern)) {
+                telefonoError.textContent = "El teléfono debe tener 9 números.";
+            } else {
+                telefonoError.textContent = "";
+            }
+        }
+
+        function validatePatente() {
+            const patente = document.getElementById('patente');
+            const patenteError = document.getElementById('patenteError');
+            const pattern = /^[A-Za-z0-9]{6}$/;
+            if (!patente.value.match(pattern)) {
+                patenteError.textContent = "La patente debe tener exactamente 6 caracteres.";
+            } else {
+                patenteError.textContent = "";
+            }
+        }
+
+        function validateMarca() {
+            const marca = document.getElementById('marca');
+            const marcaError = document.getElementById('marcaError');
+            if (marca.value.trim() === "") {
+                marcaError.textContent = "La marca es obligatoria.";
+            } else {
+                marcaError.textContent = "";
+            }
+        }
+
+        function validateModelo() {
+            const modelo = document.getElementById('modelo');
+            const modeloError = document.getElementById('modeloError');
+            if (modelo.value.trim() === "") {
+                modeloError.textContent = "El modelo es obligatorio.";
+            } else {
+                modeloError.textContent = "";
             }
         }
 
@@ -135,14 +188,12 @@
         async function handleSubmit(event) {
             event.preventDefault(); // Evitar el envío tradicional del formulario
 
-            // Obtener los valores de los inputs del propietario
+            // Obtener los valores de los inputs del propietario y vehículo
             const dni = document.getElementById('dni').value;
             const nombre = document.getElementById('nombre').value;
             const apellido = document.getElementById('apellido').value;
             const direccion = document.getElementById('direccion').value;
             const telefono = document.getElementById('telefono').value;
-
-            // Obtener los valores de los inputs del vehículo
             const patente = document.getElementById('patente').value;
             const marca = document.getElementById('marca').value;
             const modelo = document.getElementById('modelo').value;
@@ -190,55 +241,37 @@
                         // Redirigir a la página crearOrden4.html y pasar el DNI
                         setTimeout(() => {
                             window.location.href = `crearOrden4.html?dni=${result.dni}`;
-                        }, 2000); // Redirige después de 2 segundos
+                        }, 2000); // Esperar 2 segundos antes de redirigir
 
+                        // Resetear el formulario
+                        document.getElementById('propietarioForm').reset();
                     } else {
-                        document.getElementById('errorMessage').textContent = 'Error al crear propietario o vehículo.';
-                        document.getElementById('errorMessage').classList.remove('hidden');
+                        throw new Error('La estructura de la respuesta es incorrecta.');
                     }
                 } else {
-                    console.error('Error en el servidor:', await response.text());
-                    document.getElementById('errorMessage').textContent = 'Error en la creación del propietario o vehículo.';
+                    // Manejar error en la respuesta
+                    const errorText = await response.text(); // Obtener el texto de error del servidor
+                    console.error('Error de respuesta del servidor:', errorText); // Loguear el texto de error
+                    document.getElementById('errorMessage').textContent = `Error al crear el propietario y vehículo: ${errorText}`;
                     document.getElementById('errorMessage').classList.remove('hidden');
+                    document.getElementById('successMessage').classList.add('hidden');
                 }
             } catch (error) {
-                console.error('Error en la solicitud:', error);
-                document.getElementById('errorMessage').textContent = 'Error en la solicitud.';
+                // Manejar error general
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'Hubo un problema al crear el propietario y vehículo.';
                 document.getElementById('errorMessage').classList.remove('hidden');
+                document.getElementById('successMessage').classList.add('hidden');
             }
         }
-
-        // Validación en tiempo real
-        document.addEventListener('DOMContentLoaded', () => {
-            const fields = [
-                { id: 'dni', pattern: /^[0-9]{8}[A-Za-z]$/, errorMessage: 'El DNI debe tener 8 números seguidos de una letra.' },
-                { id: 'telefono', pattern: /^[0-9]{9}$/, errorMessage: 'El teléfono debe tener 9 números.' },
-                { id: 'patente', pattern: /^[A-Za-z0-9]{6}$/, errorMessage: 'La patente debe tener exactamente 6 caracteres.' }
-            ];
-
-            fields.forEach(({ id, pattern, errorMessage }) => {
-                const input = document.getElementById(id);
-                const errorDiv = document.getElementById(`${id}Error`);
-
-                input.addEventListener('input', () => {
-                    if (!pattern.test(input.value)) {
-                        errorDiv.textContent = errorMessage;
-                        input.classList.add('is-invalid');
-                    } else {
-                        errorDiv.textContent = '';
-                        input.classList.remove('is-invalid');
-                    }
-                });
-
-                input.addEventListener('blur', () => {
-                    if (input.value !== '' && !pattern.test(input.value)) {
-                        errorDiv.textContent = errorMessage;
-                        input.classList.add('is-invalid');
-                    }
-                });
-            });
-        });
     </script>
+
+    <!-- Estilos para ocultar mensajes al inicio -->
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </body>
 
 </html>
