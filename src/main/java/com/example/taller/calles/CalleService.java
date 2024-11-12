@@ -33,7 +33,7 @@ public class CalleService {
             con.setRequestMethod("GET");
 
             // Configurar el User-Agent
-            con.setRequestProperty("User-Agent", "MiApp/1.0 (mi-email@ejemplo.com)");
+            con.setRequestProperty("User-Agent", "TallerProject/1.0 (mi-email@ejemplo.com)");
 
             // Verificar el código de respuesta
             int responseCode = con.getResponseCode();

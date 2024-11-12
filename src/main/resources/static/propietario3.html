@@ -57,6 +57,7 @@
                         <label for="direccion">Dirección:</label>
                         <input type="text" id="direccion" name="direccion" class="form-control"
                             oninput="validateDireccion()">
+                        <div id="direccionSuggestions" class="suggestions-container"></div>
                         <div id="direccionError" class="text-danger"></div>
                     </div>
                     <div class="form-group mb-3">
@@ -300,6 +301,86 @@
             }
         }
     </script>
+    <script>
+        // Función para obtener sugerencias de direcciones usando Nominatim
+        async function fetchAddressSuggestions(query) {
+    try {
+        // Construir la URL con los parámetros adecuados
+        const url = `http://localhost:8080/api/calles/geolocalizacion?direccion=${encodeURIComponent(query)}`;
+        const response = await fetch(url, {
+            method: 'GET', // Puede ser GET o POST dependiendo de cómo esté configurada la API
+            headers: {
+                'User-Agent': 'MiAplicacion/1.0', // Asegúrate de usar un User-Agent adecuado
+            },
+        });
+
+        // Verificar si la respuesta fue exitosa
+        if (!response.ok) {
+            console.error('Error al obtener sugerencias de dirección:', response.statusText);
+            return [];
+        }
+
+        const suggestions = await response.json();
+        return suggestions;
+    } catch (error) {
+        console.error('Error en la solicitud de sugerencias:', error);
+        return [];
+    }
+}
+
+// Función para mostrar las sugerencias
+function showAddressSuggestions(suggestions) {
+    const suggestionsContainer = document.getElementById('direccionSuggestions');
+    suggestionsContainer.innerHTML = '';
+
+    // Mostrar sugerencias solo si hay resultados
+    if (suggestions.length === 0) {
+        const noResult = document.createElement('div');
+        noResult.textContent = 'No se encontraron resultados.';
+        noResult.classList.add('suggestion-item');
+        suggestionsContainer.appendChild(noResult);
+        return;
+    }
+
+    suggestions.forEach(suggestion => {
+        const option = document.createElement('div');
+        option.textContent = suggestion.display_name || suggestion.direccion;
+        option.classList.add('suggestion-item');
+        option.onclick = () => {
+            document.getElementById('direccion').value = suggestion.display_name || suggestion.direccion;
+            suggestionsContainer.innerHTML = ''; // Limpiar sugerencias al seleccionar una
+        };
+        suggestionsContainer.appendChild(option);
+    });
+
+    // Asegurarse de que el contenedor sea visible
+    suggestionsContainer.style.display = 'block';
+}
+
+// Evento para manejar el autocompletado en el campo de dirección
+document.getElementById('direccion').addEventListener('input', async (event) => {
+    const query = event.target.value.trim();
+    const suggestionsContainer = document.getElementById('direccionSuggestions');
+
+    // Ocultar sugerencias si el input es corto
+    if (query.length <= 3) {
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
+
+    // Obtener sugerencias y mostrarlas
+    const suggestions = await fetchAddressSuggestions(query);
+    showAddressSuggestions(suggestions);
+});
+
+// Ocultar el contenedor de sugerencias al hacer clic fuera
+document.addEventListener('click', (event) => {
+    const suggestionsContainer = document.getElementById('direccionSuggestions');
+    if (!event.target.closest('#direccion') && !event.target.closest('#direccionSuggestions')) {
+        suggestionsContainer.style.display = 'none';
+    }
+});    </script>
+
 
     <!-- Estilos para ocultar mensajes al inicio -->
     <style>
