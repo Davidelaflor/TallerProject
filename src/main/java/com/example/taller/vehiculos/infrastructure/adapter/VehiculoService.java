@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.taller.propietarios.infrastructure.adapter.PropietarioEntity;
-import com.example.taller.propietarios.infrastructure.adapter.PropietarioRepository;
 import com.example.taller.propietarios.infrastructure.port.PropietarioServicePort;
-import com.example.taller.vehiculos.application.CrearVehiculoParaPropietarioRequestDTO;
 import com.example.taller.vehiculos.application.VehiculoRequestDTO;
 import com.example.taller.vehiculos.domain.VehiculoDTO;
 import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;

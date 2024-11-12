@@ -54,12 +54,12 @@ public class PropietarioService implements PropietarioServicePort{
     }
 
   
-     @Override
+    /*  @Override
    public PropietarioDTO guardarPropietario(PropietarioDTO propietarioDTO) {
         PropietarioEntity entity = PropietarioMapper.toEntity(propietarioDTO); // Convierte a Entity
         PropietarioEntity savedEntity = propietarioRepository.save(entity);
         return PropietarioMapper.toDTO(savedEntity); // Usando la clase de utilidad
-    }
+    }*/
 
         @Override
     public Optional<PropietarioEntity> findByDni(String dni) {
