@@ -13,8 +13,7 @@ import com.example.taller.propietarios.infrastructure.port.PropietarioServicePor
 import com.example.taller.propietarios.utilities.PropietarioMapper;
 import com.example.taller.vehiculos.application.VehiculoRequestDTO;
 import com.example.taller.vehiculos.infrastructure.adapter.VehiculoEntity;
-import com.example.taller.vehiculos.infrastructure.adapter.VehiculoRepository;
-import com.example.taller.vehiculos.infrastructure.port.VehiculoServicePort;
+import com.example.taller.calles.CalleService;  // Asegúrate de importar el servicio CalleService
 
 @Service
 public class PropietarioService implements PropietarioServicePort{
@@ -22,6 +21,9 @@ public class PropietarioService implements PropietarioServicePort{
     @Autowired
     private PropietarioRepository propietarioRepository;
 
+    @Autowired
+    private CalleService calleService;
+    
         @Override
     public List<PropietarioDTO> listarPropietarios() {
         return propietarioRepository.findAll()
@@ -31,6 +33,18 @@ public class PropietarioService implements PropietarioServicePort{
     }
      @Override
     public PropietarioDTO crearPropietarioConVehiculo(PropietarioRequestDTO propietarioDTO, VehiculoRequestDTO vehiculoDTO) {
+        
+         // Obtener la calle, barrio, ciudad y país proporcionados
+         String direccion = propietarioDTO.getDireccion();
+         String barrio = propietarioDTO.getBarrio();
+         String ciudad = propietarioDTO.getCiudad();
+         String pais = propietarioDTO.getPais();
+ 
+         // Realizar la búsqueda de la dirección con la nueva API de Nominatim
+         String geolocalizacion = calleService.buscarDireccion(direccion, barrio, ciudad, pais);
+         
+         // Aquí puedes procesar la geolocalización que has obtenido y almacenarla si es necesario
+         System.out.println("Geolocalización de la dirección: " + geolocalizacion);
         PropietarioEntity entity = PropietarioMapper.toEntity(propietarioDTO);
 
         VehiculoEntity vehiculoEntity = PropietarioMapper.toEntity(vehiculoDTO);

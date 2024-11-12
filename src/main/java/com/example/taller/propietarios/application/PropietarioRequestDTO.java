@@ -17,5 +17,8 @@ public class PropietarioRequestDTO {
     private String nombre;
     private String apellido;
     private String direccion;
+    private String barrio;     // Nuevo campo (opcional)
+    private String ciudad;     // Nuevo campo (opcional)
+    private String pais; 
     private String telefono;
 }
