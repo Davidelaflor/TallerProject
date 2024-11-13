@@ -13,10 +13,10 @@ public class CalleController {
     }
 
     @GetMapping("/api/calles/geolocalizacion")
-    public String obtenerGeolocalizacion(@RequestParam String direccion,
+    public String obtenerGeolocalizacion(@RequestParam String direccion/* ,
                                         @RequestParam String barrio,
                                          @RequestParam String ciudad,
-                                         @RequestParam String pais) {
-        return calleService.buscarDireccion(direccion, barrio, ciudad, pais);
+                                         @RequestParam String pais*/) {
+        return calleService.buscarDireccion(direccion);//, barrio, ciudad, pais);
     }
 }

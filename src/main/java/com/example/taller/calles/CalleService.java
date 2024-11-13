@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 public class CalleService {
     private static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 
-    public String buscarDireccion(String direccion, String barrio, String ciudad, String pais) {
+    public String buscarDireccion(String direccion){//, String barrio, String ciudad, String pais) {
         try {
             // Construir la consulta con los parámetros direccion, barrio, ciudad y pais
-            String query = String.join(", ", direccion, barrio, ciudad, pais);
+            String query = String.join(", ", direccion);//, barrio, ciudad, pais);
 
             // Codificar la consulta para asegurarnos de que los caracteres especiales estén correctamente codificados
             String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.toString());

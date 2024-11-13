@@ -60,23 +60,6 @@
                         <div id="direccionSuggestions" class="suggestions-container"></div>
                         <div id="direccionError" class="text-danger"></div>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="barrio">Barrio:</label>
-                        <input type="text" id="barrio" name="barrio" class="form-control">
-                        <div id="barrioError" class="text-danger"></div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="ciudad">Ciudad:</label>
-                        <input type="text" id="ciudad" name="ciudad" class="form-control">
-                        <div id="ciudadError" class="text-danger"></div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="pais">País:</label>
-                        <input type="text" id="pais" name="pais" class="form-control">
-                        <div id="paisError" class="text-danger"></div>
-                    </div>
 
                     <div class="form-group mb-3">
                         <label for="telefono">*Teléfono:</label>
@@ -223,9 +206,6 @@
             const nombre = document.getElementById('nombre').value;
             const apellido = document.getElementById('apellido').value;
             const direccion = document.getElementById('direccion').value;
-            const barrio = document.getElementById('barrio').value; // Nuevo campo
-            const ciudad = document.getElementById('ciudad').value; // Nuevo campo
-            const pais = document.getElementById('pais').value;
             const telefono = document.getElementById('telefono').value;
             const patente = document.getElementById('patente').value;
             const marca = document.getElementById('marca').value;
@@ -238,9 +218,6 @@
                     nombre: nombre,
                     apellido: apellido,
                     direccion: direccion,
-                    barrio: barrio, // Incluir el barrio
-                    ciudad: ciudad, // Incluir la ciudad
-                    pais: pais,
                     telefono: telefono
                 },
                 vehiculo: {
@@ -302,85 +279,97 @@
         }
     </script>
     <script>
+        // Función de debouncing mejorada
+        function debounce(func, delay) {
+            let timer;
+            return function (...args) {
+                const context = this;
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.apply(context, args);
+                }, delay);
+            };
+        }
+    
         // Función para obtener sugerencias de direcciones usando Nominatim
         async function fetchAddressSuggestions(query) {
-    try {
-        // Construir la URL con los parámetros adecuados
-        const url = `http://localhost:8080/api/calles/geolocalizacion?direccion=${encodeURIComponent(query)}`;
-        const response = await fetch(url, {
-            method: 'GET', // Puede ser GET o POST dependiendo de cómo esté configurada la API
-            headers: {
-                'User-Agent': 'MiAplicacion/1.0', // Asegúrate de usar un User-Agent adecuado
-            },
-        });
-
-        // Verificar si la respuesta fue exitosa
-        if (!response.ok) {
-            console.error('Error al obtener sugerencias de dirección:', response.statusText);
-            return [];
+            try {
+                const url = `http://localhost:8080/api/calles/geolocalizacion?direccion=${encodeURIComponent(query)}`;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'User-Agent': 'MiApp/1.0',
+                    },
+                });
+    
+                if (!response.ok) {
+                    console.error('Error al obtener sugerencias de dirección:', response.statusText);
+                    return [];
+                }
+    
+                const suggestions = await response.json();
+                return suggestions;
+            } catch (error) {
+                console.error('Error en la solicitud de sugerencias:', error);
+                return [];
+            }
         }
-
-        const suggestions = await response.json();
-        return suggestions;
-    } catch (error) {
-        console.error('Error en la solicitud de sugerencias:', error);
-        return [];
-    }
-}
-
-// Función para mostrar las sugerencias
-function showAddressSuggestions(suggestions) {
-    const suggestionsContainer = document.getElementById('direccionSuggestions');
-    suggestionsContainer.innerHTML = '';
-
-    // Mostrar sugerencias solo si hay resultados
-    if (suggestions.length === 0) {
-        const noResult = document.createElement('div');
-        noResult.textContent = 'No se encontraron resultados.';
-        noResult.classList.add('suggestion-item');
-        suggestionsContainer.appendChild(noResult);
-        return;
-    }
-
-    suggestions.forEach(suggestion => {
-        const option = document.createElement('div');
-        option.textContent = suggestion.display_name || suggestion.direccion;
-        option.classList.add('suggestion-item');
-        option.onclick = () => {
-            document.getElementById('direccion').value = suggestion.display_name || suggestion.direccion;
-            suggestionsContainer.innerHTML = ''; // Limpiar sugerencias al seleccionar una
-        };
-        suggestionsContainer.appendChild(option);
-    });
-
-    // Asegurarse de que el contenedor sea visible
-    suggestionsContainer.style.display = 'block';
-}
-
-// Evento para manejar el autocompletado en el campo de dirección
-document.getElementById('direccion').addEventListener('input', async (event) => {
-    const query = event.target.value.trim();
-    const suggestionsContainer = document.getElementById('direccionSuggestions');
-
-    // Ocultar sugerencias si el input es corto
-    if (query.length <= 3) {
-        suggestionsContainer.style.display = 'none';
-        return;
-    }
-
-    // Obtener sugerencias y mostrarlas
-    const suggestions = await fetchAddressSuggestions(query);
-    showAddressSuggestions(suggestions);
-});
-
-// Ocultar el contenedor de sugerencias al hacer clic fuera
-document.addEventListener('click', (event) => {
-    const suggestionsContainer = document.getElementById('direccionSuggestions');
-    if (!event.target.closest('#direccion') && !event.target.closest('#direccionSuggestions')) {
-        suggestionsContainer.style.display = 'none';
-    }
-});    </script>
-
+    
+        // Función para mostrar las sugerencias
+        function showAddressSuggestions(suggestions) {
+            const suggestionsContainer = document.getElementById('direccionSuggestions');
+            suggestionsContainer.innerHTML = '';
+    
+            if (suggestions.length === 0) {
+                const noResult = document.createElement('div');
+                noResult.textContent = 'No se encontraron resultados.';
+                noResult.classList.add('suggestion-item');
+                suggestionsContainer.appendChild(noResult);
+                return;
+            }
+    
+            suggestions.forEach(suggestion => {
+                const option = document.createElement('div');
+                option.textContent = suggestion.display_name || suggestion.direccion;
+                option.classList.add('suggestion-item');
+                option.onclick = () => {
+                    document.getElementById('direccion').value = suggestion.display_name || suggestion.direccion;
+                    suggestionsContainer.innerHTML = '';
+                };
+                suggestionsContainer.appendChild(option);
+            });
+    
+            suggestionsContainer.style.display = 'block';
+        }
+    
+        // Función manejadora del input del campo de dirección con debouncing
+        const handleAddressInput = debounce(async (event) => {
+            const query = event.target.value.trim();
+            const suggestionsContainer = document.getElementById('direccionSuggestions');
+    
+            if (query.length <= 3) {
+                suggestionsContainer.style.display = 'none';
+                return;
+            }
+    
+            // Obtener sugerencias y mostrarlas
+            const suggestions = await fetchAddressSuggestions(query);
+            showAddressSuggestions(suggestions);
+        }, 500); // 500 ms de retraso para el debounce
+    
+        // Agregar el evento input al campo de dirección
+        document.getElementById('direccion').addEventListener('input', handleAddressInput);
+    
+        // Ocultar el contenedor de sugerencias al hacer clic fuera
+        document.addEventListener('click', (event) => {
+            const suggestionsContainer = document.getElementById('direccionSuggestions');
+            if (!event.target.closest('#direccion') && !event.target.closest('#direccionSuggestions')) {
+                suggestionsContainer.style.display = 'none';
+            }
+        });
+    </script>
+    
+    
 
     <!-- Estilos para ocultar mensajes al inicio -->
     <style>

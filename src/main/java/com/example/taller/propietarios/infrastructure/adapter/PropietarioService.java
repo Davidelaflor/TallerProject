@@ -23,7 +23,7 @@ public class PropietarioService implements PropietarioServicePort{
 
     @Autowired
     private CalleService calleService;
-    
+
         @Override
     public List<PropietarioDTO> listarPropietarios() {
         return propietarioRepository.findAll()
@@ -41,7 +41,7 @@ public class PropietarioService implements PropietarioServicePort{
          String pais = propietarioDTO.getPais();
  
          // Realizar la búsqueda de la dirección con la nueva API de Nominatim
-         String geolocalizacion = calleService.buscarDireccion(direccion, barrio, ciudad, pais);
+         String geolocalizacion = calleService.buscarDireccion(direccion);//, barrio, ciudad, pais);
          
          // Aquí puedes procesar la geolocalización que has obtenido y almacenarla si es necesario
          System.out.println("Geolocalización de la dirección: " + geolocalizacion);
