@@ -60,7 +60,7 @@
                         <div id="direccionSuggestions" class="suggestions-container"></div>
                         <div id="direccionError" class="text-danger"></div>
                     </div>
-
+                    
                     <div class="form-group mb-3">
                         <label for="telefono">*Teléfono:</label>
                         <input type="tel" id="telefono" name="telefono" class="form-control" required
@@ -201,6 +201,13 @@
         async function handleSubmit(event) {
             event.preventDefault(); // Evitar el envío tradicional del formulario
 
+               // Verificar si hay errores de dirección
+    const direccionError = document.getElementById('direccionError').textContent;
+    if (direccionError && direccionError.trim() !== "") {
+        alert("La dirección no es válida. Por favor, corrija el campo.");
+        return; // Evitar el envío si la dirección no es válida
+    }
+    
             // Obtener los valores de los inputs del propietario y vehículo
             const dni = document.getElementById('dni').value;
             const nombre = document.getElementById('nombre').value;
@@ -291,29 +298,37 @@
             };
         }
     
-        // Función para obtener sugerencias de direcciones usando Nominatim
-        async function fetchAddressSuggestions(query) {
-            try {
-                const url = `http://localhost:8080/api/calles/geolocalizacion?direccion=${encodeURIComponent(query)}`;
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'User-Agent': 'MiApp/1.0',
-                    },
-                });
-    
-                if (!response.ok) {
-                    console.error('Error al obtener sugerencias de dirección:', response.statusText);
-                    return [];
-                }
-    
-                const suggestions = await response.json();
-                return suggestions;
-            } catch (error) {
-                console.error('Error en la solicitud de sugerencias:', error);
-                return [];
-            }
+       // Función para obtener sugerencias de direcciones usando Nominatim
+async function fetchAddressSuggestions(query) {
+    try {
+        const url = `http://localhost:8080/api/calles/geolocalizacion?direccion=${encodeURIComponent(query)}`;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'MiApp/1.0',
+            },
+        });
+
+        if (!response.ok) {
+            console.error('Error al obtener sugerencias de dirección:', response.statusText);
+            return [];
         }
+
+        const suggestions = await response.json();
+
+        if (suggestions.length === 0) {
+            document.getElementById('direccionError').textContent = "La dirección no es válida.";
+        } else {
+            document.getElementById('direccionError').textContent = "";
+        }
+
+        return suggestions;
+    } catch (error) {
+        console.error('Error en la solicitud de sugerencias:', error);
+        return [];
+    }
+}
+
     
         // Función para mostrar las sugerencias
         function showAddressSuggestions(suggestions) {
@@ -342,20 +357,21 @@
             suggestionsContainer.style.display = 'block';
         }
     
-        // Función manejadora del input del campo de dirección con debouncing
-        const handleAddressInput = debounce(async (event) => {
-            const query = event.target.value.trim();
-            const suggestionsContainer = document.getElementById('direccionSuggestions');
-    
-            if (query.length <= 3) {
-                suggestionsContainer.style.display = 'none';
-                return;
-            }
-    
-            // Obtener sugerencias y mostrarlas
-            const suggestions = await fetchAddressSuggestions(query);
-            showAddressSuggestions(suggestions);
-        }, 500); // 500 ms de retraso para el debounce
+    // Función manejadora del input del campo de dirección con debouncing
+const handleAddressInput = debounce(async (event) => {
+    const query = event.target.value.trim();
+    const suggestionsContainer = document.getElementById('direccionSuggestions');
+
+    if (query.length <= 3) {
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
+
+    // Obtener sugerencias y mostrarlas
+    const suggestions = await fetchAddressSuggestions(query);
+    showAddressSuggestions(suggestions);
+}, 500); // 500 ms de retraso para el debounce
+
     
         // Agregar el evento input al campo de dirección
         document.getElementById('direccion').addEventListener('input', handleAddressInput);
