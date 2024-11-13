@@ -207,7 +207,7 @@
         alert("La dirección no es válida. Por favor, corrija el campo.");
         return; // Evitar el envío si la dirección no es válida
     }
-    
+
             // Obtener los valores de los inputs del propietario y vehículo
             const dni = document.getElementById('dni').value;
             const nombre = document.getElementById('nombre').value;
@@ -298,6 +298,38 @@
             };
         }
     
+        // Función para verificar si la dirección es válida
+async function verificarDireccionValida(direccion) {
+    try {
+        const url = `http://localhost:8080/api/calles/geolocalizacion?direccion=${encodeURIComponent(direccion)}`;
+        const response = await fetch(url, { method: 'GET' });
+
+        if (response.ok) {
+            // Si la respuesta es correcta, la dirección es válida
+            return true;
+        } else {
+            // Si la respuesta no es correcta, la dirección no es válida
+            return false;
+        }
+    } catch (error) {
+        console.error('Error de validación:', error);
+        return false;
+    }
+}
+
+// Validar al enviar el formulario
+document.getElementById('propietarioForm').addEventListener('submit', async (event) => {
+    const direccion = document.getElementById('direccion').value;
+
+    const esValida = await verificarDireccionValida(direccion);
+    
+    if (!esValida) {
+        event.preventDefault(); // Evitar el envío del formulario
+        alert('La dirección ingresada no es válida. Por favor, seleccione una de las sugerencias.');
+    }
+});
+
+
        // Función para obtener sugerencias de direcciones usando Nominatim
 async function fetchAddressSuggestions(query) {
     try {
