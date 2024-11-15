@@ -12,4 +12,6 @@ public interface RepuestoServicePort {
 
     Optional<RepuestoEntity> findByCodigoInventario(String codigoInventario);
 
+    void save(RepuestoEntity repuesto);
+
 }
