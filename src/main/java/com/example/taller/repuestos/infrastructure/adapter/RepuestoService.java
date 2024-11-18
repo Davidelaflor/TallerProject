@@ -38,4 +38,9 @@ public class RepuestoService implements RepuestoServicePort {
     public Optional<RepuestoEntity> findByCodigoInventario(String codigoInventario) {
         return repuestoRepository.findByCodigoInventario(codigoInventario);
     }
+
+    @Override
+    public void save(RepuestoEntity repuesto) {
+        repuestoRepository.save(repuesto);
+    }
 }
