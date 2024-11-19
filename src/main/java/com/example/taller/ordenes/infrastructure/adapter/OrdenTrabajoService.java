@@ -92,6 +92,9 @@ public OrdenTrabajoDTO finalizarOrdenTrabajo(Long id){
 
     public OrdenTrabajoDTO obtenerOrdenTrabajo(Long id) {
         OrdenTrabajoEntity ordenTrabajoEntity = ordenTrabajoRepository.findById(id).orElse(null);
+        if (ordenTrabajoEntity == null) {
+            return null;  // o lanzar una excepción, dependiendo del comportamiento esperado
+        }
         return toDTO(ordenTrabajoEntity); // Conversión a DTO
     }
 
@@ -149,4 +152,5 @@ public OrdenTrabajoDTO finalizarOrdenTrabajo(Long id){
         // Usamos el repositorio para encontrar la orden de trabajo por la patente del vehículo
         return ordenTrabajoRepository.findByVehiculoPatente(patente);
     }
+
 }
